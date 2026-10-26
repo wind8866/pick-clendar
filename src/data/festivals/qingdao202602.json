@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "isDefault": true,
+  "id": "qingdao202602",
+  "name": "风格万相 · 中外经典影片展",
+  "city": "青岛站",
+  "venue": "艾尚乐汀艺术影城",
+  "venueAddress": "青岛市市南区香港中路 31 号银座商城 5 楼",
+  "timeZone": "Asia/Shanghai",
+  "initialDate": "2026-10-26",
+  "dayStart": "12:00",
+  "dayEnd": "23:00",
+  "subscribeUrl": "",
+  "itemNoun": "部影片",
+  "updatedAt": "2026-10-26",
+  "events": [
+    {
+      "id": "20261029-1930",
+      "title": "🎉太太万岁",
+      "start": "2026-10-29T19:30:00+08:00",
+      "durationMinutes": 114,
+      "description": "导演：桑弧 · 8.4（23020 人评价） · 1947 · 普通话",
+      "url": "https://movie.douban.com/subject/1421673/",
+      "postScreening": true
+    },
+    {
+      "id": "20261030-1930",
+      "title": "🎉小城之春",
+      "start": "2026-10-30T19:30:00+08:00",
+      "durationMinutes": 99,
+      "description": "导演：费穆 · 8.7（75954 人评价） · 1948 · 普通话",
+      "url": "https://movie.douban.com/subject/1323746/",
+      "postScreening": true
+    },
+    {
+      "id": "20261031-1400",
+      "title": "在那河畔青草青",
+      "start": "2026-10-31T14:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "导演：侯孝贤 · 7.1（3377 人评价） · 1982 · 普通话",
+      "url": "https://movie.douban.com/subject/1296972/",
+      "postScreening": false
+    },
+    {
+      "id": "20261031-1600",
+      "title": "野草莓",
+      "start": "2026-10-31T16:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "导演：英格玛·伯格曼 · 8.8（98378 人评价） · 1957 · 瑞典语",
+      "url": "https://movie.douban.com/subject/1293071/",
+      "postScreening": false
+    },
+    {
+      "id": "20261031-1800",
+      "title": "笑傲江湖",
+      "start": "2026-10-31T18:00:00+08:00",
+      "durationMinutes": 123,
+      "description": "导演：胡金铨 / 徐克 / 李惠民 / 程小东 · 8.1（135988 人评价） · 1990 · 粤语",
+      "url": "https://movie.douban.com/subject/1297304/",
+      "postScreening": false
+    },
+    {
+      "id": "20261101-1400",
+      "title": "🎉都灵之马",
+      "start": "2026-11-01T14:00:00+08:00",
+      "durationMinutes": 154,
+      "description": "导演：塔尔·贝拉 / 阿尼亚斯·赫拉尼茨基 · 8.4（38069 人评价） · 2011 · 匈牙利语",
+      "url": "https://movie.douban.com/subject/3285632/",
+      "postScreening": true
+    },
+    {
+      "id": "20261101-1800",
+      "title": "🎉牺牲",
+      "start": "2026-11-01T18:00:00+08:00",
+      "durationMinutes": 149,
+      "description": "导演：安德烈·塔可夫斯基 · 8.6（25052 人评价） · 1986 · 瑞典语",
+      "url": "https://movie.douban.com/subject/1294531/",
+      "postScreening": true
+    },
+    {
+      "id": "20261102-1830",
+      "title": "狗镇",
+      "start": "2026-11-02T18:30:00+08:00",
+      "durationMinutes": 178,
+      "description": "导演：拉斯·冯·提尔 · 8.4（169877 人评价） · 2003 · 英语",
+      "url": "https://movie.douban.com/subject/1298759/",
+      "postScreening": false
+    },
+    {
+      "id": "20261103-1900",
+      "title": "脸庞，村庄",
+      "start": "2026-11-03T19:00:00+08:00",
+      "durationMinutes": 89,
+      "description": "导演：阿涅斯·瓦尔达 / 让·热内 · 9.1（99685 人评价） · 2017 · 法语",
+      "url": "https://movie.douban.com/subject/26764928/",
+      "postScreening": false
+    },
+    {
+      "id": "20261104-1830",
+      "title": "都灵之马",
+      "start": "2026-11-04T18:30:00+08:00",
+      "durationMinutes": 154,
+      "description": "导演：塔尔·贝拉 / 阿尼亚斯·赫拉尼茨基 · 8.4（38069 人评价） · 2011 · 匈牙利语",
+      "url": "https://movie.douban.com/subject/3285632/",
+      "postScreening": false
+    },
+    {
+      "id": "20261105-1900",
+      "title": "接近终点",
+      "start": "2026-11-05T19:00:00+08:00",
+      "durationMinutes": 114,
+      "description": "导演：奥利维尔·拉克谢 · 7.4（21265 人评价） · 2025 · 西班牙语",
+      "url": "https://movie.douban.com/subject/35409362/",
+      "postScreening": false
+    },
+    {
+      "id": "20261106-1930",
+      "title": "🎉血迷宫",
+      "start": "2026-11-06T19:30:00+08:00",
+      "durationMinutes": 96,
+      "description": "导演：乔尔·科恩 · 7.8（52769 人评价） · 1984 · 英语",
+      "url": "https://movie.douban.com/subject/1302542/",
+      "postScreening": true
+    },
+    {
+      "id": "20261107-1400",
+      "title": "子弹横飞百老汇",
+      "start": "2026-11-07T14:00:00+08:00",
+      "durationMinutes": 99,
+      "description": "导演：伍迪·艾伦 · 8.5（34516 人评价） · 1994 · 英语",
+      "url": "https://movie.douban.com/subject/1295452/",
+      "postScreening": false
+    },
+    {
+      "id": "20261107-1600",
+      "title": "何处是我朋友的家",
+      "start": "2026-11-07T16:00:00+08:00",
+      "durationMinutes": 83,
+      "description": "导演：阿巴斯·基亚罗斯塔米 · 9.0（53332 人评价） · 1987 · 波斯语",
+      "url": "https://movie.douban.com/subject/1301897/",
+      "postScreening": false
+    },
+    {
+      "id": "20261107-1800",
+      "title": "🎉狗镇",
+      "start": "2026-11-07T18:00:00+08:00",
+      "durationMinutes": 178,
+      "description": "导演：拉斯·冯·提尔 · 8.4（169877 人评价） · 2003 · 英语",
+      "url": "https://movie.douban.com/subject/1298759/",
+      "postScreening": true
+    },
+    {
+      "id": "20261108-1400",
+      "title": "🎉脸庞，村庄",
+      "start": "2026-11-08T14:00:00+08:00",
+      "durationMinutes": 89,
+      "description": "导演：阿涅斯·瓦尔达 / 让·热内 · 9.1（99685 人评价） · 2017 · 法语",
+      "url": "https://movie.douban.com/subject/26764928/",
+      "postScreening": true
+    },
+    {
+      "id": "20261108-1630",
+      "title": "🎉我的舅舅",
+      "start": "2026-11-08T16:30:00+08:00",
+      "durationMinutes": 117,
+      "description": "导演：雅克·塔蒂 · 8.6（26886 人评价） · 1958 · 法语",
+      "url": "https://movie.douban.com/subject/1400829/",
+      "postScreening": true
+    },
+    {
+      "id": "20261108-1945",
+      "title": "🎉列宁格勒牛仔征美记",
+      "start": "2026-11-08T19:45:00+08:00",
+      "durationMinutes": 79,
+      "description": "导演：阿基·考里斯马基 · 8.4（24941 人评价） · 1989 · 英语",
+      "url": "https://movie.douban.com/subject/1316560/",
+      "postScreening": true
+    },
+    {
+      "id": "20261109-1900",
+      "title": "子弹横飞百老汇",
+      "start": "2026-11-09T19:00:00+08:00",
+      "durationMinutes": 99,
+      "description": "导演：伍迪·艾伦 · 8.5（34516 人评价） · 1994 · 英语",
+      "url": "https://movie.douban.com/subject/1295452/",
+      "postScreening": false
+    },
+    {
+      "id": "20261110-1900",
+      "title": "笑傲江湖",
+      "start": "2026-11-10T19:00:00+08:00",
+      "durationMinutes": 123,
+      "description": "导演：胡金铨 / 徐克 / 李惠民 / 程小东 · 8.1（135988 人评价） · 1990 · 粤语",
+      "url": "https://movie.douban.com/subject/1297304/",
+      "postScreening": false
+    },
+    {
+      "id": "20261111-1900",
+      "title": "列宁格勒牛仔征美记",
+      "start": "2026-11-11T19:00:00+08:00",
+      "durationMinutes": 79,
+      "description": "导演：阿基·考里斯马基 · 8.4（24941 人评价） · 1989 · 英语",
+      "url": "https://movie.douban.com/subject/1316560/",
+      "postScreening": false
+    },
+    {
+      "id": "20261112-1900",
+      "title": "何处是我朋友的家",
+      "start": "2026-11-12T19:00:00+08:00",
+      "durationMinutes": 83,
+      "description": "导演：阿巴斯·基亚罗斯塔米 · 9.0（53332 人评价） · 1987 · 波斯语",
+      "url": "https://movie.douban.com/subject/1301897/",
+      "postScreening": false
+    },
+    {
+      "id": "20261113-1930",
+      "title": "英雄本色",
+      "start": "2026-11-13T19:30:00+08:00",
+      "durationMinutes": 96,
+      "description": "导演：吴宇森 · 8.6（618618 人评价） · 1986 · 粤语",
+      "url": "https://movie.douban.com/subject/1297574/",
+      "postScreening": false
+    },
+    {
+      "id": "20261114-1400",
+      "title": "接近终点",
+      "start": "2026-11-14T14:00:00+08:00",
+      "durationMinutes": 114,
+      "description": "导演：奥利维尔·拉克谢 · 7.4（21265 人评价） · 2025 · 西班牙语",
+      "url": "https://movie.douban.com/subject/35409362/",
+      "postScreening": false
+    },
+    {
+      "id": "20261114-1630",
+      "title": "都灵之马",
+      "start": "2026-11-14T16:30:00+08:00",
+      "durationMinutes": 154,
+      "description": "导演：塔尔·贝拉 / 阿尼亚斯·赫拉尼茨基 · 8.4（38069 人评价） · 2011 · 匈牙利语",
+      "url": "https://movie.douban.com/subject/3285632/",
+      "postScreening": false
+    },
+    {
+      "id": "20261114-1940",
+      "title": "血迷宫",
+      "start": "2026-11-14T19:40:00+08:00",
+      "durationMinutes": 96,
+      "description": "导演：乔尔·科恩 · 7.8（52769 人评价） · 1984 · 英语",
+      "url": "https://movie.douban.com/subject/1302542/",
+      "postScreening": false
+    },
+    {
+      "id": "20261115-1400",
+      "title": "🎉野草莓",
+      "start": "2026-11-15T14:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "导演：英格玛·伯格曼 · 8.8（98378 人评价） · 1957 · 瑞典语",
+      "url": "https://movie.douban.com/subject/1293071/",
+      "postScreening": true
+    },
+    {
+      "id": "20261115-1640",
+      "title": "🎉在那河畔青草青",
+      "start": "2026-11-15T16:40:00+08:00",
+      "durationMinutes": 91,
+      "description": "导演：侯孝贤 · 7.1（3377 人评价） · 1982 · 普通话",
+      "url": "https://movie.douban.com/subject/1296972/",
+      "postScreening": true
+    },
+    {
+      "id": "20261115-1930",
+      "title": "脸庞，村庄",
+      "start": "2026-11-15T19:30:00+08:00",
+      "durationMinutes": 89,
+      "description": "导演：阿涅斯·瓦尔达 / 让·热内 · 9.1（99685 人评价） · 2017 · 法语",
+      "url": "https://movie.douban.com/subject/26764928/",
+      "postScreening": false
+    },
+    {
+      "id": "20261116-1830",
+      "title": "牺牲",
+      "start": "2026-11-16T18:30:00+08:00",
+      "durationMinutes": 149,
+      "description": "导演：安德烈·塔可夫斯基 · 8.6（25052 人评价） · 1986 · 瑞典语",
+      "url": "https://movie.douban.com/subject/1294531/",
+      "postScreening": false
+    },
+    {
+      "id": "20261117-1900",
+      "title": "英雄本色",
+      "start": "2026-11-17T19:00:00+08:00",
+      "durationMinutes": 96,
+      "description": "导演：吴宇森 · 8.6（618618 人评价） · 1986 · 粤语",
+      "url": "https://movie.douban.com/subject/1297574/",
+      "postScreening": false
+    },
+    {
+      "id": "20261118-1900",
+      "title": "血迷宫",
+      "start": "2026-11-18T19:00:00+08:00",
+      "durationMinutes": 96,
+      "description": "导演：乔尔·科恩 · 7.8（52769 人评价） · 1984 · 英语",
+      "url": "https://movie.douban.com/subject/1302542/",
+      "postScreening": false
+    },
+    {
+      "id": "20261119-1900",
+      "title": "在那河畔青草青",
+      "start": "2026-11-19T19:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "导演：侯孝贤 · 7.1（3377 人评价） · 1982 · 普通话",
+      "url": "https://movie.douban.com/subject/1296972/",
+      "postScreening": false
+    },
+    {
+      "id": "20261120-1930",
+      "title": "我的舅舅",
+      "start": "2026-11-20T19:30:00+08:00",
+      "durationMinutes": 117,
+      "description": "导演：雅克·塔蒂 · 8.6（26886 人评价） · 1958 · 法语",
+      "url": "https://movie.douban.com/subject/1400829/",
+      "postScreening": false
+    },
+    {
+      "id": "20261121-1400",
+      "title": "牺牲",
+      "start": "2026-11-21T14:00:00+08:00",
+      "durationMinutes": 149,
+      "description": "导演：安德烈·塔可夫斯基 · 8.6（25052 人评价） · 1986 · 瑞典语",
+      "url": "https://movie.douban.com/subject/1294531/",
+      "postScreening": false
+    },
+    {
+      "id": "20261121-1700",
+      "title": "太太万岁",
+      "start": "2026-11-21T17:00:00+08:00",
+      "durationMinutes": 114,
+      "description": "导演：桑弧 · 8.4（23020 人评价） · 1947 · 普通话",
+      "url": "https://movie.douban.com/subject/1421673/",
+      "postScreening": false
+    },
+    {
+      "id": "20261121-1930",
+      "title": "小城之春",
+      "start": "2026-11-21T19:30:00+08:00",
+      "durationMinutes": 99,
+      "description": "导演：费穆 · 8.7（75954 人评价） · 1948 · 普通话",
+      "url": "https://movie.douban.com/subject/1323746/",
+      "postScreening": false
+    },
+    {
+      "id": "20261122-1400",
+      "title": "狗镇",
+      "start": "2026-11-22T14:00:00+08:00",
+      "durationMinutes": 178,
+      "description": "导演：拉斯·冯·提尔 · 8.4（169877 人评价） · 2003 · 英语",
+      "url": "https://movie.douban.com/subject/1298759/",
+      "postScreening": false
+    },
+    {
+      "id": "20261122-1720",
+      "title": "笑傲江湖",
+      "start": "2026-11-22T17:20:00+08:00",
+      "durationMinutes": 123,
+      "description": "导演：胡金铨 / 徐克 / 李惠民 / 程小东 · 8.1（135988 人评价） · 1990 · 粤语",
+      "url": "https://movie.douban.com/subject/1297304/",
+      "postScreening": false
+    },
+    {
+      "id": "20261122-1940",
+      "title": "子弹横飞百老汇",
+      "start": "2026-11-22T19:40:00+08:00",
+      "durationMinutes": 99,
+      "description": "导演：伍迪·艾伦 · 8.5（34516 人评价） · 1994 · 英语",
+      "url": "https://movie.douban.com/subject/1295452/",
+      "postScreening": false
+    },
+    {
+      "id": "20261123-1900",
+      "title": "我的舅舅",
+      "start": "2026-11-23T19:00:00+08:00",
+      "durationMinutes": 117,
+      "description": "导演：雅克·塔蒂 · 8.6（26886 人评价） · 1958 · 法语",
+      "url": "https://movie.douban.com/subject/1400829/",
+      "postScreening": false
+    },
+    {
+      "id": "20261124-1900",
+      "title": "野草莓",
+      "start": "2026-11-24T19:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "导演：英格玛·伯格曼 · 8.8（98378 人评价） · 1957 · 瑞典语",
+      "url": "https://movie.douban.com/subject/1293071/",
+      "postScreening": false
+    },
+    {
+      "id": "20261125-1900",
+      "title": "小城之春",
+      "start": "2026-11-25T19:00:00+08:00",
+      "durationMinutes": 99,
+      "description": "导演：费穆 · 8.7（75954 人评价） · 1948 · 普通话",
+      "url": "https://movie.douban.com/subject/1323746/",
+      "postScreening": false
+    },
+    {
+      "id": "20261126-1900",
+      "title": "太太万岁",
+      "start": "2026-11-26T19:00:00+08:00",
+      "durationMinutes": 114,
+      "description": "导演：桑弧 · 8.4（23020 人评价） · 1947 · 普通话",
+      "url": "https://movie.douban.com/subject/1421673/",
+      "postScreening": false
+    },
+    {
+      "id": "20261127-1930",
+      "title": "🎉何处是我朋友的家",
+      "start": "2026-11-27T19:30:00+08:00",
+      "durationMinutes": 83,
+      "description": "导演：阿巴斯·基亚罗斯塔米 · 9.0（53332 人评价） · 1987 · 波斯语",
+      "url": "https://movie.douban.com/subject/1301897/",
+      "postScreening": true
+    },
+    {
+      "id": "20261128-1400",
+      "title": "🎉英雄本色",
+      "start": "2026-11-28T14:00:00+08:00",
+      "durationMinutes": 96,
+      "description": "导演：吴宇森 · 8.6（618618 人评价） · 1986 · 粤语",
+      "url": "https://movie.douban.com/subject/1297574/",
+      "postScreening": true
+    },
+    {
+      "id": "20261128-1700",
+      "title": "列宁格勒牛仔征美记",
+      "start": "2026-11-28T17:00:00+08:00",
+      "durationMinutes": 79,
+      "description": "导演：阿基·考里斯马基 · 8.4（24941 人评价） · 1989 · 英语",
+      "url": "https://movie.douban.com/subject/1316560/",
+      "postScreening": false
+    },
+    {
+      "id": "20261128-1900",
+      "title": "🎉接近终点",
+      "start": "2026-11-28T19:00:00+08:00",
+      "durationMinutes": 114,
+      "description": "导演：奥利维尔·拉克谢 · 7.4（21265 人评价） · 2025 · 西班牙语",
+      "url": "https://movie.douban.com/subject/35409362/",
+      "postScreening": true
+    }
+  ]
+}
