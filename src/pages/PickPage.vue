@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { dayjs, rangeLabel, startOfWeek, zoned } from '@/utils/time'
 import type { CalendarView, FestivalConfig, FestivalEvent } from '@/types'
 import { findFestival } from '@/data/festivals'
 import { useSelectionStore } from '@/stores/selection'
+import { applyTheme } from '@/utils/theme'
 import AppHeader from '@/components/AppHeader.vue'
 import WeekCalendar from '@/components/WeekCalendar.vue'
 import MonthCalendar from '@/components/MonthCalendar.vue'
 import SelectionPanel from '@/components/SelectionPanel.vue'
-import EventDetailDialog from '@/components/EventDetailDialog.vue'
 import DayEventsDialog from '@/components/DayEventsDialog.vue'
 
 const route = useRoute()
@@ -23,12 +23,11 @@ const store = useSelectionStore()
 store.init(config, route.path)
 
 const view = ref<CalendarView>('month')
-const mode = ref<'browse' | 'select'>('browse')
 const anchor = ref(dayjs.tz(config.initialDate, config.timeZone).format('YYYY-MM-DD'))
 const activeTab = ref<'calendar' | 'selected'>('calendar')
+const panelOpen = ref(true)
+const isFullscreen = ref(false)
 
-const detailOpen = ref(false)
-const detailEvent = ref<FestivalEvent | null>(null)
 const dayOpen = ref(false)
 const dayDate = ref('')
 
@@ -63,27 +62,46 @@ function goToday(): void {
   anchor.value = dayjs().tz(config.timeZone).format('YYYY-MM-DD')
 }
 
-function openDetail(event: FestivalEvent): void {
-  detailEvent.value = event
-  detailOpen.value = true
-}
-
 function openDay(date: string): void {
   dayDate.value = date
   dayOpen.value = true
 }
 
 function onDaySelect(event: FestivalEvent): void {
-  if (mode.value === 'select') {
-    store.toggle(event.id)
-  } else {
-    dayOpen.value = false
-    openDetail(event)
+  dayOpen.value = false
+  store.toggle(event.id)
+}
+
+function togglePanel(): void {
+  panelOpen.value = !panelOpen.value
+}
+
+async function toggleFullscreen(): Promise<void> {
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen()
+    } else {
+      await document.documentElement.requestFullscreen?.()
+    }
+  } catch {
+    // 某些环境（如 iOS Safari）不支持全屏，忽略
   }
+  syncFullscreen()
+}
+
+function syncFullscreen(): void {
+  isFullscreen.value = Boolean(document.fullscreenElement)
 }
 
 onMounted(() => {
   document.title = `${config.name} · 日程挑选`
+  applyTheme(config.theme)
+  document.addEventListener('fullscreenchange', syncFullscreen)
+  syncFullscreen()
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('fullscreenchange', syncFullscreen)
 })
 </script>
 
@@ -92,14 +110,16 @@ onMounted(() => {
     <AppHeader
       :config="config"
       :view="view"
-      :mode="mode"
       :range-text="rangeText"
       :show-nav="view === 'week'"
+      :panel-open="panelOpen"
+      :is-fullscreen="isFullscreen"
       @update:view="changeView"
-      @update:mode="mode = $event"
       @prev="shiftWeek(-1)"
       @next="shiftWeek(1)"
       @today="goToday"
+      @toggle-panel="togglePanel"
+      @toggle-fullscreen="toggleFullscreen"
     />
 
     <nav class="mobile-tabs" aria-label="移动端视图切换">
@@ -120,21 +140,20 @@ onMounted(() => {
       </button>
     </nav>
 
-    <main class="app-body" :class="{ 'show-selection': activeTab === 'selected' }">
+    <main
+      class="app-body"
+      :class="{ 'show-selection': activeTab === 'selected', 'panel-closed': !panelOpen }"
+    >
       <section class="calendar-pane">
         <WeekCalendar
           v-if="view === 'week'"
           :config="config"
           :anchor="anchor"
-          :mode="mode"
-          @open-detail="openDetail"
         />
         <MonthCalendar
           v-else
           :config="config"
           :anchor="anchor"
-          :mode="mode"
-          @open-detail="openDetail"
           @open-day="openDay"
           @update:anchor="anchor = $event"
         />
@@ -143,17 +162,10 @@ onMounted(() => {
       <SelectionPanel :config="config" class="selection-pane" />
     </main>
 
-    <EventDetailDialog
-      v-model="detailOpen"
-      :event="detailEvent"
-      :config="config"
-    />
-
     <DayEventsDialog
       v-model="dayOpen"
       :date="dayDate"
       :config="config"
-      :mode="mode"
       @select="onDaySelect"
     />
   </div>
@@ -188,6 +200,16 @@ onMounted(() => {
 
 .mobile-tabs {
   display: none;
+}
+
+@media (min-width: 901px) {
+  .app-body.panel-closed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-body.panel-closed .selection-pane {
+    display: none;
+  }
 }
 
 @media (max-width: 900px) {

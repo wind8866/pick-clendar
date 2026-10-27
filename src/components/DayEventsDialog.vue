@@ -8,7 +8,6 @@ const props = defineProps<{
   modelValue: boolean
   date: string
   config: FestivalConfig
-  mode: 'browse' | 'select'
 }>()
 
 const emit = defineEmits<{
@@ -59,9 +58,9 @@ function pickDay(event: FestivalEvent): void {
           {{ hm(zoned(event.start, config.timeZone)) }} –
           {{ hm(eventEnd(event.start, event.durationMinutes, config.timeZone)) }}
         </span>
-        <span class="day-title">{{ event.title }}</span>
+        <span class="day-title">{{ store.displayTitle(event) }}</span>
         <span class="day-action">
-          {{ store.isSelected(event.id) ? '移出' : mode === 'select' ? '加入' : '详情' }}
+          {{ store.isSelected(event.id) ? '移出' : '加入' }}
         </span>
       </button>
     </div>

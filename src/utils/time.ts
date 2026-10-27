@@ -56,11 +56,6 @@ export function formatGap(gapMinutes: number): string {
   return `空档 ${formatDuration(gapMinutes)}`
 }
 
-export function minutesFromDayStart(date: Dayjs, dayStart: string): number {
-  const [hour, minute] = dayStart.split(':').map(Number)
-  return date.hour() * 60 + date.minute() - (hour * 60 + minute)
-}
-
 export function rangeLabel(start: Dayjs, end: Dayjs): string {
   const sameYear = start.year() === end.year()
   const sameMonth = sameYear && start.month() === end.month()

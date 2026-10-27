@@ -3,13 +3,13 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Dayjs } from 'dayjs'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
+import { useEventHover } from '@/composables/useEventHover'
 import {
   dayjs,
   hm,
   startOfWeek,
   toDateKey,
   WEEKDAYS_MON,
-  weekdayLabel,
   zoned,
 } from '@/utils/time'
 import EventHoverCard from '@/components/EventHoverCard.vue'
@@ -17,22 +17,30 @@ import EventHoverCard from '@/components/EventHoverCard.vue'
 const props = defineProps<{
   config: FestivalConfig
   anchor: string
-  mode: 'browse' | 'select'
 }>()
 
 const emit = defineEmits<{
-  'open-detail': [event: FestivalEvent]
   'open-day': [date: string]
   'update:anchor': [weekStart: string]
 }>()
 
 const store = useSelectionStore()
+const {
+  event: hoverEvent,
+  x: hoverX,
+  y: hoverY,
+  show: showHover,
+  scheduleHide,
+  enterCard,
+  leaveCard,
+  hide: hideHover,
+} = useEventHover()
+
 const scrollEl = ref<HTMLElement | null>(null)
 const rowHeight = ref(120)
 const weeks = ref<WeekRow[]>([])
 const topWeekKey = ref('')
 const rangeStart = ref<Dayjs | null>(null)
-const hover = ref<{ event: FestivalEvent; x: number; y: number } | null>(null)
 let ready = false
 let extending = false
 let ticking = false
@@ -47,6 +55,11 @@ interface WeekRow {
 const BEFORE_WEEKS = 26
 const AFTER_WEEKS = 52
 const EXTEND_WEEKS = 26
+
+// 格子内预留：日期头 + 内边距
+const CELL_OVERHEAD = 30
+// 单个日程块占用高度（含间距）
+const CHIP_H = 24
 
 function makeWeek(start: Dayjs): WeekRow {
   return {
@@ -86,33 +99,41 @@ function eventsFor(day: Dayjs): FestivalEvent[] {
   return eventsByDate.value.get(day.format('YYYY-MM-DD')) ?? []
 }
 
-const maxChips = computed(() => (rowHeight.value < 118 ? 2 : 3))
+// 激进显示：尽可能铺满格子，仅在溢出时预留一行显示 +N
+const maxChips = computed(() =>
+  Math.max(1, Math.floor((rowHeight.value - CELL_OVERHEAD) / CHIP_H)),
+)
 
 function visibleEvents(day: Dayjs): FestivalEvent[] {
-  return eventsFor(day).slice(0, maxChips.value)
+  const events = eventsFor(day)
+  const fit = maxChips.value
+  if (events.length <= fit) return events
+  return events.slice(0, Math.max(1, fit - 1))
 }
 
 function extraCount(day: Dayjs): number {
-  return Math.max(0, eventsFor(day).length - maxChips.value)
-}
-
-function decide(event: FestivalEvent): void {
-  if (props.mode === 'select') {
-    store.toggle(event.id)
-    hover.value = null
-  } else {
-    emit('open-detail', event)
-  }
+  return Math.max(0, eventsFor(day).length - visibleEvents(day).length)
 }
 
 function onChipClick(mouse: MouseEvent, event: FestivalEvent): void {
   mouse.stopPropagation()
-  decide(event)
+  store.toggle(event.id)
+  hideHover()
+  store.clearHoverTitle()
 }
 
 function onChipEnter(mouse: MouseEvent, event: FestivalEvent): void {
-  if (props.mode !== 'select') return
-  hover.value = { event, x: mouse.clientX, y: mouse.clientY }
+  showHover(event, mouse.clientX, mouse.clientY)
+  store.setHoverTitle(event.title)
+}
+
+function onChipLeave(): void {
+  scheduleHide()
+  store.scheduleHideHoverTitle()
+}
+
+function onHoverPick(): void {
+  if (hoverEvent.value) store.toggle(hoverEvent.value.id)
 }
 
 function onCellClick(day: Dayjs): void {
@@ -182,7 +203,8 @@ function updateTopWeek(): void {
 
 function onScroll(): void {
   if (!ready) return
-  hover.value = null
+  hideHover()
+  store.clearHoverTitle()
   if (ticking) return
   ticking = true
   requestAnimationFrame(() => {
@@ -283,15 +305,18 @@ watch(
               :key="event.id"
               type="button"
               class="chip"
-              :class="{ selected: store.isSelected(event.id) }"
-              :title="`${hm(zoned(event.start, config.timeZone))} ${event.title}`"
+              :class="{
+                selected: store.isSelected(event.id),
+                'hover-same': store.isHoverSibling(event),
+              }"
+              :title="`${hm(zoned(event.start, config.timeZone))} ${store.displayTitle(event)}`"
               @click.stop="onChipClick($event, event)"
               @mouseenter="onChipEnter($event, event)"
-              @mouseleave="hover = null"
+              @mouseleave="onChipLeave"
             >
+              <span class="chip-bar" aria-hidden="true"></span>
+              <span class="chip-title">{{ store.displayTitle(event) }}</span>
               <span class="chip-time">{{ hm(zoned(event.start, config.timeZone)) }}</span>
-              <span class="chip-title">{{ event.title }}</span>
-              <span v-if="store.isSelected(event.id)" class="chip-check">✓</span>
             </button>
 
             <button
@@ -308,12 +333,15 @@ watch(
     </div>
 
     <EventHoverCard
-      v-if="hover && mode === 'select'"
-      :event="hover.event"
+      v-if="hoverEvent"
+      :event="hoverEvent"
       :config="config"
-      :selected="store.isSelected(hover.event.id)"
-      :x="hover.x"
-      :y="hover.y"
+      :selected="store.isSelected(hoverEvent.id)"
+      :x="hoverX"
+      :y="hoverY"
+      @enter="enterCard"
+      @leave="leaveCard"
+      @pick="onHoverPick"
     />
   </div>
 </template>
@@ -385,15 +413,15 @@ watch(
 }
 
 .month-cell:hover {
-  background: rgb(255 250 240 / 80%);
+  background: rgb(255 250 240 / 70%);
 }
 
 .month-cell.weekend {
-  background: rgb(140 47 47 / 2.5%);
+  background: rgb(106 52 36 / 3%);
 }
 
 .month-cell.today {
-  background: rgb(140 47 47 / 7%);
+  background: rgb(106 52 36 / 7%);
 }
 
 .cell-head {
@@ -407,15 +435,15 @@ watch(
 .day-number {
   color: var(--ink-soft);
   font-family: var(--font-serif);
-  font-size: 14px;
+  font-size: 15px;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
 }
 
 .month-cell.today .day-number {
   display: grid;
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   margin-left: -3px;
   border-radius: 50%;
   background: var(--red);
@@ -442,13 +470,13 @@ watch(
   position: relative;
   display: flex;
   overflow: hidden;
-  gap: 4px;
-  align-items: baseline;
-  min-height: 18px;
-  padding: 1px 4px;
+  gap: 5px;
+  align-items: center;
+  min-height: 20px;
+  padding: 1px 5px 1px 2px;
   border: 0;
   border-radius: 3px;
-  background: #efe1d2;
+  background: transparent;
   color: var(--ink);
   cursor: pointer;
   text-align: left;
@@ -456,33 +484,44 @@ watch(
 }
 
 .chip:hover {
-  background: #e7d4c0;
+  background: rgb(106 52 36 / 6%);
 }
 
-.chip.selected {
-  background: var(--red-soft);
-  box-shadow: inset 2px 0 0 var(--red);
-}
-
-.chip-time {
+.chip-bar {
   flex: none;
-  color: var(--red);
-  font-size: 9px;
-  font-variant-numeric: tabular-nums;
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--red);
 }
 
 .chip-title {
+  flex: 1;
   overflow: hidden;
-  font-size: 10.5px;
-  line-height: 1.45;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.chip-check {
-  margin-left: auto;
-  color: var(--red);
-  font-size: 9px;
+.chip-time {
+  flex: none;
+  color: var(--muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip.hover-same {
+  background: var(--secondary-soft);
+}
+
+.chip.selected {
+  background: var(--red-soft);
+}
+
+.chip.selected .chip-bar {
+  background: var(--red-deep);
 }
 
 .more {
@@ -522,22 +561,25 @@ watch(
   }
 
   .chip {
-    width: 7px;
-    height: 7px;
-    min-height: 7px;
+    width: 8px;
+    height: 8px;
+    min-height: 8px;
     padding: 0;
     border-radius: 50%;
     background: var(--red);
   }
 
-  .chip.selected {
-    background: var(--gold);
-    box-shadow: none;
+  .chip.hover-same {
+    background: var(--secondary-deep);
   }
 
-  .chip-time,
+  .chip.selected {
+    background: var(--gold);
+  }
+
+  .chip-bar,
   .chip-title,
-  .chip-check {
+  .chip-time {
     display: none;
   }
 

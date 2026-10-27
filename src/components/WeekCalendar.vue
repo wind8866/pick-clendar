@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { Dayjs } from 'dayjs'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
+import { useEventHover } from '@/composables/useEventHover'
 import {
   dayjs,
   hm,
@@ -16,23 +17,41 @@ import EventHoverCard from '@/components/EventHoverCard.vue'
 const props = defineProps<{
   config: FestivalConfig
   anchor: string
-  mode: 'browse' | 'select'
-}>()
-
-const emit = defineEmits<{
-  'open-detail': [event: FestivalEvent]
 }>()
 
 const store = useSelectionStore()
-const hover = ref<{ event: FestivalEvent; x: number; y: number } | null>(null)
+const {
+  event: hoverEvent,
+  x: hoverX,
+  y: hoverY,
+  show: showHover,
+  scheduleHide,
+  enterCard,
+  leaveCard,
+  hide: hideHover,
+} = useEventHover()
 
-function parseTime(value: string): number {
-  const [hour, minute] = value.split(':').map(Number)
-  return hour * 60 + minute
-}
+// 时间轴范围：由全部日程的最早开始 / 最晚结束动态决定，向下取整 −1h、向上取整 +1h
+const rangeBounds = computed(() => {
+  let minStart = Infinity
+  let maxEnd = -Infinity
+  for (const event of props.config.events) {
+    const start = zoned(event.start, props.config.timeZone)
+    const startMin = start.hour() * 60 + start.minute()
+    const endMin = startMin + event.durationMinutes
+    if (startMin < minStart) minStart = startMin
+    if (endMin > maxEnd) maxEnd = endMin
+  }
+  if (!Number.isFinite(minStart) || !Number.isFinite(maxEnd)) {
+    return { startMin: 9 * 60, endMin: 21 * 60 }
+  }
+  const start = Math.max(0, Math.floor(minStart / 60) * 60 - 60)
+  const end = Math.min(24 * 60, Math.ceil(maxEnd / 60) * 60 + 60)
+  return { startMin: start, endMin: end }
+})
 
-const dayStartMin = computed(() => parseTime(props.config.dayStart))
-const dayEndMin = computed(() => parseTime(props.config.dayEnd))
+const dayStartMin = computed(() => rangeBounds.value.startMin)
+const dayEndMin = computed(() => rangeBounds.value.endMin)
 const totalMinutes = computed(() => Math.max(1, dayEndMin.value - dayStartMin.value))
 const startHour = computed(() => Math.floor(dayStartMin.value / 60))
 const endHour = computed(() => Math.ceil(dayEndMin.value / 60))
@@ -63,8 +82,17 @@ function eventsFor(day: Dayjs): FestivalEvent[] {
   return eventsByDate.value.get(day.format('YYYY-MM-DD')) ?? []
 }
 
-function timeText(event: FestivalEvent): string {
-  return hm(zoned(event.start, props.config.timeZone))
+function timeRangeText(event: FestivalEvent): string {
+  const start = zoned(event.start, props.config.timeZone)
+  const end = start.add(event.durationMinutes, 'minute')
+  return `${hm(start)}–${hm(end)}`
+}
+
+function directorYear(event: FestivalEvent): string {
+  const parts: string[] = []
+  if (event.director) parts.push(event.director)
+  if (event.year !== undefined) parts.push(String(event.year))
+  return parts.join(' · ')
 }
 
 function positionStyle(event: FestivalEvent): Record<string, string> {
@@ -83,21 +111,23 @@ function positionStyle(event: FestivalEvent): Record<string, string> {
 }
 
 function onEnter(mouse: MouseEvent, event: FestivalEvent): void {
-  if (props.mode !== 'select') return
-  hover.value = { event, x: mouse.clientX, y: mouse.clientY }
+  showHover(event, mouse.clientX, mouse.clientY)
+  store.setHoverTitle(event.title)
 }
 
 function onLeave(): void {
-  hover.value = null
+  scheduleHide()
+  store.scheduleHideHoverTitle()
+}
+
+function onHoverPick(): void {
+  if (hoverEvent.value) store.toggle(hoverEvent.value.id)
 }
 
 function onClick(event: FestivalEvent): void {
-  if (props.mode === 'select') {
-    store.toggle(event.id)
-    hover.value = null
-  } else {
-    emit('open-detail', event)
-  }
+  store.toggle(event.id)
+  hideHover()
+  store.clearHoverTitle()
 }
 
 const now = ref(dayjs())
@@ -133,7 +163,8 @@ function hourTop(hour: number): string {
 }
 
 function onScroll(): void {
-  hover.value = null
+  hideHover()
+  store.clearHoverTitle()
 }
 </script>
 
@@ -197,16 +228,18 @@ function onScroll(): void {
                   :key="event.id"
                   type="button"
                   class="event-block"
-                  :class="{ selected: store.isSelected(event.id) }"
+                  :class="{
+                    selected: store.isSelected(event.id),
+                    'hover-same': store.isHoverSibling(event),
+                  }"
                   :style="positionStyle(event)"
-                  :title="`${timeText(event)} ${event.title}`"
                   @click.stop="onClick(event)"
                   @mouseenter="onEnter($event, event)"
                   @mouseleave="onLeave"
                 >
-                  <span class="event-time">{{ timeText(event) }}</span>
-                  <span class="event-title">{{ event.title }}</span>
-                  <span v-if="store.isSelected(event.id)" class="event-check" aria-label="已加入">✓</span>
+                  <span class="event-time">{{ timeRangeText(event) }}</span>
+                  <span class="event-title">{{ store.displayTitle(event) }}</span>
+                  <span v-if="directorYear(event)" class="event-sub">{{ directorYear(event) }}</span>
                 </button>
               </div>
             </div>
@@ -216,12 +249,15 @@ function onScroll(): void {
     </div>
 
     <EventHoverCard
-      v-if="hover && mode === 'select'"
-      :event="hover.event"
+      v-if="hoverEvent"
+      :event="hoverEvent"
       :config="config"
-      :selected="store.isSelected(hover.event.id)"
-      :x="hover.x"
-      :y="hover.y"
+      :selected="store.isSelected(hoverEvent.id)"
+      :x="hoverX"
+      :y="hoverY"
+      @enter="enterCard"
+      @leave="leaveCard"
+      @pick="onHoverPick"
     />
   </div>
 </template>
@@ -366,7 +402,7 @@ function onScroll(): void {
 }
 
 .day-col.today {
-  background: rgb(140 47 47 / 3%);
+  background: rgb(106 52 36 / 3%);
 }
 
 .hour-line {
@@ -385,31 +421,37 @@ function onScroll(): void {
   overflow: hidden;
   flex-direction: column;
   gap: 1px;
-  padding: 5px 6px;
-  border: 1px solid rgb(111 34 34 / 30%);
+  min-height: 40px;
+  padding: 4px 6px;
+  border: 0;
   border-left: 3px solid var(--red);
-  border-radius: 6px;
-  background: linear-gradient(145deg, #933a3a, #742626);
-  color: #fff8ec;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
   cursor: pointer;
   text-align: left;
-  transition: transform 0.13s ease, box-shadow 0.13s ease;
+  transition: background 0.13s ease;
 }
 
 .event-block:hover {
-  z-index: 2;
-  box-shadow: 0 8px 18px rgb(84 34 24 / 26%);
-  transform: translateY(-1px);
+  background: rgb(106 52 36 / 5%);
+}
+
+.event-block.hover-same {
+  background: var(--secondary-soft);
 }
 
 .event-block.selected {
-  border-color: var(--gold);
-  border-left-color: var(--gold);
-  box-shadow: inset 0 0 0 1px var(--gold);
+  background: var(--red-soft);
+  border-left-color: var(--red-deep);
+}
+
+.event-block.selected.hover-same {
+  border-left-color: var(--secondary-deep);
 }
 
 .event-time {
-  color: rgb(255 248 236 / 76%);
+  color: var(--muted);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
   line-height: 1.3;
@@ -418,25 +460,20 @@ function onScroll(): void {
 .event-title {
   overflow: hidden;
   font-family: var(--font-serif);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.event-check {
-  position: absolute;
-  top: 4px;
-  right: 5px;
-  display: grid;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: var(--gold);
-  color: #4a2f0b;
+.event-sub {
+  overflow: hidden;
+  color: var(--ink-soft);
   font-size: 10px;
-  place-items: center;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .now-line {

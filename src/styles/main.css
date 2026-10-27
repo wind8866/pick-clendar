@@ -1,38 +1,42 @@
 :root {
-  --paper: #f4eee2;
-  --paper-strong: #fbf7ee;
-  --panel: #efe6d6;
-  --panel-soft: #f7f1e6;
+  /* 主题三色由 config.theme 注入（见 src/utils/theme.ts），此处为默认回退值 */
+  --paper: #e5cea8;
+  --paper-strong: #f8f1e7;
+  --panel: #dfc6a1;
+  --panel-soft: #f0e3cd;
   --ink: #33241d;
-  --ink-soft: #6e5a4c;
-  --muted: #95816f;
-  --line: #ded1bb;
-  --line-soft: #e9dfcd;
-  --red: #8c2f2f;
-  --red-deep: #6f2222;
-  --red-soft: #f3e2dd;
-  --gold: #b58b45;
-  --gold-soft: #f3e3b6;
+  --ink-soft: #5f4c3e;
+  --muted: #8a7a63;
+  --line: #a88166;
+  --line-soft: #c3a383;
+  --red: #6a3424;
+  --red-deep: #572b1e;
+  --red-soft: #eae3e0;
+  --gold: #966841;
+  --gold-soft: #b7987e;
+  --secondary: #9ab9af;
+  --secondary-soft: #edf2f1;
+  --secondary-deep: #7e9890;
   --highlight: #fff1b8;
-  --shadow: 0 10px 30px rgb(76 51 34 / 10%);
+  --shadow: 0 10px 30px rgb(60 40 28 / 12%);
   --font-serif: "Songti SC", "STSong", "Noto Serif SC", Georgia, "Times New Roman", serif;
   --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "Segoe UI", sans-serif;
 
-  --el-color-primary: #8c2f2f;
-  --el-color-primary-light-3: #a85a5a;
-  --el-color-primary-light-5: #c08a8a;
-  --el-color-primary-light-7: #ddc0c0;
-  --el-color-primary-light-8: #ead7d7;
-  --el-color-primary-light-9: #f6ecec;
-  --el-color-primary-dark-2: #6f2222;
-  --el-color-danger: #a33a2f;
+  --el-color-primary: #6a3424;
+  --el-color-primary-light-3: #977166;
+  --el-color-primary-light-5: #b59a92;
+  --el-color-primary-light-7: #d2c2bd;
+  --el-color-primary-light-8: #e1d6d3;
+  --el-color-primary-light-9: #f0ebe9;
+  --el-color-primary-dark-2: #552a1d;
+  --el-color-danger: #753526;
   --el-text-color-primary: #33241d;
   --el-text-color-regular: #5f4c3e;
-  --el-border-color: #ded1bb;
-  --el-border-color-light: #e9dfcd;
-  --el-fill-color-blank: #fbf7ee;
-  --el-bg-color: #fbf7ee;
+  --el-border-color: #a88166;
+  --el-border-color-light: #c3a383;
+  --el-fill-color-blank: #f8f1e7;
+  --el-bg-color: #f8f1e7;
   --el-font-family: var(--font-sans);
   --el-border-radius-base: 8px;
   --el-border-radius-small: 6px;
@@ -53,12 +57,9 @@ body {
   min-width: 320px;
   overflow: hidden;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 8% 0%, rgb(255 255 255 / 70%), transparent 34%),
-    radial-gradient(circle at 100% 100%, rgb(206 178 132 / 22%), transparent 42%),
-    var(--paper);
+  background: var(--paper);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

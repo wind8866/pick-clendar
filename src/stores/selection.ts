@@ -24,7 +24,9 @@ export const useSelectionStore = defineStore('selection', () => {
   const overrides = ref<Record<string, EventOverride>>({})
   const defaultTravelTime = ref(0)
   const highlightId = ref<string | null>(null)
+  const hoverTitle = ref<string | null>(null)
   let highlightTimer: ReturnType<typeof setTimeout> | undefined
+  let hoverTitleTimer: ReturnType<typeof setTimeout> | undefined
   let initialized = false
 
   const eventMap = computed(
@@ -49,6 +51,7 @@ export const useSelectionStore = defineStore('selection', () => {
     overrides.value = {}
     defaultTravelTime.value = 0
     highlightId.value = null
+    hoverTitle.value = null
 
     const known = new Set(nextConfig.events.map((event) => event.id))
     try {
@@ -117,6 +120,45 @@ export const useSelectionStore = defineStore('selection', () => {
     }, 1900)
   }
 
+  function setHoverTitle(title: string): void {
+    if (hoverTitleTimer) {
+      clearTimeout(hoverTitleTimer)
+      hoverTitleTimer = undefined
+    }
+    hoverTitle.value = title
+  }
+
+  function scheduleHideHoverTitle(): void {
+    if (hoverTitleTimer) clearTimeout(hoverTitleTimer)
+    hoverTitleTimer = setTimeout(() => {
+      hoverTitle.value = null
+      hoverTitleTimer = undefined
+    }, 260)
+  }
+
+  function keepHoverTitle(): void {
+    if (hoverTitleTimer) {
+      clearTimeout(hoverTitleTimer)
+      hoverTitleTimer = undefined
+    }
+  }
+
+  function clearHoverTitle(): void {
+    if (hoverTitleTimer) {
+      clearTimeout(hoverTitleTimer)
+      hoverTitleTimer = undefined
+    }
+    hoverTitle.value = null
+  }
+
+  function isHoverSibling(event: FestivalEvent): boolean {
+    return hoverTitle.value !== null && hoverTitle.value === event.title
+  }
+
+  function displayTitle(event: FestivalEvent): string {
+    return `${event.titlePrefix ?? ''}${event.title}`
+  }
+
   function isSelected(id: string): boolean {
     return selectedSet.value.has(id)
   }
@@ -181,8 +223,23 @@ export const useSelectionStore = defineStore('selection', () => {
     return typeof override === 'number' ? override : defaultTravelTime.value
   }
 
+  function composedMeta(event: FestivalEvent): string {
+    const parts: string[] = []
+    if (event.director) parts.push(`导演：${event.director}`)
+    if (event.rating !== undefined) {
+      const count = event.ratingCount !== undefined ? `（${event.ratingCount} 人评价）` : ''
+      parts.push(`${event.rating}${count}`)
+    }
+    if (event.year !== undefined) parts.push(String(event.year))
+    if (event.language) parts.push(event.language)
+    return parts.join(' · ')
+  }
+
   function descriptionOf(event: FestivalEvent): string {
-    return overrides.value[event.id]?.description ?? event.description
+    const override = overrides.value[event.id]?.description
+    if (override) return override
+    if (event.description) return event.description
+    return composedMeta(event)
   }
 
   function endOf(event: FestivalEvent): string {
@@ -202,7 +259,9 @@ export const useSelectionStore = defineStore('selection', () => {
     overrides.value = {}
     defaultTravelTime.value = 0
     highlightId.value = null
+    hoverTitle.value = null
     if (highlightTimer) clearTimeout(highlightTimer)
+    if (hoverTitleTimer) clearTimeout(hoverTitleTimer)
     try {
       if (storageKey.value) localStorage.removeItem(storageKey.value)
     } catch {
@@ -217,6 +276,7 @@ export const useSelectionStore = defineStore('selection', () => {
     overrides,
     defaultTravelTime,
     highlightId,
+    hoverTitle,
     timeZone,
     selectedCount,
     hasSelection,
@@ -235,5 +295,12 @@ export const useSelectionStore = defineStore('selection', () => {
     dateOf,
     startDate,
     clearAll,
+    setHoverTitle,
+    scheduleHideHoverTitle,
+    keepHoverTitle,
+    clearHoverTitle,
+    isHoverSibling,
+    displayTitle,
+    composedMeta,
   }
 })

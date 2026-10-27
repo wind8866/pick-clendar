@@ -92,7 +92,7 @@ defineExpose({ root })
         :class="{ selected: store.isSelected(item.event.id) }"
       >
         <span class="poster-time">{{ item.start }}–{{ item.end }}</span>
-        <span class="poster-title">{{ item.event.title }}</span>
+        <span class="poster-title">{{ store.displayTitle(item.event) }}</span>
         <span v-if="item.travel > 0" class="poster-travel">路程 {{ item.travel }} 分钟</span>
       </div>
     </section>

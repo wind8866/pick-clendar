@@ -6,6 +6,7 @@
 
 ```bash
 pnpm install
+pnpm gen      # 从 raw 生成显示数据（改数据后执行）
 pnpm dev
 pnpm build
 ```
@@ -24,11 +25,16 @@ http://127.0.0.1:5173/pick/qingdao202602
 
 ## 日历配置
 
-配置放在 `src/data/festivals/*.json`，构建时通过 `import.meta.glob` 自动发现，代码中不写死具体影展信息。
+数据分两层，`raw` 是贴近数据源的自由格式，`display` 是运行时标准配置：
+
+- **原始数据**：`src/data/raw/*.raw.json`，字段自由，人工维护（贴近海报 / 豆瓣等来源）。
+- **显示数据**：`src/data/festivals/*.json`，标准化，运行时唯一配置，由生成脚本产出。
+
+修改数据后执行 `pnpm gen` 重新生成显示数据；构建时通过 `import.meta.glob` 自动发现，代码中不写死具体影展信息。
 
 ```json
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "isDefault": true,
   "id": "qingdao202602",
   "name": "日历名称",
@@ -37,18 +43,24 @@ http://127.0.0.1:5173/pick/qingdao202602
   "venueAddress": "详细地址",
   "timeZone": "Asia/Shanghai",
   "initialDate": "2026-10-26",
-  "dayStart": "12:00",
-  "dayEnd": "23:00",
   "subscribeUrl": "",
   "itemNoun": "部影片",
   "updatedAt": "2026-10-26",
+  "theme": { "background": "#E5CEA8", "primary": "#6A3424", "secondary": "#9AB9AF" },
   "events": [
     {
       "id": "20261029-1930",
       "title": "日程标题",
+      "titlePrefix": "🎉",
       "start": "2026-10-29T19:30:00+08:00",
       "durationMinutes": 114,
-      "description": "描述",
+      "director": "导演",
+      "year": 1947,
+      "language": "普通话",
+      "rating": 8.4,
+      "ratingCount": 23020,
+      "description": "",
+      "weekDesc": "",
       "url": "",
       "postScreening": false
     }
@@ -56,10 +68,13 @@ http://127.0.0.1:5173/pick/qingdao202602
 }
 ```
 
+- `title` 不含前缀图标，`titlePrefix` 单独存（如 🎉），同标题联动匹配只比较 `title`。
 - `durationMinutes` 用于计算结束时间；不使用显式 `end` 字段，避免两处数据不一致。
+- `director` / `year` / `language` / `rating` / `ratingCount` 为结构化字段，周视图与导出使用；`description` 为自由补充（可为空），`weekDesc` 为周视图专属补充（可选）。
 - `initialDate` 决定月视图第一行所在周，也用于默认定位。
 - `subscribeUrl` 为空时“订阅日历”按钮不可用。
-- 新增日历只需新增 JSON，并在需要时设置 `isDefault`。
+- `theme` 三项主色：背景、可交互主色、协助/联动色；周视图时间轴由全部日程动态计算，不再使用固定的 `dayStart` / `dayEnd`。
+- 新增日历：在 `src/data/raw` 新增 `.raw.json` 并执行 `pnpm gen`，需要时设置 `isDefault`。
 
 ## 本地存储
 

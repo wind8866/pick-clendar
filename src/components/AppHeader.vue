@@ -1,28 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowLeft, ArrowRight, Calendar } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Calendar, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import type { CalendarView, FestivalConfig } from '@/types'
 
 const props = defineProps<{
   config: FestivalConfig
   view: CalendarView
-  mode: 'browse' | 'select'
   rangeText: string
   showNav: boolean
+  panelOpen: boolean
+  isFullscreen: boolean
 }>()
 
 const emit = defineEmits<{
   'update:view': [value: CalendarView]
-  'update:mode': [value: 'browse' | 'select']
   prev: []
   next: []
   today: []
+  'toggle-panel': []
+  'toggle-fullscreen': []
 }>()
-
-const selectMode = computed({
-  get: () => props.mode === 'select',
-  set: (value: boolean) => emit('update:mode', value ? 'select' : 'browse'),
-})
 
 const subtitle = computed(() => {
   const parts = [props.config.city, props.config.venue].filter(Boolean)
@@ -62,12 +59,6 @@ const subtitle = computed(() => {
         </button>
       </div>
 
-      <div class="mode-switch">
-        <span :class="{ active: mode === 'browse' }">展示</span>
-        <el-switch v-model="selectMode" aria-label="切换展示模式或选择模式" />
-        <span :class="{ active: mode === 'select' }">选择</span>
-      </div>
-
       <div v-if="showNav" class="week-nav">
         <el-button circle size="small" aria-label="上一周" @click="emit('prev')">
           <el-icon><ArrowLeft /></el-icon>
@@ -84,6 +75,32 @@ const subtitle = computed(() => {
         <el-icon><Calendar /></el-icon>
         今天
       </el-button>
+
+      <div class="header-tools">
+        <el-tooltip :content="panelOpen ? '收起已选日程' : '展开已选日程'" placement="bottom">
+          <el-button
+            circle
+            size="small"
+            class="tool-btn"
+            :aria-label="panelOpen ? '收起已选' : '展开已选'"
+            @click="emit('toggle-panel')"
+          >
+            <el-icon><Fold v-if="panelOpen" /><Expand v-else /></el-icon>
+          </el-button>
+        </el-tooltip>
+
+        <el-tooltip :content="isFullscreen ? '退出全屏' : '全屏展示'" placement="bottom">
+          <el-button
+            circle
+            size="small"
+            class="tool-btn"
+            :aria-label="isFullscreen ? '退出全屏' : '全屏展示'"
+            @click="emit('toggle-fullscreen')"
+          >
+            <el-icon><FullScreen /></el-icon>
+          </el-button>
+        </el-tooltip>
+      </div>
     </div>
   </header>
 </template>
@@ -99,9 +116,7 @@ const subtitle = computed(() => {
   min-height: 68px;
   padding: 12px 24px;
   border-bottom: 1px solid var(--line);
-  background:
-    linear-gradient(90deg, rgb(255 255 255 / 55%), transparent 42%),
-    rgb(247 241 230 / 92%);
+  background: var(--paper-strong);
   backdrop-filter: blur(10px);
 }
 
@@ -133,7 +148,7 @@ const subtitle = computed(() => {
   overflow: hidden;
   color: var(--ink);
   font-family: var(--font-serif);
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
   letter-spacing: 0.02em;
   line-height: 1.25;
@@ -162,7 +177,7 @@ const subtitle = computed(() => {
 .controls {
   display: flex;
   flex: none;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
 }
 
@@ -171,7 +186,7 @@ const subtitle = computed(() => {
   padding: 3px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ece2d2;
+  background: var(--panel-soft);
 }
 
 .segmented button {
@@ -187,29 +202,10 @@ const subtitle = computed(() => {
 }
 
 .segmented button.active {
-  background: var(--panel-soft);
+  background: var(--paper-strong);
   box-shadow: 0 2px 8px rgb(80 55 35 / 12%);
   color: var(--red);
   font-weight: 700;
-}
-
-.mode-switch {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.mode-switch span.active {
-  color: var(--red);
-  font-weight: 700;
-}
-
-.mode-switch :deep(.el-switch) {
-  --el-switch-on-color: var(--red);
-  --el-switch-off-color: #b5a48f;
 }
 
 .week-nav {
@@ -222,17 +218,29 @@ const subtitle = computed(() => {
   color: var(--ink-soft);
 }
 
+.header-tools {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-left: 4px;
+  border-left: 1px solid var(--line-soft);
+}
+
+.tool-btn {
+  color: var(--ink-soft);
+}
+
+.tool-btn:hover {
+  color: var(--red);
+}
+
 @media (max-width: 1180px) {
   .app-header {
     padding: 10px 16px;
   }
 
   .brand-text h1 {
-    font-size: 19px;
-  }
-
-  .controls {
-    gap: 9px;
+    font-size: 20px;
   }
 }
 
@@ -264,15 +272,11 @@ const subtitle = computed(() => {
 
   .controls {
     width: 100%;
-    gap: 10px;
+    gap: 8px;
     justify-content: space-between;
   }
 
-  .mode-switch {
-    margin-left: auto;
-  }
-
-  .week-nav {
+  .header-tools {
     margin-left: auto;
   }
 }

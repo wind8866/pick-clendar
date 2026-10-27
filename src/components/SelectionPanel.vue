@@ -305,10 +305,23 @@ async function clearAll(): Promise<void> {
             <article
               :id="`picked-${item.id}`"
               class="pick-card"
-              :class="{ highlight: store.highlightId === item.id }"
+              :class="{
+                highlight: store.highlightId === item.id,
+                'hover-same': store.isHoverSibling(item),
+              }"
             >
               <div class="card-head">
-                <h3>{{ item.title }}</h3>
+                <a
+                  v-if="item.url"
+                  class="card-title-link"
+                  :href="item.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :title="item.url"
+                >
+                  <h3>{{ store.displayTitle(item) }}</h3>
+                </a>
+                <h3 v-else>{{ store.displayTitle(item) }}</h3>
                 <span v-if="item.postScreening" class="card-tag">映后交流</span>
               </div>
 
@@ -624,6 +637,10 @@ async function clearAll(): Promise<void> {
   border-color: var(--gold);
 }
 
+.pick-card.hover-same {
+  background: var(--secondary-soft);
+}
+
 @keyframes card-flash {
   0%,
   55% {
@@ -648,6 +665,18 @@ async function clearAll(): Promise<void> {
   font-size: 16px;
   font-weight: 700;
   line-height: 1.4;
+}
+
+.card-title-link {
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-title-link h3:hover {
+  color: var(--red);
+  text-decoration: underline;
 }
 
 .card-tag {
@@ -728,7 +757,8 @@ async function clearAll(): Promise<void> {
   flex: 1;
   padding-top: 1px;
   color: var(--ink-soft);
-  font-size: 11.5px;
+  font-family: var(--font-serif);
+  font-size: 12.5px;
   line-height: 1.6;
   word-break: break-word;
 }

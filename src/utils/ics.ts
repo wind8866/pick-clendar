@@ -64,7 +64,7 @@ export function buildIcs(config: FestivalConfig, items: ExportItem[]): string {
       `DTSTAMP:${stamp}`,
       `DTSTART;TZID=${tz}:${icsLocal(start)}`,
       `DTEND;TZID=${tz}:${icsLocal(end)}`,
-      `SUMMARY:${escapeText(item.event.title)}`,
+      `SUMMARY:${escapeText(`${item.event.titlePrefix ?? ''}${item.event.title}`)}`,
       `DESCRIPTION:${escapeText(descriptionParts.join('\n'))}`,
     )
     if (location) lines.push(`LOCATION:${escapeText(location)}`)

@@ -31,7 +31,7 @@ export function buildCsv(config: FestivalConfig, items: ExportItem[]): string {
       hm(start),
       hm(end),
       item.event.durationMinutes,
-      item.event.title,
+      `${item.event.titlePrefix ?? ''}${item.event.title}`,
       item.description,
       ...(anyTravel ? [item.travelTime > 0 ? item.travelTime : ''] : []),
       item.event.url,
