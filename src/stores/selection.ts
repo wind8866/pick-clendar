@@ -35,6 +35,9 @@ export const useSelectionStore = defineStore('selection', () => {
   const selectedSet = computed(() => new Set(selectedIds.value))
   const selectedCount = computed(() => selectedIds.value.length)
   const hasSelection = computed(() => selectedIds.value.length > 0)
+  const schedulableEvents = computed<FestivalEvent[]>(
+    () => (config.value?.events ?? []).filter((event) => event.kind !== 'header'),
+  )
   const selectedEvents = computed<FestivalEvent[]>(() => {
     const events = [...selectedSet.value]
       .map((id) => eventMap.value.get(id))
@@ -223,6 +226,34 @@ export const useSelectionStore = defineStore('selection', () => {
     return typeof override === 'number' ? override : defaultTravelTime.value
   }
 
+  /** 判断 event 是否与已选中列表里上一场“紧挨”：同一天、两场间无其他排片、间隔在阈值内 */
+  function isAdjacentToPrev(event: FestivalEvent): boolean {
+    const index = selectedEvents.value.findIndex((item) => item.id === event.id)
+    if (index <= 0) return false
+    const prev = selectedEvents.value[index - 1]
+    if (dateOf(prev) !== dateOf(event)) return false
+    const gap = zoned(event.start, timeZone.value).diff(
+      eventEnd(prev.start, prev.durationMinutes, timeZone.value),
+      'minute',
+    )
+    if (gap < 0) return false
+    // 活动场次（映后交流）间隔放宽到 2 小时，普通场次 1 小时
+    const threshold = prev.postScreening || event.postScreening ? 120 : 60
+    if (gap > threshold) return false
+    const dayKey = dateOf(event)
+    const dayEvents = schedulableEvents.value
+      .filter((item) => dateOf(item) === dayKey)
+      .sort((a, b) => a.start.localeCompare(b.start))
+    const prevIndex = dayEvents.findIndex((item) => item.id === prev.id)
+    const eventIndex = dayEvents.findIndex((item) => item.id === event.id)
+    return prevIndex >= 0 && eventIndex >= 0 && eventIndex - prevIndex === 1
+  }
+
+  /** 紧挨场次不显示路程（导出同样处理），返回 0 */
+  function effectiveTravelOf(event: FestivalEvent): number {
+    return isAdjacentToPrev(event) ? 0 : travelOf(event)
+  }
+
   function composedMeta(event: FestivalEvent): string {
     const parts: string[] = []
     if (event.director) parts.push(`导演：${event.director}`)
@@ -281,6 +312,7 @@ export const useSelectionStore = defineStore('selection', () => {
     selectedCount,
     hasSelection,
     selectedEvents,
+    schedulableEvents,
     init,
     isSelected,
     toggle,
@@ -290,6 +322,8 @@ export const useSelectionStore = defineStore('selection', () => {
     setTravel,
     setDescription,
     travelOf,
+    effectiveTravelOf,
+    isAdjacentToPrev,
     descriptionOf,
     endOf,
     dateOf,

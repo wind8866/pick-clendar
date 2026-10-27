@@ -36,6 +36,7 @@ const rangeBounds = computed(() => {
   let minStart = Infinity
   let maxEnd = -Infinity
   for (const event of props.config.events) {
+    if (event.kind === 'header') continue
     const start = zoned(event.start, props.config.timeZone)
     const startMin = start.hour() * 60 + start.minute()
     const endMin = startMin + event.durationMinutes
@@ -69,6 +70,7 @@ const hours = computed(() =>
 const eventsByDate = computed(() => {
   const map = new Map<string, FestivalEvent[]>()
   for (const event of props.config.events) {
+    if (event.kind === 'header') continue
     const key = toDateKey(event.start, props.config.timeZone)
     const bucket = map.get(key)
     if (bucket) bucket.push(event)
@@ -426,7 +428,7 @@ function onScroll(): void {
   border: 0;
   border-left: 3px solid var(--red);
   border-radius: 4px;
-  background: transparent;
+  background: var(--week-default-bg);
   color: var(--ink);
   cursor: pointer;
   text-align: left;
@@ -434,20 +436,23 @@ function onScroll(): void {
 }
 
 .event-block:hover {
-  background: rgb(106 52 36 / 5%);
-}
-
-.event-block.hover-same {
-  background: var(--secondary-soft);
+  background: rgb(106 52 36 / 7%);
 }
 
 .event-block.selected {
-  background: var(--red-soft);
-  border-left-color: var(--red-deep);
+  background: var(--sel-bg);
+  border-left-color: var(--sel-line);
 }
 
-.event-block.selected.hover-same {
-  border-left-color: var(--secondary-deep);
+.event-block.hover-same {
+  background: var(--hover-same-bg);
+  border-left-color: var(--hover-same-fg);
+}
+
+.event-block.hover-same .event-time,
+.event-block.hover-same .event-title,
+.event-block.hover-same .event-sub {
+  color: var(--hover-same-fg);
 }
 
 .event-time {

@@ -20,7 +20,7 @@ const store = useSelectionStore()
 const day = computed(() => (props.date ? zoned(`${props.date}T12:00:00+08:00`, props.config.timeZone) : null))
 const events = computed(() =>
   props.config.events
-    .filter((event) => event.start.slice(0, 10) === props.date)
+    .filter((event) => event.kind !== 'header' && event.start.slice(0, 10) === props.date)
     .sort((a, b) => a.start.localeCompare(b.start)),
 )
 

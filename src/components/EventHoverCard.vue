@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
-import { eventEnd, formatDuration, hm } from '@/utils/time'
+import { eventEnd, formatDuration, hm, zoned } from '@/utils/time'
 
 const props = defineProps<{
   event: FestivalEvent
@@ -32,9 +32,28 @@ const urlHost = computed(() => {
     return ''
   }
 })
+
+// 同片未来场次（晚于当前场），用于详情弹窗展示
+const futureSiblings = computed(() =>
+  props.config.events
+    .filter(
+      (event) =>
+        event.kind !== 'header' &&
+        event.title === props.event.title &&
+        event.id !== props.event.id &&
+        event.start > props.event.start,
+    )
+    .sort((a, b) => a.start.localeCompare(b.start)),
+)
+
+function siblingLabel(event: FestivalEvent): string {
+  const d = zoned(event.start, props.config.timeZone)
+  return `${d.format('MM/DD')} ${d.format('HH:mm')}`
+}
+
 const position = computed(() => {
   const width = 320
-  const height = 250
+  const height = 250 + futureSiblings.value.length * 22
   const left = Math.max(8, Math.min(props.x + 16, window.innerWidth - width - 8))
   const top = Math.max(8, Math.min(props.y + 16, window.innerHeight - height - 8))
   return { left: `${left}px`, top: `${top}px` }
@@ -50,13 +69,39 @@ const position = computed(() => {
       @mouseleave="emit('leave')"
     >
       <div class="hover-head">
-        <h4>{{ title }}</h4>
+        <a
+          v-if="event.url"
+          class="hover-title-link"
+          :href="event.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <h4>{{ title }}</h4>
+        </a>
+        <h4 v-else>{{ title }}</h4>
         <span class="hover-status" :class="{ selected }">{{ selected ? '已加入' : '未加入' }}</span>
       </div>
       <p class="hover-time">{{ start }} – {{ end }} · {{ formatDuration(event.durationMinutes) }}</p>
       <p v-if="meta" class="hover-desc">{{ meta }}</p>
       <p v-if="event.weekDesc" class="hover-week">{{ event.weekDesc }}</p>
-      <p v-if="urlHost" class="hover-url">{{ urlHost }}</p>
+
+      <div v-if="futureSiblings.length" class="hover-siblings">
+        <p class="hover-siblings-head">同片场次</p>
+        <p v-for="(sibling, index) in futureSiblings" :key="sibling.id" class="hover-sibling">
+          {{ siblingLabel(sibling) }} {{ index === 0 ? '首次放映' : '也有放映' }}
+        </p>
+      </div>
+
+      <a
+        v-if="event.url"
+        class="hover-url"
+        :href="event.url"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ urlHost }}
+      </a>
+
       <button type="button" class="hover-action" :class="{ selected }" @click="emit('pick')">
         {{ selected ? '移出已选' : '加入已选' }}
       </button>
@@ -84,12 +129,24 @@ const position = computed(() => {
   gap: 10px;
 }
 
+.hover-title-link {
+  flex: 1;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
 .hover-head h4 {
   color: var(--ink);
   font-family: var(--font-serif);
   font-size: 18px;
   font-weight: 700;
   line-height: 1.35;
+}
+
+.hover-title-link h4:hover {
+  color: var(--red);
+  text-decoration: underline;
 }
 
 .hover-status {
@@ -102,8 +159,8 @@ const position = computed(() => {
 }
 
 .hover-status.selected {
-  background: var(--red-soft);
-  color: var(--red);
+  background: var(--sel-bg);
+  color: var(--ink);
 }
 
 .hover-time {
@@ -132,13 +189,41 @@ const position = computed(() => {
   line-height: 1.55;
 }
 
+.hover-siblings {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.hover-siblings-head {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hover-sibling {
+  margin-top: 3px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+}
+
 .hover-url {
+  display: inline-block;
   overflow: hidden;
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 10px;
+  max-width: 100%;
+  margin-top: 7px;
+  color: var(--red);
+  font-size: 11px;
+  text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.hover-url:hover {
+  text-decoration: underline;
 }
 
 .hover-action {

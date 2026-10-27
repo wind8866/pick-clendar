@@ -43,7 +43,7 @@ const groups = computed<PosterGroup[]>(() => {
       event,
       start: hm(start),
       end: hm(end),
-      travel: store.travelOf(event),
+      travel: store.effectiveTravelOf(event),
     })
   }
   return [...map.values()].sort((a, b) => a.date.localeCompare(b.date))
@@ -56,6 +56,14 @@ const dateRange = computed(() => {
   const last = zoned(starts[starts.length - 1], props.config.timeZone)
   return `${first.format('YYYY.MM.DD')} – ${last.format('MM.DD')}`
 })
+
+function metaLine(event: FestivalEvent): string {
+  const parts: string[] = []
+  if (event.year !== undefined) parts.push(`${event.year}年`)
+  if (event.language) parts.push(event.language)
+  if (event.director) parts.push(event.director.replace(/ \/ /g, '/'))
+  return parts.join(' ')
+}
 
 defineExpose({ root })
 </script>
@@ -92,7 +100,13 @@ defineExpose({ root })
         :class="{ selected: store.isSelected(item.event.id) }"
       >
         <span class="poster-time">{{ item.start }}–{{ item.end }}</span>
-        <span class="poster-title">{{ store.displayTitle(item.event) }}</span>
+        <div class="poster-main">
+          <div class="poster-title-row">
+            <span class="poster-prefix">{{ item.event.titlePrefix ?? '' }}</span>
+            <span class="poster-title">{{ item.event.title }}</span>
+          </div>
+          <span class="poster-sub">{{ metaLine(item.event) }}</span>
+        </div>
         <span v-if="item.travel > 0" class="poster-travel">路程 {{ item.travel }} 分钟</span>
       </div>
     </section>
@@ -109,7 +123,7 @@ defineExpose({ root })
   position: relative;
   overflow: hidden;
   width: 750px;
-  padding: 44px 46px 38px;
+  padding: 34px 40px 30px;
   background:
     radial-gradient(circle at 88% -4%, rgb(200 161 90 / 18%), transparent 36%),
     radial-gradient(circle at 0% 100%, rgb(140 47 47 / 7%), transparent 42%),
@@ -168,12 +182,12 @@ defineExpose({ root })
 
 .poster-rule {
   height: 1px;
-  margin: 22px 0 8px;
+  margin: 16px 0 6px;
   background: linear-gradient(90deg, var(--red), rgb(140 47 47 / 10%));
 }
 
 .poster-group {
-  padding-top: 18px;
+  padding-top: 10px;
 }
 
 .poster-day {
@@ -200,8 +214,8 @@ defineExpose({ root })
 .poster-item {
   display: flex;
   gap: 14px;
-  align-items: baseline;
-  padding: 10px 0;
+  align-items: flex-start;
+  padding: 7px 0;
   border-bottom: 1px dashed var(--line-soft);
 }
 
@@ -211,14 +225,32 @@ defineExpose({ root })
 
 .poster-time {
   flex: none;
-  width: 122px;
+  width: 118px;
+  padding-top: 3px;
   color: var(--red);
-  font-size: 15px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
-.poster-title {
+.poster-main {
   flex: 1;
+  min-width: 0;
+}
+
+.poster-title-row {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.poster-prefix {
+  flex: none;
+  width: 1.1em;
+  color: var(--red);
+  font-size: 16px;
+}
+
+.poster-title {
   color: var(--ink);
   font-family: var(--font-serif);
   font-size: 20px;
@@ -226,8 +258,16 @@ defineExpose({ root })
   line-height: 1.35;
 }
 
+.poster-sub {
+  margin-top: 2px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .poster-travel {
   flex: none;
+  padding-top: 3px;
   color: var(--muted);
   font-size: 12px;
 }

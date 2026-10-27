@@ -86,6 +86,7 @@ function resetRange(anchor: Dayjs): void {
 const eventsByDate = computed(() => {
   const map = new Map<string, FestivalEvent[]>()
   for (const event of props.config.events) {
+    if (event.kind === 'header') continue
     const key = toDateKey(event.start, props.config.timeZone)
     const bucket = map.get(key)
     if (bucket) bucket.push(event)
@@ -512,16 +513,28 @@ watch(
   font-variant-numeric: tabular-nums;
 }
 
-.chip.hover-same {
-  background: var(--secondary-soft);
-}
-
 .chip.selected {
-  background: var(--red-soft);
+  background: var(--sel-bg);
 }
 
 .chip.selected .chip-bar {
-  background: var(--red-deep);
+  background: var(--sel-line);
+}
+
+.chip.hover-same {
+  background: var(--hover-same-bg);
+}
+
+.chip.hover-same .chip-bar {
+  background: var(--hover-same-fg);
+}
+
+.chip.hover-same .chip-title {
+  color: var(--hover-same-fg);
+}
+
+.chip.hover-same .chip-time {
+  color: var(--hover-same-fg);
 }
 
 .more {

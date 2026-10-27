@@ -43,17 +43,12 @@ export function dateTimeLabel(date: Dayjs): string {
 
 export function formatDuration(totalMinutes: number): string {
   const minutes = Math.max(0, Math.round(totalMinutes))
-  const hours = Math.floor(minutes / 60)
-  const rest = minutes % 60
-  if (hours === 0) return `${rest} 分钟`
-  if (rest === 0) return `${hours} 小时`
-  return `${hours} 小时 ${rest} 分钟`
+  return `${minutes} 分钟`
 }
 
 export function formatGap(gapMinutes: number): string {
   if (gapMinutes < 0) return `时间冲突 ${formatDuration(-gapMinutes)}`
-  if (gapMinutes === 0) return '无缝衔接'
-  return `空档 ${formatDuration(gapMinutes)}`
+  return `间隔 ${formatDuration(gapMinutes)}`
 }
 
 export function rangeLabel(start: Dayjs, end: Dayjs): string {

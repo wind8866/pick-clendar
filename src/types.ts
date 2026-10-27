@@ -27,6 +27,8 @@ export interface FestivalEvent {
   ratingCount?: number
   url: string
   postScreening?: boolean
+  /** 特殊日程类型：header 为标题头（仅进导出数据，前端不展示） */
+  kind?: 'header'
 }
 
 export interface FestivalConfig {

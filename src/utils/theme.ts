@@ -48,8 +48,8 @@ export function applyTheme(theme?: FestivalTheme): void {
   const { background, primary, secondary } = theme ?? DEFAULT_THEME
   const root = document.documentElement
 
-  const line = mix(primary, background, 0.5)
-  const lineSoft = mix(primary, background, 0.72)
+  const line = mix(primary, background, 0.72)
+  const lineSoft = mix(primary, background, 0.86)
   const paperStrong = mix(background, WHITE, 0.72)
   const panelSoft = mix(background, WHITE, 0.42)
 

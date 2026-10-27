@@ -137,7 +137,7 @@ function exportItems(): ExportItem[] {
     event,
     end: store.endOf(event),
     description: store.descriptionOf(event),
-    travelTime: store.travelOf(event),
+    travelTime: store.effectiveTravelOf(event),
   }))
 }
 
@@ -162,8 +162,10 @@ function downloadCsv(): void {
 }
 
 function subscribe(): void {
-  if (!props.config.subscribeUrl) return
-  window.open(props.config.subscribeUrl, '_blank', 'noopener,noreferrer')
+  const url =
+    props.config.subscribeUrl ||
+    `${import.meta.env.BASE_URL}subscribe/${props.config.id}.ics`
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 async function capture(): Promise<void> {
@@ -254,12 +256,9 @@ async function clearAll(): Promise<void> {
           列表截图
         </el-button>
 
-        <el-tooltip
-          :content="config.subscribeUrl ? '在新窗口打开在线文档' : '待补充在线文档地址'"
-          placement="top"
-        >
+        <el-tooltip content="在新窗口打开订阅日历文件" placement="top">
           <span class="btn-wrap">
-            <el-button size="small" :disabled="!config.subscribeUrl" @click="subscribe">
+            <el-button size="small" @click="subscribe">
               <el-icon><LinkIcon /></el-icon>
               订阅日历
             </el-button>
@@ -330,7 +329,7 @@ async function clearAll(): Promise<void> {
                 <span class="card-duration">· {{ formatDuration(item.durationMinutes) }}</span>
               </p>
 
-              <div class="card-field">
+              <div v-if="!store.isAdjacentToPrev(item)" class="card-field">
                 <span class="field-label inline-label">
                   路程
                   <el-tooltip
@@ -790,6 +789,7 @@ async function clearAll(): Promise<void> {
 
 .remove-btn:hover {
   color: var(--red-deep);
+  background: var(--remove-hover-bg) !important;
 }
 
 .gap {
