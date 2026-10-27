@@ -51,13 +51,13 @@ export function buildIcs(config: FestivalConfig, items: ExportItem[]): string {
   ]
 
   const stamp = icsStamp()
-  const location = [config.venue, config.venueAddress].filter(Boolean).join('，')
+  const location = config.venue || ''
 
   for (const item of items) {
     const start = zoned(item.event.start, tz)
     const end = zoned(item.end, tz)
     const descriptionParts = [item.description]
-    if (item.travelTime > 0) descriptionParts.push(`路程：${item.travelTime} 分钟`)
+    if (item.travelTime > 0) descriptionParts.push(`行程：${item.travelTime} 分钟`)
     lines.push(
       'BEGIN:VEVENT',
       `UID:${config.id}-${item.event.id}@calendar-pick`,

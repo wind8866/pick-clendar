@@ -13,6 +13,15 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const RAW_DIR = path.join(ROOT, 'src/data/raw')
 const OUT_DIR = path.join(ROOT, 'src/data/festivals')
 const SUBSCRIBE_DIR = path.join(ROOT, 'public/subscribe')
+const QR_DIR = path.join(ROOT, 'public/qrcode')
+
+// 二维码为可选能力：scripts/node_modules 里有 qrcode 时才生成
+let QRCode = null
+try {
+  QRCode = (await import('qrcode')).default
+} catch {
+  QRCode = null
+}
 
 // 标题前导 emoji/符号（如 🎉）作为 titlePrefix 拆出
 const EMOJI_PREFIX_RE =
@@ -129,7 +138,7 @@ function buildSubscribeIcs(config) {
     'END:VTIMEZONE',
   ]
   const stamp = wallClockAdd(new Date().toISOString(), 0).replace('T', '') + 'Z'
-  const location = [config.venue, config.venueAddress].filter(Boolean).join('，')
+  const location = config.venue || ''
 
   const events = config.events
     .slice()
@@ -163,6 +172,7 @@ async function main() {
     return
   }
   await mkdir(SUBSCRIBE_DIR, { recursive: true })
+  await mkdir(QR_DIR, { recursive: true })
   for (const file of files) {
     const raw = JSON.parse(await readFile(path.join(RAW_DIR, file), 'utf8'))
     const { meta, events } = raw
@@ -178,6 +188,21 @@ async function main() {
     const icsName = `${config.id}.ics`
     await writeFile(path.join(SUBSCRIBE_DIR, icsName), buildSubscribeIcs(config), 'utf8')
     console.log(`generated subscribe/${icsName}`)
+
+    // 二维码：扫码跳转到该日程页面
+    const shareUrl = meta.shareUrl || `https://cal.wind8866.top/pick/${config.id}`
+    if (QRCode) {
+      const svg = await QRCode.toString(shareUrl, {
+        type: 'svg',
+        margin: 1,
+        width: 160,
+        color: { dark: '#33241d', light: '#ffffff' },
+      })
+      await writeFile(path.join(QR_DIR, `${config.id}.svg`), svg, 'utf8')
+      console.log(`generated qrcode/${config.id}.svg -> ${shareUrl}`)
+    } else {
+      console.warn('未安装 qrcode，跳过二维码生成')
+    }
   }
 }
 

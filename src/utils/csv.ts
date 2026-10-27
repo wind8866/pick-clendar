@@ -18,7 +18,7 @@ export function buildCsv(config: FestivalConfig, items: ExportItem[]): string {
     '时长（分钟）',
     '标题',
     '描述',
-    ...(anyTravel ? ['路程（分钟）'] : []),
+    ...(anyTravel ? ['行程（分钟）'] : []),
     '链接',
   ]
 

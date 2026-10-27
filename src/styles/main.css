@@ -161,6 +161,11 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
+/* 顶栏工具按钮的提示气泡需要盖住日历内容 */
+.header-tip {
+  z-index: 3000 !important;
+}
+
 @media (max-width: 900px) {
   ::-webkit-scrollbar {
     width: 5px;

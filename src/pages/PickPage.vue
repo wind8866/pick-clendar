@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { Calendar } from '@element-plus/icons-vue'
 import { dayjs, rangeLabel, startOfWeek, zoned } from '@/utils/time'
 import type { CalendarView, FestivalConfig, FestivalEvent } from '@/types'
 import { findFestival } from '@/data/festivals'
@@ -22,7 +23,8 @@ const config: FestivalConfig = foundConfig
 const store = useSelectionStore()
 store.init(config, route.path)
 
-const view = ref<CalendarView>('month')
+const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches
+const view = ref<CalendarView>(isMobile ? 'week' : 'month')
 const anchor = ref(dayjs.tz(config.initialDate, config.timeZone).format('YYYY-MM-DD'))
 const activeTab = ref<'calendar' | 'selected'>('calendar')
 const panelOpen = ref(true)
@@ -68,7 +70,6 @@ function openDay(date: string): void {
 }
 
 function onDaySelect(event: FestivalEvent): void {
-  dayOpen.value = false
   store.toggle(event.id)
 }
 
@@ -109,15 +110,9 @@ onBeforeUnmount(() => {
   <div class="app-shell">
     <AppHeader
       :config="config"
-      :view="view"
       :range-text="rangeText"
-      :show-nav="view === 'week'"
       :panel-open="panelOpen"
       :is-fullscreen="isFullscreen"
-      @update:view="changeView"
-      @prev="shiftWeek(-1)"
-      @next="shiftWeek(1)"
-      @today="goToday"
       @toggle-panel="togglePanel"
       @toggle-fullscreen="toggleFullscreen"
     />
@@ -145,10 +140,35 @@ onBeforeUnmount(() => {
       :class="{ 'show-selection': activeTab === 'selected', 'panel-closed': !panelOpen }"
     >
       <section class="calendar-pane">
+        <div class="calendar-toolbar">
+          <el-button size="small" class="today-btn" @click="goToday">
+            <el-icon><Calendar /></el-icon>
+            今天
+          </el-button>
+          <div class="segmented" role="group" aria-label="视图切换">
+            <button
+              type="button"
+              :class="{ active: view === 'week' }"
+              @click="changeView('week')"
+            >
+              周
+            </button>
+            <button
+              type="button"
+              :class="{ active: view === 'month' }"
+              @click="changeView('month')"
+            >
+              月
+            </button>
+          </div>
+        </div>
+
         <WeekCalendar
           v-if="view === 'week'"
           :config="config"
           :anchor="anchor"
+          @prev="shiftWeek(-1)"
+          @next="shiftWeek(1)"
         />
         <MonthCalendar
           v-else
@@ -196,6 +216,51 @@ onBeforeUnmount(() => {
 
 .selection-pane {
   min-height: 0;
+}
+
+.calendar-toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--panel-soft);
+}
+
+.today-btn {
+  color: var(--ink-soft);
+}
+
+.today-btn :deep(.el-icon) {
+  margin-right: 4px;
+}
+
+.segmented {
+  display: flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-strong);
+}
+
+.segmented button {
+  min-width: 40px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--panel-soft);
+  box-shadow: 0 1px 4px rgb(80 55 35 / 12%);
+  color: var(--red);
+  font-weight: 700;
 }
 
 .mobile-tabs {

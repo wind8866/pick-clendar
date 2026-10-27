@@ -24,7 +24,7 @@ const end = computed(() =>
   hm(eventEnd(props.event.start, props.event.durationMinutes, props.config.timeZone)),
 )
 const title = computed(() => store.displayTitle(props.event))
-const meta = computed(() => store.composedMeta(props.event))
+const meta = computed(() => store.descriptionOf(props.event))
 const urlHost = computed(() => {
   try {
     return new URL(props.event.url).host
@@ -103,7 +103,7 @@ const position = computed(() => {
       </a>
 
       <button type="button" class="hover-action" :class="{ selected }" @click="emit('pick')">
-        {{ selected ? '移出已选' : '加入已选' }}
+        {{ selected ? '移出' : '加入' }}
       </button>
     </div>
   </Teleport>
@@ -117,7 +117,8 @@ const position = computed(() => {
   padding: 14px 16px 13px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--paper-strong);
+  background: rgb(248 241 231 / 0.86);
+  backdrop-filter: blur(8px);
   box-shadow: 0 16px 46px rgb(61 38 25 / 22%);
   pointer-events: auto;
 }
@@ -171,15 +172,11 @@ const position = computed(() => {
 }
 
 .hover-desc {
-  display: -webkit-box;
-  overflow: hidden;
   margin-top: 6px;
   color: var(--ink-soft);
-  font-family: var(--font-serif);
   font-size: 13px;
   line-height: 1.55;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  white-space: pre-line;
 }
 
 .hover-week {

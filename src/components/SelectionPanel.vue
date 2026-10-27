@@ -34,6 +34,9 @@ const props = defineProps<{
 const store = useSelectionStore()
 const posterWrap = ref<HTMLElement | null>(null)
 const capturing = ref(false)
+const screenshotOpen = ref(false)
+const footerDraft = ref('')
+const posterFooterText = ref('')
 
 interface SelectionGroup {
   date: string
@@ -90,7 +93,7 @@ function onDefaultTravelChange(value: number | undefined): void {
   store.setDefaultTravel(value ?? 0)
 }
 
-/* 单场路程编辑 */
+/* 单场行程编辑 */
 const travelEditId = ref<string | null>(null)
 const travelDraft = ref<number | undefined>(0)
 function beginTravel(event: FestivalEvent): void {
@@ -161,11 +164,30 @@ function downloadCsv(): void {
   ElMessage.success('CSV 文件已生成')
 }
 
-function subscribe(): void {
+async function subscribe(): Promise<void> {
   const url =
     props.config.subscribeUrl ||
     `${import.meta.env.BASE_URL}subscribe/${props.config.id}.ics`
-  window.open(url, '_blank', 'noopener,noreferrer')
+  try {
+    await navigator.clipboard.writeText(url)
+    ElMessage.success('订阅地址已复制')
+  } catch {
+    // 非安全上下文（http）下退化为提示地址
+    ElMessage.info(url)
+  }
+}
+
+function openScreenshot(): void {
+  if (!store.hasSelection) return
+  footerDraft.value = posterFooterText.value
+  screenshotOpen.value = true
+}
+
+async function confirmScreenshot(): Promise<void> {
+  posterFooterText.value = footerDraft.value.trim()
+  screenshotOpen.value = false
+  await nextTick()
+  await capture()
 }
 
 async function capture(): Promise<void> {
@@ -194,7 +216,7 @@ async function capture(): Promise<void> {
 async function clearAll(): Promise<void> {
   try {
     await ElMessageBox.confirm(
-      '将清空已选日程、默认行程时间以及单场的路程和描述自定义内容。',
+      '将清空已选日程、默认行程时间以及单场的行程和描述自定义内容。',
       '清除已选',
       {
         confirmButtonText: '清除',
@@ -224,7 +246,7 @@ async function clearAll(): Promise<void> {
         <label class="field-label">
           默认行程时间
           <el-tooltip
-            content="所有未单独设置路程的日程默认使用这个时长，单位分钟。0 表示不设置行程，导出日历、CSV 和截图时隐藏路程。"
+            content="日程发生前需要的行程或准备时间。"
             placement="top"
           >
             <el-icon class="help-icon"><QuestionFilled /></el-icon>
@@ -250,13 +272,13 @@ async function clearAll(): Promise<void> {
           size="small"
           :loading="capturing"
           :disabled="!store.hasSelection"
-          @click="capture"
+          @click="openScreenshot"
         >
           <el-icon><Camera /></el-icon>
-          列表截图
+          导出截图
         </el-button>
 
-        <el-tooltip content="在新窗口打开订阅日历文件" placement="top">
+        <el-tooltip content="点击复制订阅日历地址" placement="top">
           <span class="btn-wrap">
             <el-button size="small" @click="subscribe">
               <el-icon><LinkIcon /></el-icon>
@@ -333,9 +355,9 @@ async function clearAll(): Promise<void> {
 
               <div v-if="!store.isAdjacentToPrev(item)" class="card-field">
                 <span class="field-label inline-label">
-                  路程
+                  行程
                   <el-tooltip
-                    content="仅修改当前日程的路程，单位分钟；0 表示不设置。"
+                    content="仅修改当前日程的行程时间，单位分钟；0 表示不设置。"
                     placement="top"
                   >
                     <el-icon class="help-icon"><QuestionFilled /></el-icon>
@@ -352,7 +374,7 @@ async function clearAll(): Promise<void> {
                     circle
                     size="small"
                     class="pencil"
-                    aria-label="编辑路程"
+                    aria-label="编辑行程"
                     @click="beginTravel(item)"
                   >
                     <el-icon><Edit /></el-icon>
@@ -431,7 +453,7 @@ async function clearAll(): Promise<void> {
                   @click="store.discard(item.id)"
                 >
                   <el-icon><Delete /></el-icon>
-                  移除日程
+                  移出
                 </el-button>
               </div>
             </article>
@@ -449,8 +471,29 @@ async function clearAll(): Promise<void> {
     </div>
 
     <div ref="posterWrap" class="poster-holder">
-      <ScreenshotPoster :config="config" />
+      <ScreenshotPoster :config="config" :footer-text="posterFooterText" />
     </div>
+
+    <el-dialog
+      v-model="screenshotOpen"
+      title="导出截图"
+      width="min(420px, 92vw)"
+      align-center
+    >
+      <p class="screenshot-hint">可填写一行文字，将显示在图片底部（可选）。</p>
+      <el-input
+        v-model="footerDraft"
+        maxlength="40"
+        show-word-limit
+        placeholder="例如：扫码查看并挑选影展日程"
+      />
+      <template #footer>
+        <el-button @click="screenshotOpen = false">取消</el-button>
+        <el-button type="primary" :loading="capturing" @click="confirmScreenshot">
+          生成图片
+        </el-button>
+      </template>
+    </el-dialog>
   </aside>
 </template>
 
@@ -766,9 +809,9 @@ async function clearAll(): Promise<void> {
   flex: 1;
   padding-top: 1px;
   color: var(--ink-soft);
-  font-family: var(--font-serif);
   font-size: 12.5px;
   line-height: 1.6;
+  white-space: pre-line;
   word-break: break-word;
 }
 
@@ -839,6 +882,12 @@ async function clearAll(): Promise<void> {
   left: -10000px;
   z-index: -1;
   pointer-events: none;
+}
+
+.screenshot-hint {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 @media (max-width: 900px) {

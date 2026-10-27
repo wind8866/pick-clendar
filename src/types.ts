@@ -42,6 +42,7 @@ export interface FestivalConfig {
   timeZone: string
   initialDate: string
   subscribeUrl: string
+  shareUrl?: string
   itemNoun: string
   updatedAt?: string
   theme?: FestivalTheme

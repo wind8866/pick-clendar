@@ -201,7 +201,8 @@ export const useSelectionStore = defineStore('selection', () => {
       delete next[eventId]
       overrides.value = next
     }
-    if (highlightId.value === eventId) highlightId.value = null
+    // 移除后同样在日历视图中短暂黄色高亮
+    flash(eventId)
     save()
   }
 
@@ -264,21 +265,20 @@ export const useSelectionStore = defineStore('selection', () => {
     return prevIndex >= 0 && eventIndex >= 0 && eventIndex - prevIndex === 1
   }
 
-  /** 紧挨场次不显示路程（导出同样处理），返回 0 */
+  /** 紧挨场次不显示行程（导出同样处理），返回 0 */
   function effectiveTravelOf(event: FestivalEvent): number {
     return isAdjacentToPrev(event) ? 0 : travelOf(event)
   }
 
   function composedMeta(event: FestivalEvent): string {
-    const parts: string[] = []
-    if (event.director) parts.push(`导演：${event.director}`)
-    if (event.rating !== undefined) {
-      const count = event.ratingCount !== undefined ? `（${event.ratingCount} 人评价）` : ''
-      parts.push(`${event.rating}${count}`)
-    }
-    if (event.year !== undefined) parts.push(String(event.year))
-    if (event.language) parts.push(event.language)
-    return parts.join(' · ')
+    const line1: string[] = []
+    if (event.year !== undefined) line1.push(`${event.year}年`)
+    if (event.director) line1.push(event.director)
+    if (event.language) line1.push(event.language)
+    const line2: string[] = []
+    if (event.rating !== undefined) line2.push(`${event.rating}分`)
+    if (event.ratingCount !== undefined) line2.push(`${event.ratingCount}人评价`)
+    return [line1.join(' '), line2.join(' ')].filter(Boolean).join('\n')
   }
 
   function descriptionOf(event: FestivalEvent): string {
