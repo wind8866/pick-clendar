@@ -87,8 +87,8 @@ const position = computed(() => {
 
       <div v-if="futureSiblings.length" class="hover-siblings">
         <p class="hover-siblings-head">同片场次</p>
-        <p v-for="(sibling, index) in futureSiblings" :key="sibling.id" class="hover-sibling">
-          {{ siblingLabel(sibling) }} {{ index === 0 ? '首次放映' : '也有放映' }}
+        <p v-for="sibling in futureSiblings" :key="sibling.id" class="hover-sibling">
+          {{ siblingLabel(sibling) }}
         </p>
       </div>
 

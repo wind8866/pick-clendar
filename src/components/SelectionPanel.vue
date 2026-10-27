@@ -1,6 +1,17 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import ScreenshotPoster from '@/components/ScreenshotPoster.vue'
+import { useSelectionStore } from '@/stores/selection'
+import type { ExportItem, FestivalConfig, FestivalEvent } from '@/types'
+import { buildCsv } from '@/utils/csv'
+import { downloadBlob, downloadDataUrl, exportFilename } from '@/utils/download'
+import { buildIcs } from '@/utils/ics'
+import {
+  dateTimeLabel,
+  formatDuration,
+  formatGap,
+  hm,
+  zoned,
+} from '@/utils/time'
 import {
   Calendar,
   Camera,
@@ -12,20 +23,9 @@ import {
   Link as LinkIcon,
   QuestionFilled,
 } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { toPng } from 'html-to-image'
-import type { ExportItem, FestivalConfig, FestivalEvent } from '@/types'
-import { useSelectionStore } from '@/stores/selection'
-import {
-  dateTimeLabel,
-  formatDuration,
-  formatGap,
-  hm,
-  zoned,
-} from '@/utils/time'
-import { buildIcs } from '@/utils/ics'
-import { buildCsv } from '@/utils/csv'
-import { downloadBlob, downloadDataUrl, exportFilename } from '@/utils/download'
-import ScreenshotPoster from '@/components/ScreenshotPoster.vue'
+import { computed, nextTick, ref, watch } from 'vue'
 
 const props = defineProps<{
   config: FestivalConfig
@@ -308,6 +308,8 @@ async function clearAll(): Promise<void> {
                 highlight: store.highlightId === item.id,
                 'hover-same': store.isHoverSibling(item),
               }"
+              @mouseenter="store.setHoverPicked(item.id)"
+              @mouseleave="store.clearHoverPicked()"
             >
               <div class="card-head">
                 <a
@@ -601,6 +603,14 @@ async function clearAll(): Promise<void> {
 
 .empty span {
   font-size: 12px;
+}
+
+.group {
+  margin-bottom: 32px;
+}
+
+.group:last-child {
+  margin-bottom: 0;
 }
 
 .group-head {

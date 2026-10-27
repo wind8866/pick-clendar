@@ -33,7 +33,7 @@ const groups = computed<PosterGroup[]>(() => {
     if (!group) {
       group = {
         date: key,
-        dayLabel: start.format('MM.DD'),
+        dayLabel: start.format('MM/DD'),
         weekday: weekdayLabel(start),
         items: [],
       }
@@ -54,7 +54,7 @@ const dateRange = computed(() => {
   const starts = props.config.events.map((event) => event.start).sort()
   const first = zoned(starts[0], props.config.timeZone)
   const last = zoned(starts[starts.length - 1], props.config.timeZone)
-  return `${first.format('YYYY.MM.DD')} – ${last.format('MM.DD')}`
+  return `${first.format('YYYY-MM-DD')} – ${last.format('MM-DD')}`
 })
 
 function metaLine(event: FestivalEvent): string {
@@ -97,14 +97,11 @@ defineExpose({ root })
         v-for="item in group.items"
         :key="item.event.id"
         class="poster-item"
-        :class="{ selected: store.isSelected(item.event.id) }"
       >
-        <span class="poster-time">{{ item.start }}–{{ item.end }}</span>
+        <span class="poster-time">{{ item.start }} – {{ item.end }}</span>
+        <span class="poster-prefix">{{ item.event.titlePrefix ?? '' }}</span>
         <div class="poster-main">
-          <div class="poster-title-row">
-            <span class="poster-prefix">{{ item.event.titlePrefix ?? '' }}</span>
-            <span class="poster-title">{{ item.event.title }}</span>
-          </div>
+          <span class="poster-title">{{ item.event.title }}</span>
           <span class="poster-sub">{{ metaLine(item.event) }}</span>
         </div>
         <span v-if="item.travel > 0" class="poster-travel">路程 {{ item.travel }} 分钟</span>
@@ -232,25 +229,22 @@ defineExpose({ root })
   font-variant-numeric: tabular-nums;
 }
 
+.poster-prefix {
+  flex: none;
+  width: 1.3em;
+  padding-top: 3px;
+  color: var(--red);
+  font-size: 16px;
+  text-align: center;
+}
+
 .poster-main {
   flex: 1;
   min-width: 0;
 }
 
-.poster-title-row {
-  display: flex;
-  gap: 6px;
-  align-items: baseline;
-}
-
-.poster-prefix {
-  flex: none;
-  width: 1.1em;
-  color: var(--red);
-  font-size: 16px;
-}
-
 .poster-title {
+  display: block;
   color: var(--ink);
   font-family: var(--font-serif);
   font-size: 20px;
@@ -259,6 +253,7 @@ defineExpose({ root })
 }
 
 .poster-sub {
+  display: block;
   margin-top: 2px;
   color: var(--ink-soft);
   font-size: 12px;

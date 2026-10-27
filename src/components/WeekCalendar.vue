@@ -184,7 +184,7 @@ function onScroll(): void {
               :class="{ today: isToday(day) }"
             >
               <span class="weekday">{{ weekdayLabel(day) }}</span>
-              <span class="date">{{ day.format('M/D') }}</span>
+              <span class="date">{{ day.format('MM/DD') }}</span>
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ function onScroll(): void {
                   class="event-block"
                   :class="{
                     selected: store.isSelected(event.id),
-                    'hover-same': store.isHoverSibling(event),
+                    'hover-same': store.isCalendarHighlighted(event),
                   }"
                   :style="positionStyle(event)"
                   @click.stop="onClick(event)"

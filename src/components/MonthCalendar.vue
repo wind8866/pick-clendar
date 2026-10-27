@@ -308,7 +308,7 @@ watch(
               class="chip"
               :class="{
                 selected: store.isSelected(event.id),
-                'hover-same': store.isHoverSibling(event),
+                'hover-same': store.isCalendarHighlighted(event),
               }"
               :title="`${hm(zoned(event.start, config.timeZone))} ${store.displayTitle(event)}`"
               @click.stop="onChipClick($event, event)"

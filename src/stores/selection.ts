@@ -25,6 +25,7 @@ export const useSelectionStore = defineStore('selection', () => {
   const defaultTravelTime = ref(0)
   const highlightId = ref<string | null>(null)
   const hoverTitle = ref<string | null>(null)
+  const hoverPickedId = ref<string | null>(null)
   let highlightTimer: ReturnType<typeof setTimeout> | undefined
   let hoverTitleTimer: ReturnType<typeof setTimeout> | undefined
   let initialized = false
@@ -55,6 +56,7 @@ export const useSelectionStore = defineStore('selection', () => {
     defaultTravelTime.value = 0
     highlightId.value = null
     hoverTitle.value = null
+    hoverPickedId.value = null
 
     const known = new Set(nextConfig.events.map((event) => event.id))
     try {
@@ -156,6 +158,19 @@ export const useSelectionStore = defineStore('selection', () => {
 
   function isHoverSibling(event: FestivalEvent): boolean {
     return hoverTitle.value !== null && hoverTitle.value === event.title
+  }
+
+  function setHoverPicked(id: string): void {
+    hoverPickedId.value = id
+  }
+
+  function clearHoverPicked(): void {
+    hoverPickedId.value = null
+  }
+
+  /** 左侧日历中该日程是否处于高亮态（同名联动 或 指向已选日程） */
+  function isCalendarHighlighted(event: FestivalEvent): boolean {
+    return isHoverSibling(event) || hoverPickedId.value === event.id
   }
 
   function displayTitle(event: FestivalEvent): string {
@@ -291,6 +306,7 @@ export const useSelectionStore = defineStore('selection', () => {
     defaultTravelTime.value = 0
     highlightId.value = null
     hoverTitle.value = null
+    hoverPickedId.value = null
     if (highlightTimer) clearTimeout(highlightTimer)
     if (hoverTitleTimer) clearTimeout(hoverTitleTimer)
     try {
@@ -334,6 +350,10 @@ export const useSelectionStore = defineStore('selection', () => {
     keepHoverTitle,
     clearHoverTitle,
     isHoverSibling,
+    isCalendarHighlighted,
+    setHoverPicked,
+    clearHoverPicked,
+    hoverPickedId,
     displayTitle,
     composedMeta,
   }
