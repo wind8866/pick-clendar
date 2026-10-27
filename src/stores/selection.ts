@@ -201,8 +201,8 @@ export const useSelectionStore = defineStore('selection', () => {
       delete next[eventId]
       overrides.value = next
     }
-    // 移除后同样在日历视图中短暂黄色高亮
-    flash(eventId)
+    // 移除后不再在日历视图中黄色高亮
+    if (highlightId.value === eventId) highlightId.value = null
     save()
   }
 
@@ -270,22 +270,29 @@ export const useSelectionStore = defineStore('selection', () => {
     return isAdjacentToPrev(event) ? 0 : travelOf(event)
   }
 
+  /** 描述首行：年代 / 导演 / 语言 */
+  function metaLine(event: FestivalEvent): string {
+    const parts: string[] = []
+    if (event.year !== undefined) parts.push(`${event.year}年`)
+    if (event.director) parts.push(event.director)
+    if (event.language) parts.push(event.language)
+    return parts.join(' ')
+  }
+
+  /** 完整描述（含评分），仅用于日历视图的详情 */
   function composedMeta(event: FestivalEvent): string {
-    const line1: string[] = []
-    if (event.year !== undefined) line1.push(`${event.year}年`)
-    if (event.director) line1.push(event.director)
-    if (event.language) line1.push(event.language)
     const line2: string[] = []
     if (event.rating !== undefined) line2.push(`${event.rating}分`)
     if (event.ratingCount !== undefined) line2.push(`${event.ratingCount}人评价`)
-    return [line1.join(' '), line2.join(' ')].filter(Boolean).join('\n')
+    return [metaLine(event), line2.join(' ')].filter(Boolean).join('\n')
   }
 
-  function descriptionOf(event: FestivalEvent): string {
+  /** withRating=true 时包含评分（日历详情）；默认不含（已选列表 / 导出） */
+  function descriptionOf(event: FestivalEvent, withRating = false): string {
     const override = overrides.value[event.id]?.description
     if (override) return override
     if (event.description) return event.description
-    return composedMeta(event)
+    return withRating ? composedMeta(event) : metaLine(event)
   }
 
   function endOf(event: FestivalEvent): string {

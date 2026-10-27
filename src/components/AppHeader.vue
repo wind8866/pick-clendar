@@ -5,7 +5,6 @@ import type { FestivalConfig } from '@/types'
 
 const props = defineProps<{
   config: FestivalConfig
-  rangeText: string
   panelOpen: boolean
   isFullscreen: boolean
 }>()
@@ -29,11 +28,7 @@ const logoUrl = `${import.meta.env.BASE_URL}logo.svg`
       <img class="brand-logo" :src="logoUrl" alt="" aria-hidden="true" />
       <div class="brand-text">
         <h1>{{ config.name }}</h1>
-        <p>
-          <span v-if="subtitle">{{ subtitle }}</span>
-          <span v-if="subtitle" class="dot">·</span>
-          <span class="range">{{ rangeText }}</span>
-        </p>
+        <p v-if="subtitle">{{ subtitle }}</p>
       </div>
     </div>
 
@@ -97,8 +92,8 @@ const logoUrl = `${import.meta.env.BASE_URL}logo.svg`
 
 .brand-logo {
   flex: none;
-  width: 38px;
-  height: 38px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 }
 
@@ -174,8 +169,8 @@ const logoUrl = `${import.meta.env.BASE_URL}logo.svg`
   }
 
   .brand-logo {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 
   .brand-text h1 {

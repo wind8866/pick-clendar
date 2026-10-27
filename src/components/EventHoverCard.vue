@@ -24,7 +24,7 @@ const end = computed(() =>
   hm(eventEnd(props.event.start, props.event.durationMinutes, props.config.timeZone)),
 )
 const title = computed(() => store.displayTitle(props.event))
-const meta = computed(() => store.descriptionOf(props.event))
+const meta = computed(() => store.descriptionOf(props.event, true))
 const urlHost = computed(() => {
   try {
     return new URL(props.event.url).host

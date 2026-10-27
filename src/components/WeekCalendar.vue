@@ -19,11 +19,6 @@ const props = defineProps<{
   anchor: string
 }>()
 
-const emit = defineEmits<{
-  prev: []
-  next: []
-}>()
-
 const store = useSelectionStore()
 const {
   event: hoverEvent,
@@ -132,7 +127,6 @@ function onHoverPick(): void {
 }
 
 function onClick(event: FestivalEvent): void {
-  if (justSwiped) return
   store.toggle(event.id)
   hideHover()
   store.clearHoverTitle()
@@ -166,33 +160,6 @@ function isWeekend(day: Dayjs): boolean {
   return weekday === 0 || weekday === 6
 }
 
-// 左右滑动切换周（触摸 / 鼠标拖拽）
-let swipeStartX = 0
-let swipeStartY = 0
-let swipeActive = false
-let justSwiped = false
-
-function onPointerDown(event: PointerEvent): void {
-  if (event.pointerType === 'mouse' && event.button !== 0) return
-  swipeActive = true
-  swipeStartX = event.clientX
-  swipeStartY = event.clientY
-}
-
-function onPointerUp(event: PointerEvent): void {
-  if (!swipeActive) return
-  swipeActive = false
-  const dx = event.clientX - swipeStartX
-  const dy = event.clientY - swipeStartY
-  if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return
-  justSwiped = true
-  window.setTimeout(() => {
-    justSwiped = false
-  }, 0)
-  if (dx < 0) emit('next')
-  else emit('prev')
-}
-
 function hourLabel(hour: number): string {
   return `${String(hour).padStart(2, '0')}:00`
 }
@@ -210,12 +177,7 @@ function onScroll(): void {
 
 <template>
   <div class="week-shell">
-    <div
-      class="week-scroll"
-      @scroll="onScroll"
-      @pointerdown="onPointerDown"
-      @pointerup="onPointerUp"
-    >
+    <div class="week-scroll" @scroll="onScroll">
       <div class="week-inner">
         <div class="week-top">
           <div class="axis-corner">时间</div>
@@ -276,7 +238,6 @@ function onScroll(): void {
                   :class="{
                     selected: store.isSelected(event.id),
                     'hover-same': store.isCalendarHighlighted(event),
-                    flash: store.highlightId === event.id,
                   }"
                   :style="positionStyle(event)"
                   @click.stop="onClick(event)"
@@ -320,7 +281,6 @@ function onScroll(): void {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  touch-action: pan-y;
 }
 
 .week-inner {
@@ -495,21 +455,6 @@ function onScroll(): void {
 .event-block.selected {
   background: var(--sel-bg);
   border-left-color: var(--sel-line);
-}
-
-.event-block.flash {
-  animation: event-flash 1.6s ease;
-}
-
-@keyframes event-flash {
-  0%,
-  45% {
-    box-shadow: inset 0 0 0 9999px var(--highlight);
-  }
-
-  100% {
-    box-shadow: inset 0 0 0 9999px transparent;
-  }
 }
 
 .event-block.hover-same {

@@ -63,13 +63,20 @@ defineExpose({ root })
 <template>
   <div ref="root" class="poster">
     <header class="poster-head">
-      <p class="poster-kicker">
-        <span v-if="config.city">{{ config.city }}</span>
-        <span v-if="config.city && config.venue"> · </span>
-        <span v-if="config.venue">{{ config.venue }}</span>
-      </p>
-      <h1>{{ config.name }}</h1>
-      <p class="poster-date">{{ dateRange }}</p>
+      <div class="poster-head-main">
+        <h1 class="poster-title-main">{{ config.name }}</h1>
+        <p class="poster-venue">
+          <span v-if="config.city">{{ config.city }}</span>
+          <span v-if="config.city && config.venue"> · </span>
+          <span v-if="config.venue">{{ config.venue }}</span>
+        </p>
+        <p class="poster-date">{{ dateRange }}</p>
+      </div>
+
+      <div class="poster-qr-box">
+        <img class="poster-qr" :src="qrSrc" alt="创建排片表" />
+        <span class="poster-qr-hint">创建排片表</span>
+      </div>
     </header>
 
     <section v-for="group in groups" :key="group.date" class="poster-group">
@@ -89,9 +96,8 @@ defineExpose({ root })
       </div>
     </section>
 
-    <footer class="poster-foot">
-      <img class="poster-qr" :src="qrSrc" alt="扫码查看日程" />
-      <span v-if="footerText" class="poster-foot-text">{{ footerText }}</span>
+    <footer v-if="footerText" class="poster-foot">
+      <span class="poster-foot-text">{{ footerText }}</span>
     </footer>
   </div>
 </template>
@@ -101,42 +107,87 @@ defineExpose({ root })
   position: relative;
   overflow: hidden;
   width: 393px;
-  padding: 20px 20px 16px;
+  padding: 0 0 16px;
   background: #fbf7ee;
   color: var(--ink);
   font-family: var(--font-sans);
 }
 
+/* 电影票头部 */
 .poster-head {
   position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 20px 22px;
+  background: #6a3424;
+  color: #fbf7ee;
 }
 
-.poster-kicker {
-  color: var(--red);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+.poster-head::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 10px;
+  background: radial-gradient(circle at 7px 10px, #fbf7ee 6px, transparent 6.5px);
+  background-repeat: repeat-x;
+  background-size: 14px 10px;
+  pointer-events: none;
 }
 
-.poster-head h1 {
-  margin-top: 6px;
-  color: var(--ink);
+.poster-head-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.poster-title-main {
+  color: #fbf7ee;
   font-family: var(--font-serif);
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
   letter-spacing: 0.02em;
   line-height: 1.3;
 }
 
-.poster-date {
+.poster-venue {
   margin-top: 6px;
-  color: var(--muted);
+  color: rgb(251 247 238 / 82%);
+  font-size: 11px;
+}
+
+.poster-date {
+  margin-top: 3px;
+  color: rgb(251 247 238 / 66%);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
+.poster-qr-box {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.poster-qr {
+  width: 52px;
+  height: 52px;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.poster-qr-hint {
+  color: rgb(251 247 238 / 80%);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
 .poster-group {
-  padding-top: 12px;
+  padding: 12px 20px 0;
 }
 
 .poster-day {
@@ -217,21 +268,12 @@ defineExpose({ root })
 
 .poster-foot {
   display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  padding-top: 10px;
-}
-
-.poster-qr {
-  flex: none;
-  width: 46px;
-  height: 46px;
+  justify-content: flex-end;
+  margin-top: 14px;
+  padding: 10px 20px 0;
 }
 
 .poster-foot-text {
-  flex: 1;
   color: var(--ink-soft);
   font-size: 10px;
   line-height: 1.5;

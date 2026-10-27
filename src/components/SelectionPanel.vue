@@ -485,7 +485,7 @@ async function clearAll(): Promise<void> {
         v-model="footerDraft"
         maxlength="40"
         show-word-limit
-        placeholder="例如：扫码查看并挑选影展日程"
+        placeholder="xxx 的日程"
       />
       <template #footer>
         <el-button @click="screenshotOpen = false">取消</el-button>

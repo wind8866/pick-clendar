@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { Calendar } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Calendar } from '@element-plus/icons-vue'
 import { dayjs, rangeLabel, startOfWeek, zoned } from '@/utils/time'
 import type { CalendarView, FestivalConfig, FestivalEvent } from '@/types'
 import { findFestival } from '@/data/festivals'
@@ -110,7 +110,6 @@ onBeforeUnmount(() => {
   <div class="app-shell">
     <AppHeader
       :config="config"
-      :range-text="rangeText"
       :panel-open="panelOpen"
       :is-fullscreen="isFullscreen"
       @toggle-panel="togglePanel"
@@ -141,25 +140,46 @@ onBeforeUnmount(() => {
     >
       <section class="calendar-pane">
         <div class="calendar-toolbar">
-          <el-button size="small" class="today-btn" @click="goToday">
-            <el-icon><Calendar /></el-icon>
-            今天
-          </el-button>
-          <div class="segmented" role="group" aria-label="视图切换">
-            <button
-              type="button"
-              :class="{ active: view === 'week' }"
-              @click="changeView('week')"
+          <span class="toolbar-range">{{ rangeText }}</span>
+          <div class="toolbar-actions">
+            <el-button
+              v-if="view === 'week'"
+              circle
+              size="small"
+              aria-label="上一周"
+              @click="shiftWeek(-1)"
             >
-              周
-            </button>
-            <button
-              type="button"
-              :class="{ active: view === 'month' }"
-              @click="changeView('month')"
+              <el-icon><ArrowLeft /></el-icon>
+            </el-button>
+            <el-button size="small" class="today-btn" @click="goToday">
+              <el-icon><Calendar /></el-icon>
+              今天
+            </el-button>
+            <el-button
+              v-if="view === 'week'"
+              circle
+              size="small"
+              aria-label="下一周"
+              @click="shiftWeek(1)"
             >
-              月
-            </button>
+              <el-icon><ArrowRight /></el-icon>
+            </el-button>
+            <div class="segmented" role="group" aria-label="视图切换">
+              <button
+                type="button"
+                :class="{ active: view === 'week' }"
+                @click="changeView('week')"
+              >
+                周
+              </button>
+              <button
+                type="button"
+                :class="{ active: view === 'month' }"
+                @click="changeView('month')"
+              >
+                月
+              </button>
+            </div>
           </div>
         </div>
 
@@ -167,8 +187,6 @@ onBeforeUnmount(() => {
           v-if="view === 'week'"
           :config="config"
           :anchor="anchor"
-          @prev="shiftWeek(-1)"
-          @next="shiftWeek(1)"
         />
         <MonthCalendar
           v-else
@@ -222,11 +240,28 @@ onBeforeUnmount(() => {
   display: flex;
   flex: none;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 8px;
   padding: 6px 12px;
   border-bottom: 1px solid var(--line-soft);
   background: var(--panel-soft);
+}
+
+.toolbar-range {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toolbar-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
 }
 
 .today-btn {

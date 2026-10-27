@@ -309,7 +309,6 @@ watch(
               :class="{
                 selected: store.isSelected(event.id),
                 'hover-same': store.isCalendarHighlighted(event),
-                flash: store.highlightId === event.id,
               }"
               :title="`${hm(zoned(event.start, config.timeZone))} ${store.displayTitle(event)}`"
               @click.stop="onChipClick($event, event)"
@@ -536,21 +535,6 @@ watch(
 
 .chip.hover-same .chip-time {
   color: var(--hover-same-fg);
-}
-
-.chip.flash {
-  animation: chip-flash 1.6s ease;
-}
-
-@keyframes chip-flash {
-  0%,
-  45% {
-    box-shadow: inset 0 0 0 9999px var(--highlight);
-  }
-
-  100% {
-    box-shadow: inset 0 0 0 9999px transparent;
-  }
 }
 
 .more {
