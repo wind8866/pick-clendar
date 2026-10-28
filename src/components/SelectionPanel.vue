@@ -7,6 +7,7 @@ import { downloadBlob, downloadDataUrl, exportFilename } from '@/utils/download'
 import { buildIcs } from '@/utils/ics'
 import {
   dateTimeLabel,
+  dayjs,
   formatDuration,
   formatGap,
   hm,
@@ -37,6 +38,7 @@ const capturing = ref(false)
 const screenshotOpen = ref(false)
 const footerDraft = ref('')
 const posterFooterText = ref('')
+const capturedAt = ref('')
 
 interface SelectionGroup {
   date: string
@@ -196,12 +198,18 @@ async function capture(): Promise<void> {
   if (!node) return
   capturing.value = true
   try {
+    capturedAt.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
     await document.fonts.ready
     await nextTick()
+    // html-to-image 默认的计算样式列表会漏掉 font-family，导致导出图里衬线字体退化为非衬线。
+    // 显式传入完整属性列表并强制包含 font-family，保证导出与页面渲染一致。
+    const styleProps = Array.from(window.getComputedStyle(document.documentElement))
+    if (!styleProps.includes('font-family')) styleProps.push('font-family')
     const dataUrl = await toPng(node, {
       pixelRatio: 2,
       cacheBust: true,
       backgroundColor: '#fbf7ee',
+      includeStyleProperties: Array.from(new Set(styleProps)),
     })
     downloadDataUrl(dataUrl, exportFilename(props.config.name, 'png'))
     ElMessage.success('截图已生成')
@@ -471,7 +479,11 @@ async function clearAll(): Promise<void> {
     </div>
 
     <div ref="posterWrap" class="poster-holder">
-      <ScreenshotPoster :config="config" :footer-text="posterFooterText" />
+      <ScreenshotPoster
+        :config="config"
+        :footer-text="posterFooterText"
+        :captured-at="capturedAt"
+      />
     </div>
 
     <el-dialog
@@ -480,7 +492,7 @@ async function clearAll(): Promise<void> {
       width="min(420px, 92vw)"
       align-center
     >
-      <p class="screenshot-hint">可填写一行文字，将显示在图片底部（可选）。</p>
+      <p class="screenshot-hint">可填写一行文字，将显示在图片中</p>
       <el-input
         v-model="footerDraft"
         maxlength="40"

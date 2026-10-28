@@ -7,6 +7,7 @@ import { eventEnd, hm, weekdayLabel, zoned } from '@/utils/time'
 const props = defineProps<{
   config: FestivalConfig
   footerText?: string
+  capturedAt?: string
 }>()
 
 const store = useSelectionStore()
@@ -47,14 +48,6 @@ const groups = computed<PosterGroup[]>(() => {
 
 const hasPrefix = computed(() => store.selectedEvents.some((event) => event.titlePrefix))
 
-const dateRange = computed(() => {
-  if (!props.config.events.length) return ''
-  const starts = props.config.events.map((event) => event.start).sort()
-  const first = zoned(starts[0], props.config.timeZone)
-  const last = zoned(starts[starts.length - 1], props.config.timeZone)
-  return `${first.format('YYYY-MM-DD')} – ${last.format('MM-DD')}`
-})
-
 const qrSrc = `${import.meta.env.BASE_URL}qrcode/${props.config.id}.svg`
 
 defineExpose({ root })
@@ -70,7 +63,7 @@ defineExpose({ root })
           <span v-if="config.city && config.venue"> · </span>
           <span v-if="config.venue">{{ config.venue }}</span>
         </p>
-        <p class="poster-date">{{ dateRange }}</p>
+        <p v-if="footerText" class="poster-note">{{ footerText }}</p>
       </div>
 
       <div class="poster-qr-box">
@@ -96,8 +89,8 @@ defineExpose({ root })
       </div>
     </section>
 
-    <footer v-if="footerText" class="poster-foot">
-      <span class="poster-foot-text">{{ footerText }}</span>
+    <footer v-if="capturedAt" class="poster-foot">
+      <span class="poster-foot-time">{{ capturedAt }}</span>
     </footer>
   </div>
 </template>
@@ -158,11 +151,11 @@ defineExpose({ root })
   font-size: 11px;
 }
 
-.poster-date {
+.poster-note {
   margin-top: 3px;
-  color: rgb(251 247 238 / 66%);
+  color: rgb(251 247 238 / 78%);
   font-size: 11px;
-  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
 }
 
 .poster-qr-box {
@@ -269,14 +262,14 @@ defineExpose({ root })
 .poster-foot {
   display: flex;
   justify-content: flex-end;
-  margin-top: 14px;
-  padding: 10px 20px 0;
+  margin-top: 16px;
+  padding: 0 20px;
 }
 
-.poster-foot-text {
-  color: var(--ink-soft);
+.poster-foot-time {
+  color: var(--muted);
   font-size: 10px;
+  font-variant-numeric: tabular-nums;
   line-height: 1.5;
-  text-align: right;
 }
 </style>
