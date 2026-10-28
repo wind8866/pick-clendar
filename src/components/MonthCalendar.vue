@@ -4,6 +4,7 @@ import type { Dayjs } from 'dayjs'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
+import { useIsMobile } from '@/composables/useIsMobile'
 import {
   dayjs,
   hm,
@@ -25,6 +26,7 @@ const emit = defineEmits<{
 }>()
 
 const store = useSelectionStore()
+const isMobile = useIsMobile()
 const {
   event: hoverEvent,
   x: hoverX,
@@ -58,8 +60,8 @@ const EXTEND_WEEKS = 26
 
 // 格子内预留：日期头 + 内边距
 const CELL_OVERHEAD = 30
-// 单个日程块占用高度（含间距）
-const CHIP_H = 24
+// 单个日程块占用高度（含间距）；移动端允许标题折成两行，预留更多高度
+const chipHeight = computed(() => (isMobile.value ? 32 : 24))
 
 function makeWeek(start: Dayjs): WeekRow {
   return {
@@ -102,7 +104,7 @@ function eventsFor(day: Dayjs): FestivalEvent[] {
 
 // 激进显示：尽可能铺满格子，仅在溢出时预留一行显示 +N
 const maxChips = computed(() =>
-  Math.max(1, Math.floor((rowHeight.value - CELL_OVERHEAD) / CHIP_H)),
+  Math.max(1, Math.floor((rowHeight.value - CELL_OVERHEAD) / chipHeight.value)),
 )
 
 function visibleEvents(day: Dayjs): FestivalEvent[] {
@@ -124,11 +126,13 @@ function onChipClick(mouse: MouseEvent, event: FestivalEvent): void {
 }
 
 function onChipEnter(mouse: MouseEvent, event: FestivalEvent): void {
+  if (isMobile.value) return
   showHover(event, mouse.clientX, mouse.clientY)
   store.setHoverTitle(event.title)
 }
 
 function onChipLeave(): void {
+  if (isMobile.value) return
   scheduleHide()
   store.scheduleHideHoverTitle()
 }
@@ -334,7 +338,7 @@ watch(
     </div>
 
     <EventHoverCard
-      v-if="hoverEvent"
+      v-if="hoverEvent && !isMobile"
       :event="hoverEvent"
       :config="config"
       :selected="store.isSelected(hoverEvent.id)"
@@ -499,7 +503,7 @@ watch(
 .chip-title {
   flex: 1;
   overflow: hidden;
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 12px;
   line-height: 1.4;
   text-overflow: ellipsis;
@@ -550,53 +554,60 @@ watch(
 @media (max-width: 900px) {
   .month-weekdays span {
     padding: 6px 2px;
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .month-cell {
-    padding: 4px 3px 3px;
+    padding: 4px 2px 3px;
+  }
+
+  .cell-head {
+    gap: 3px;
+    margin-bottom: 2px;
+    padding: 0 1px;
   }
 
   .day-number {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .month-cell.today .day-number {
-    width: 17px;
-    height: 17px;
+    width: 18px;
+    height: 18px;
     font-size: 10px;
   }
 
+  .month-label {
+    font-size: 9px;
+  }
+
   .chips {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 3px;
+    gap: 1px;
   }
 
   .chip {
-    width: 8px;
-    height: 8px;
-    min-height: 8px;
-    padding: 0;
-    border-radius: 50%;
-    background: var(--red);
+    gap: 0;
+    align-items: flex-start;
+    min-height: 21px;
+    padding: 1px 2px 1px 3px;
   }
 
-  .chip.hover-same {
-    background: var(--secondary-deep);
-  }
-
-  .chip.selected {
-    background: var(--gold);
-  }
-
-  .chip-bar,
-  .chip-title,
-  .chip-time {
+  .chip-bar {
     display: none;
   }
 
-  .more {
+  .chip-title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .chip-time {
     display: none;
   }
 }

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
-import { eventEnd, hm, weekdayLabel, zoned } from '@/utils/time'
+import { eventEnd, formatGap, hm, weekdayLabel, zoned } from '@/utils/time'
 
 const props = defineProps<{
   config: FestivalConfig
@@ -13,11 +13,24 @@ const props = defineProps<{
 const store = useSelectionStore()
 const root = ref<HTMLElement | null>(null)
 
+interface PosterGap {
+  minutes: number
+  label: string
+}
+
+interface PosterItem {
+  event: FestivalEvent
+  start: string
+  end: string
+  travel: number
+  gapBefore: PosterGap | null
+}
+
 interface PosterGroup {
   date: string
   dayLabel: string
   weekday: string
-  items: Array<{ event: FestivalEvent; start: string; end: string; travel: number }>
+  items: PosterItem[]
 }
 
 const groups = computed<PosterGroup[]>(() => {
@@ -36,11 +49,26 @@ const groups = computed<PosterGroup[]>(() => {
       }
       map.set(key, group)
     }
+
+    // 同一天内与上一场的间隔，用于时间列的虚线连接
+    const previous = group.items[group.items.length - 1]
+    let gapBefore: PosterGap | null = null
+    if (previous) {
+      const previousEnd = eventEnd(
+        previous.event.start,
+        previous.event.durationMinutes,
+        props.config.timeZone,
+      )
+      const minutes = Math.round(start.diff(previousEnd, 'minute', true))
+      gapBefore = { minutes, label: formatGap(minutes) }
+    }
+
     group.items.push({
       event,
       start: hm(start),
       end: hm(end),
       travel: store.effectiveTravelOf(event),
+      gapBefore,
     })
   }
   return [...map.values()].sort((a, b) => a.date.localeCompare(b.date))
@@ -78,15 +106,30 @@ defineExpose({ root })
         <span class="poster-day-week">{{ group.weekday }}</span>
       </div>
 
-      <div v-for="item in group.items" :key="item.event.id" class="poster-item">
-        <span class="poster-time">{{ item.start }} – {{ item.end }}</span>
-        <span v-if="hasPrefix" class="poster-prefix">{{ item.event.titlePrefix ?? '' }}</span>
-        <div class="poster-main">
-          <span class="poster-title">{{ item.event.title }}</span>
-          <span class="poster-sub">{{ store.descriptionOf(item.event) }}</span>
+      <template v-for="(item, index) in group.items" :key="item.event.id">
+        <div
+          v-if="item.gapBefore"
+          class="poster-gap"
+          :class="{ conflict: item.gapBefore.minutes < 0 }"
+        >
+          <span class="poster-gap-track">
+            <span class="poster-gap-label">{{ item.gapBefore.label }}</span>
+          </span>
         </div>
-        <span v-if="item.travel > 0" class="poster-travel">行程 {{ item.travel }} 分钟</span>
-      </div>
+
+        <div
+          class="poster-item"
+          :class="{ 'gap-after': index < group.items.length - 1 }"
+        >
+          <span class="poster-time">{{ item.start }} – {{ item.end }}</span>
+          <span v-if="hasPrefix" class="poster-prefix">{{ item.event.titlePrefix ?? '' }}</span>
+          <div class="poster-main">
+            <span class="poster-title">{{ item.event.title }}</span>
+            <span class="poster-sub">{{ store.descriptionOf(item.event) }}</span>
+          </div>
+          <span v-if="item.travel > 0" class="poster-travel">行程 {{ item.travel }} 分钟</span>
+        </div>
+      </template>
     </section>
 
     <footer v-if="capturedAt" class="poster-foot">
@@ -204,11 +247,74 @@ defineExpose({ root })
   font-size: 11px;
 }
 
+/* 同一天相邻两场之间的间隔，与已选日程列表保持一致的虚线样式 */
+.poster-gap {
+  display: flex;
+  height: 30px;
+  align-items: center;
+}
+
+.poster-gap-track {
+  position: relative;
+  display: flex;
+  width: 86px;
+  flex: none;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+}
+
+.poster-gap-track::before {
+  position: absolute;
+  top: 0;
+  bottom: -8px;
+  left: 50%;
+  width: 1px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #c8b79b 0 4px,
+    transparent 4px 9px
+  );
+  content: "";
+}
+
+.poster-gap-label {
+  position: relative;
+  padding: 0 3px;
+  background: #fbf7ee;
+  color: var(--muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.poster-gap.conflict .poster-gap-label {
+  color: var(--red);
+  font-weight: 700;
+}
+
 .poster-item {
+  position: relative;
   display: flex;
   gap: 8px;
   align-items: flex-start;
   padding: 6px 0;
+}
+
+/* 时间列内把上一场的时间延伸出一条虚线，和下方的间隔行连起来 */
+.poster-item.gap-after::after {
+  position: absolute;
+  top: 26px;
+  bottom: 0;
+  left: 43px;
+  width: 1px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #c8b79b 0 4px,
+    transparent 4px 9px
+  );
+  content: "";
+  pointer-events: none;
 }
 
 .poster-time {

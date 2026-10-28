@@ -29,6 +29,8 @@ const anchor = ref(dayjs.tz(config.initialDate, config.timeZone).format('YYYY-MM
 const activeTab = ref<'calendar' | 'selected'>('calendar')
 const panelOpen = ref(true)
 const isFullscreen = ref(false)
+// 周视图跳转信号：点击今天 / 上一周 / 下一周时递增，触发横向日历定位
+const weekJumpSeq = ref(0)
 
 const dayOpen = ref(false)
 const dayDate = ref('')
@@ -41,12 +43,26 @@ const weekEnd = computed(() => weekStart.value.add(6, 'day'))
 const monthStart = computed(() => startOfWeek(anchorDate.value))
 const monthEnd = computed(() => monthStart.value.add(4, 'week').add(6, 'day'))
 
-const rangeText = computed(() =>
-  rangeLabel(
+/** 周视图当前实际可见的日期范围，由自由横向滚动动态上报 */
+const weekRange = ref<{ start: string; end: string } | null>(null)
+
+function onWeekRange(range: { start: string; end: string }): void {
+  weekRange.value = range
+}
+
+function rangeDay(value: string) {
+  return zoned(`${value}T12:00:00+08:00`, config.timeZone)
+}
+
+const rangeText = computed(() => {
+  if (view.value === 'week' && weekRange.value) {
+    return rangeLabel(rangeDay(weekRange.value.start), rangeDay(weekRange.value.end))
+  }
+  return rangeLabel(
     view.value === 'week' ? weekStart.value : monthStart.value,
     view.value === 'week' ? weekEnd.value : monthEnd.value,
-  ),
-)
+  )
+})
 
 function changeView(next: CalendarView): void {
   view.value = next
@@ -58,10 +74,12 @@ function changeView(next: CalendarView): void {
 
 function shiftWeek(delta: number): void {
   anchor.value = anchorDate.value.add(delta, 'week').format('YYYY-MM-DD')
+  weekJumpSeq.value += 1
 }
 
 function goToday(): void {
   anchor.value = dayjs().tz(config.timeZone).format('YYYY-MM-DD')
+  weekJumpSeq.value += 1
 }
 
 function openDay(date: string): void {
@@ -146,6 +164,7 @@ onBeforeUnmount(() => {
               v-if="view === 'week'"
               circle
               size="small"
+              class="week-nav"
               aria-label="上一周"
               @click="shiftWeek(-1)"
             >
@@ -159,6 +178,7 @@ onBeforeUnmount(() => {
               v-if="view === 'week'"
               circle
               size="small"
+              class="week-nav"
               aria-label="下一周"
               @click="shiftWeek(1)"
             >
@@ -187,6 +207,9 @@ onBeforeUnmount(() => {
           v-if="view === 'week'"
           :config="config"
           :anchor="anchor"
+          :jump-seq="weekJumpSeq"
+          @update:anchor="anchor = $event"
+          @range-change="onWeekRange"
         />
         <MonthCalendar
           v-else
@@ -316,6 +339,38 @@ onBeforeUnmount(() => {
   .app-body {
     display: block;
     min-height: 0;
+  }
+
+  .calendar-toolbar {
+    gap: 6px;
+    padding: 6px 10px;
+  }
+
+  .toolbar-range {
+    flex: 1;
+    font-size: 12px;
+  }
+
+  .toolbar-actions {
+    gap: 6px;
+  }
+
+  .week-nav {
+    display: none;
+  }
+
+  .today-btn {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .segmented {
+    padding: 2px;
+  }
+
+  .segmented button {
+    min-width: 36px;
+    padding: 3px 8px;
   }
 
   .calendar-pane,

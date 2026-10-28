@@ -73,7 +73,7 @@ http://127.0.0.1:5173/pick/qingdao202602
 - `director` / `year` / `language` / `rating` / `ratingCount` 为结构化字段，周视图与导出使用；`description` 为自由补充（可为空），`weekDesc` 为周视图专属补充（可选）。
 - `kind: 'header'` 为标题头日程（如影展封面），仅进入订阅/导出 `.ics`，不在前端日历展示、不参与选片。
 - `initialDate` 决定月视图第一行所在周，也用于默认定位。
-- 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；“订阅日历”按钮直接打开它；`subscribeUrl` 可选，用于覆盖为正式在线地址。
+- 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；按钮点击复制该地址，`subscribeUrl` 可选，用于覆盖为正式在线地址。订阅文件按导出口径生成：不含评分与影院名/地址。
 - `theme` 三项主色：背景、可交互主色、协助/联动色；周视图时间轴由全部日程动态计算，不再使用固定的 `dayStart` / `dayEnd`。
 - 新增日历：在 `src/data/raw` 新增 `.raw.json` 并执行 `pnpm gen`，需要时设置 `isDefault`。
 

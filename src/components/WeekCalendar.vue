@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Dayjs } from 'dayjs'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
+import { useIsMobile } from '@/composables/useIsMobile'
 import {
   dayjs,
   hm,
@@ -13,13 +14,74 @@ import {
   zoned,
 } from '@/utils/time'
 import EventHoverCard from '@/components/EventHoverCard.vue'
+import EventMobileDialog from '@/components/EventMobileDialog.vue'
 
 const props = defineProps<{
   config: FestivalConfig
   anchor: string
+  /** 由「今天 / 上一周 / 下一周」触发的跳转序号，避免与自由滚动的锚点回传互相干扰 */
+  jumpSeq?: number
+}>()
+
+const emit = defineEmits<{
+  'update:anchor': [value: string]
+  'range-change': [range: { start: string; end: string }]
 }>()
 
 const store = useSelectionStore()
+const isMobile = useIsMobile()
+const dialogEvent = ref<FestivalEvent | null>(null)
+const scrollEl = ref<HTMLElement | null>(null)
+
+// 横向日历渲染足够长的连续日期，用户可自由左右滑动并停在任意位置
+const WEEKS_BEFORE = 12
+const WEEKS_AFTER = 12
+const VISIBLE_DAYS = 7
+const DAY_COUNT = (WEEKS_BEFORE + 1 + WEEKS_AFTER) * 7
+
+const axisWidth = computed(() => (isMobile.value ? 42 : 58))
+const dayWidth = ref(50)
+
+function weekStartOf(value: string): Dayjs {
+  return startOfWeek(zoned(`${value}T12:00:00+08:00`, props.config.timeZone))
+}
+
+function initialRangeStart(anchor: string): Dayjs {
+  return weekStartOf(anchor).subtract(WEEKS_BEFORE, 'week')
+}
+
+const rangeStart = ref<Dayjs>(initialRangeStart(props.anchor))
+const days = computed<Dayjs[]>(() =>
+  Array.from({ length: DAY_COUNT }, (_, index) => rangeStart.value.add(index, 'day')),
+)
+
+let ready = false
+let ticking = false
+let lastAnchorKey = ''
+let lastRangeKey = ''
+let lastScrollLeftX = 0
+let hintTimer: ReturnType<typeof setTimeout> | undefined
+let resizeObserver: ResizeObserver | undefined
+const showSwipeHint = ref(true)
+
+// 从移动端切回桌面布局时收起弹窗，避免残留遮罩
+watch(isMobile, (mobile) => {
+  if (mobile) {
+    showSwipeHint.value = true
+    if (hintTimer) clearTimeout(hintTimer)
+    hintTimer = setTimeout(() => {
+      showSwipeHint.value = false
+    }, 7000)
+  } else {
+    showSwipeHint.value = false
+    if (hintTimer) {
+      clearTimeout(hintTimer)
+      hintTimer = undefined
+    }
+    dialogEvent.value = null
+  }
+})
+
 const {
   event: hoverEvent,
   x: hoverX,
@@ -56,13 +118,6 @@ const dayEndMin = computed(() => rangeBounds.value.endMin)
 const totalMinutes = computed(() => Math.max(1, dayEndMin.value - dayStartMin.value))
 const startHour = computed(() => Math.floor(dayStartMin.value / 60))
 const endHour = computed(() => Math.ceil(dayEndMin.value / 60))
-
-const weekStart = computed<Dayjs>(() =>
-  startOfWeek(zoned(`${props.anchor}T12:00:00+08:00`, props.config.timeZone)),
-)
-const days = computed(() =>
-  Array.from({ length: 7 }, (_, index) => weekStart.value.add(index, 'day')),
-)
 const hours = computed(() =>
   Array.from({ length: endHour.value - startHour.value + 1 }, (_, index) => startHour.value + index),
 )
@@ -84,10 +139,12 @@ function eventsFor(day: Dayjs): FestivalEvent[] {
   return eventsByDate.value.get(day.format('YYYY-MM-DD')) ?? []
 }
 
-function timeRangeText(event: FestivalEvent): string {
-  const start = zoned(event.start, props.config.timeZone)
-  const end = start.add(event.durationMinutes, 'minute')
-  return `${hm(start)}–${hm(end)}`
+function startText(event: FestivalEvent): string {
+  return hm(zoned(event.start, props.config.timeZone))
+}
+
+function endText(event: FestivalEvent): string {
+  return hm(zoned(event.start, props.config.timeZone).add(event.durationMinutes, 'minute'))
 }
 
 function directorYear(event: FestivalEvent): string {
@@ -112,12 +169,139 @@ function positionStyle(event: FestivalEvent): Record<string, string> {
   }
 }
 
+function computeDayWidth(el: HTMLElement): number {
+  return Math.max(24, (el.clientWidth - axisWidth.value) / VISIBLE_DAYS)
+}
+
+function anchorIndexFor(value: string): number {
+  const key = weekStartOf(value).format('YYYY-MM-DD')
+  const index = days.value.findIndex((day) => day.format('YYYY-MM-DD') === key)
+  return index < 0 ? 0 : index
+}
+
+function visibleIndices(): { left: number; right: number; firstFull: number } | null {
+  const el = scrollEl.value
+  if (!el || !dayWidth.value) return null
+  const last = days.value.length - 1
+  const visibleWidth = Math.max(0, el.clientWidth - axisWidth.value)
+  const left = Math.min(last, Math.max(0, Math.floor((el.scrollLeft + 1) / dayWidth.value)))
+  const right = Math.min(
+    last,
+    Math.max(left, Math.floor((el.scrollLeft + visibleWidth - 1) / dayWidth.value)),
+  )
+  // 第一列完全露出屏幕的日期；用它来切换月视图，避免半格日期把锚点拉到上一周
+  const firstFull = Math.min(
+    right,
+    Math.max(left, Math.ceil((el.scrollLeft - 1) / dayWidth.value)),
+  )
+  return { left, right, firstFull }
+}
+
+function updateVisible(): void {
+  if (!ready) return
+  const indices = visibleIndices()
+  if (!indices) return
+  const leftDay = days.value[indices.left]
+  const rightDay = days.value[indices.right]
+  const anchorDay = days.value[indices.firstFull]
+  if (!leftDay || !rightDay || !anchorDay) return
+
+  const rangeKey = `${indices.left}-${indices.right}`
+  if (rangeKey !== lastRangeKey) {
+    lastRangeKey = rangeKey
+    emit('range-change', {
+      start: leftDay.format('YYYY-MM-DD'),
+      end: rightDay.format('YYYY-MM-DD'),
+    })
+  }
+
+  // 锚点取第一列完整可见日期所在周的周一，与周切换的语义保持一致
+  const anchorKey = startOfWeek(anchorDay).format('YYYY-MM-DD')
+  if (anchorKey !== lastAnchorKey) {
+    lastAnchorKey = anchorKey
+    emit('update:anchor', anchorKey)
+  }
+}
+
+function scrollToIndex(index: number): void {
+  const el = scrollEl.value
+  if (!el) return
+  el.scrollLeft = Math.max(0, index) * dayWidth.value
+}
+
+function onScroll(): void {
+  hideHover()
+  store.clearHoverTitle()
+  const el = scrollEl.value
+  if (!el) return
+  if (ready && Math.abs(el.scrollLeft - lastScrollLeftX) > 2) {
+    showSwipeHint.value = false
+  }
+  lastScrollLeftX = el.scrollLeft
+  if (!ready || ticking) return
+  ticking = true
+  requestAnimationFrame(() => {
+    ticking = false
+    updateVisible()
+  })
+}
+
+function onResize(): void {
+  const el = scrollEl.value
+  if (!el) return
+  const oldWidth = dayWidth.value
+  const leftIndex = oldWidth ? Math.round(el.scrollLeft / oldWidth) : 0
+  const nextWidth = computeDayWidth(el)
+  if (Math.abs(nextWidth - oldWidth) < 0.5) {
+    updateVisible()
+    return
+  }
+  dayWidth.value = nextWidth
+  nextTick(() => {
+    if (!scrollEl.value) return
+    scrollEl.value.scrollLeft = leftIndex * nextWidth
+    lastScrollLeftX = scrollEl.value.scrollLeft
+    updateVisible()
+  })
+}
+
+function rebuildRange(target: Dayjs): void {
+  rangeStart.value = target.subtract(WEEKS_BEFORE, 'week')
+  lastAnchorKey = ''
+  lastRangeKey = ''
+  nextTick(() => {
+    scrollToIndex(anchorIndexFor(target.format('YYYY-MM-DD')))
+    updateVisible()
+  })
+}
+
+function scrollToAnchor(value: string): void {
+  const target = weekStartOf(value)
+  const targetKey = target.format('YYYY-MM-DD')
+  const index = days.value.findIndex((day) => day.format('YYYY-MM-DD') === targetKey)
+  if (index < 0) {
+    rebuildRange(target)
+    return
+  }
+  scrollToIndex(index)
+}
+
+watch(
+  () => props.jumpSeq,
+  () => {
+    if (!ready) return
+    scrollToAnchor(props.anchor)
+  },
+)
+
 function onEnter(mouse: MouseEvent, event: FestivalEvent): void {
+  if (isMobile.value) return
   showHover(event, mouse.clientX, mouse.clientY)
   store.setHoverTitle(event.title)
 }
 
 function onLeave(): void {
+  if (isMobile.value) return
   scheduleHide()
   store.scheduleHideHoverTitle()
 }
@@ -127,9 +311,21 @@ function onHoverPick(): void {
 }
 
 function onClick(event: FestivalEvent): void {
-  store.toggle(event.id)
   hideHover()
   store.clearHoverTitle()
+  if (isMobile.value) {
+    // 移动端点击只打开详情弹窗，不直接选中
+    dialogEvent.value = event
+    return
+  }
+  store.toggle(event.id)
+}
+
+function onDialogPick(): void {
+  if (!dialogEvent.value) return
+  store.toggle(dialogEvent.value.id)
+  // 移动端弹窗中加入 / 移出后自动关闭
+  dialogEvent.value = null
 }
 
 const now = ref(dayjs())
@@ -138,9 +334,32 @@ onMounted(() => {
   timer = setInterval(() => {
     now.value = dayjs()
   }, 30_000)
+
+  const el = scrollEl.value
+  if (!el) return
+  dayWidth.value = computeDayWidth(el)
+  nextTick(() => {
+    if (!scrollEl.value) return
+    scrollToIndex(anchorIndexFor(props.anchor))
+    lastScrollLeftX = scrollEl.value.scrollLeft
+    ready = true
+    updateVisible()
+    if (isMobile.value) {
+      showSwipeHint.value = true
+      hintTimer = setTimeout(() => {
+        showSwipeHint.value = false
+      }, 7000)
+    }
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(onResize)
+      resizeObserver.observe(scrollEl.value)
+    }
+  })
 })
 onBeforeUnmount(() => {
   if (timer) clearInterval(timer)
+  if (hintTimer) clearTimeout(hintTimer)
+  resizeObserver?.disconnect()
 })
 
 const todayKey = computed(() => now.value.tz(props.config.timeZone).format('YYYY-MM-DD'))
@@ -168,17 +387,19 @@ function hourTop(hour: number): string {
   const minutes = hour * 60 - dayStartMin.value
   return `${(minutes / totalMinutes.value) * 100}%`
 }
-
-function onScroll(): void {
-  hideHover()
-  store.clearHoverTitle()
-}
 </script>
 
 <template>
   <div class="week-shell">
-    <div class="week-scroll" @scroll="onScroll">
-      <div class="week-inner">
+    <div ref="scrollEl" class="week-scroll" @scroll="onScroll">
+      <div
+        class="week-inner"
+        :style="{
+          '--day-w': `${dayWidth}px`,
+          '--axis-w': `${axisWidth}px`,
+          '--day-count': String(days.length),
+        }"
+      >
         <div class="week-top">
           <div class="axis-corner">时间</div>
           <div class="day-heads">
@@ -244,7 +465,9 @@ function onScroll(): void {
                   @mouseenter="onEnter($event, event)"
                   @mouseleave="onLeave"
                 >
-                  <span class="event-time">{{ timeRangeText(event) }}</span>
+                  <span class="event-time">
+                    {{ startText(event) }}<span class="event-time-end"> – {{ endText(event) }}</span>
+                  </span>
                   <span class="event-title">{{ store.displayTitle(event) }}</span>
                   <span v-if="directorYear(event)" class="event-sub">{{ directorYear(event) }}</span>
                 </button>
@@ -255,8 +478,12 @@ function onScroll(): void {
       </div>
     </div>
 
+    <div v-if="isMobile && showSwipeHint" class="swipe-hint" aria-hidden="true">
+      ← 左右滑动查看 →
+    </div>
+
     <EventHoverCard
-      v-if="hoverEvent"
+      v-if="hoverEvent && !isMobile"
       :event="hoverEvent"
       :config="config"
       :selected="store.isSelected(hoverEvent.id)"
@@ -266,11 +493,21 @@ function onScroll(): void {
       @leave="leaveCard"
       @pick="onHoverPick"
     />
+
+    <EventMobileDialog
+      v-if="dialogEvent"
+      :event="dialogEvent"
+      :config="config"
+      :selected="store.isSelected(dialogEvent.id)"
+      @pick="onDialogPick"
+      @close="dialogEvent = null"
+    />
   </div>
 </template>
 
 <style scoped>
 .week-shell {
+  position: relative;
   display: flex;
   flex: 1;
   min-height: 0;
@@ -281,11 +518,19 @@ function onScroll(): void {
   flex: 1;
   min-height: 0;
   overflow: auto;
+  overscroll-behavior-x: contain;
+}
+
+/* 桌面端保持按周翻页，不启用移动端的自由横向滑动 */
+@media (min-width: 901px) {
+  .week-scroll {
+    overflow-x: hidden;
+  }
 }
 
 .week-inner {
   display: flex;
-  min-width: 780px;
+  width: calc(var(--axis-w) + var(--day-w) * var(--day-count));
   height: 100%;
   flex-direction: column;
 }
@@ -305,7 +550,7 @@ function onScroll(): void {
   left: 0;
   z-index: 7;
   display: flex;
-  width: 58px;
+  width: var(--axis-w);
   flex: none;
   align-items: center;
   justify-content: center;
@@ -317,13 +562,15 @@ function onScroll(): void {
 }
 
 .day-heads {
-  display: grid;
-  flex: 1;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  display: flex;
+  width: calc(var(--day-w) * var(--day-count));
+  flex: none;
 }
 
 .day-head {
   display: flex;
+  width: var(--day-w);
+  flex: none;
   gap: 5px;
   align-items: baseline;
   justify-content: center;
@@ -373,7 +620,7 @@ function onScroll(): void {
   position: sticky;
   left: 0;
   z-index: 3;
-  width: 58px;
+  width: var(--axis-w);
   flex: none;
   border-right: 1px solid var(--line-soft);
   background: var(--paper-strong);
@@ -397,14 +644,16 @@ function onScroll(): void {
 }
 
 .columns {
-  display: grid;
-  flex: 1;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  display: flex;
+  width: calc(var(--day-w) * var(--day-count));
+  flex: none;
 }
 
 .day-col {
   position: relative;
+  width: var(--day-w);
   min-width: 0;
+  flex: none;
   border-right: 1px solid var(--line-soft);
 }
 
@@ -477,9 +726,8 @@ function onScroll(): void {
 
 .event-title {
   overflow: hidden;
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 13px;
-  font-weight: 700;
   line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -514,13 +762,52 @@ function onScroll(): void {
   background: var(--red);
 }
 
+.swipe-hint {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  z-index: 8;
+  padding: 4px 11px;
+  border: 1px solid var(--line-soft);
+  border-radius: 99px;
+  background: rgb(248 241 231 / 0.92);
+  box-shadow: 0 3px 12px rgb(61 38 25 / 12%);
+  color: var(--ink-soft);
+  font-size: 11px;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: swipe-hint-in 0.25s ease;
+}
+
+@keyframes swipe-hint-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -4px);
+  }
+}
+
 @media (max-width: 900px) {
-  .week-inner {
-    min-width: 0;
+  .week-canvas {
+    min-height: 520px;
   }
 
-  .week-canvas {
-    min-height: 580px;
+  .axis-corner {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+
+  .hour-label {
+    right: 5px;
+    font-size: 9px;
+  }
+
+  .day-head {
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 2px 7px;
+    line-height: 1.25;
   }
 
   .weekday {
@@ -529,6 +816,34 @@ function onScroll(): void {
 
   .date {
     font-size: 13px;
+  }
+
+  .event-block {
+    right: 2px;
+    left: 2px;
+    gap: 1px;
+    min-height: 28px;
+    padding: 3px 4px;
+    border-left-width: 0;
+  }
+
+  .event-time {
+    font-size: 10px;
+  }
+
+  .event-time-end {
+    display: none;
+  }
+
+  .event-title {
+    font-size: 12px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .event-sub {
+    display: none;
   }
 }
 </style>

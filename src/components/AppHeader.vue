@@ -182,7 +182,7 @@ const logoUrl = `${import.meta.env.BASE_URL}logo.svg`
   }
 
   .header-tools {
-    margin-left: auto;
+    display: none;
   }
 }
 </style>

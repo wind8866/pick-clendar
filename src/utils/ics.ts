@@ -51,7 +51,6 @@ export function buildIcs(config: FestivalConfig, items: ExportItem[]): string {
   ]
 
   const stamp = icsStamp()
-  const location = config.venue || ''
 
   for (const item of items) {
     const start = zoned(item.event.start, tz)
@@ -67,7 +66,6 @@ export function buildIcs(config: FestivalConfig, items: ExportItem[]): string {
       `SUMMARY:${escapeText(`${item.event.titlePrefix ?? ''}${item.event.title}`)}`,
       `DESCRIPTION:${escapeText(descriptionParts.join('\n'))}`,
     )
-    if (location) lines.push(`LOCATION:${escapeText(location)}`)
     if (item.event.url) lines.push(`URL:${item.event.url}`)
     lines.push('END:VEVENT')
   }

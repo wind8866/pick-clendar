@@ -105,15 +105,12 @@ function wallClockAdd(iso, minutes) {
 }
 
 function composedMeta(event) {
+  // 与页面导出的 .ics 保持一致：年代 / 导演 / 语言，不含评分与影院信息
   const parts = []
-  if (event.director) parts.push(`导演：${event.director}`)
-  if (event.rating !== undefined) {
-    const count = event.ratingCount !== undefined ? `（${event.ratingCount} 人评价）` : ''
-    parts.push(`${event.rating}${count}`)
-  }
-  if (event.year !== undefined) parts.push(String(event.year))
+  if (event.year !== undefined) parts.push(`${event.year}年`)
+  if (event.director) parts.push(event.director)
   if (event.language) parts.push(event.language)
-  return parts.join(' · ')
+  return parts.join(' ')
 }
 
 function buildSubscribeIcs(config) {
@@ -138,7 +135,6 @@ function buildSubscribeIcs(config) {
     'END:VTIMEZONE',
   ]
   const stamp = wallClockAdd(new Date().toISOString(), 0).replace('T', '') + 'Z'
-  const location = config.venue || ''
 
   const events = config.events
     .slice()
@@ -146,18 +142,16 @@ function buildSubscribeIcs(config) {
 
   for (const event of events) {
     const title = `${event.titlePrefix ?? ''}${event.title}`
-    const summary = event.kind === 'header' ? title : title
     lines.push(
       'BEGIN:VEVENT',
       `UID:${config.id}-${event.id}@calendar-pick`,
       `DTSTAMP:${stamp}`,
       `DTSTART;TZID=${tz}:${wallClockAdd(event.start, 0)}`,
       `DTEND;TZID=${tz}:${wallClockAdd(event.start, event.durationMinutes)}`,
-      `SUMMARY:${escapeText(summary)}`,
+      `SUMMARY:${escapeText(title)}`,
     )
     const desc = event.description || composedMeta(event)
     if (desc) lines.push(`DESCRIPTION:${escapeText(desc)}`)
-    if (location) lines.push(`LOCATION:${escapeText(location)}`)
     if (event.url) lines.push(`URL:${event.url}`)
     lines.push('END:VEVENT')
   }
