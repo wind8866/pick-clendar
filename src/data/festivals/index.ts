@@ -61,16 +61,6 @@ function buildConfigs(): FestivalConfig[] {
 
 export const festivalConfigs: FestivalConfig[] = buildConfigs()
 
-const defaultConfigs = festivalConfigs.filter((item) => item.isDefault)
-if (import.meta.env.DEV && defaultConfigs.length > 1) {
-  console.warn(
-    `[festivals] 找到 ${defaultConfigs.length} 个 isDefault，已使用第一个：${defaultConfigs[0]?.id}`,
-  )
-}
-
-export const defaultFestivalId: string =
-  defaultConfigs[0]?.id ?? festivalConfigs[0]?.id ?? ''
-
 export function findFestival(id: string | undefined): FestivalConfig | undefined {
   if (!id) return undefined
   return festivalConfigs.find((item) => item.id === id)

@@ -1,6 +1,5 @@
 {
   "schemaVersion": 2,
-  "isDefault": false,
   "id": "cfa202611",
   "name": "中国电影资料馆",
   "city": "北京",
@@ -31,7 +30,7 @@
       "title": "中国电影资料馆·小西天艺术影院排片日历",
       "start": "2026-10-29T09:00:00+08:00",
       "durationMinutes": 30,
-      "description": "中国电影资料馆 · 小西天艺术影院排片日历\n2026-10-29 – 2026-12-06\n\n数据来源：中国电影资料馆官方排片（cfa.json）\n纠错反馈：待补充",
+      "description": "中国电影资料馆 · 小西天艺术影院排片日历\n2026-10-29 – 2026-12-06\n\n数据来源：中国电影资料馆官方排片（doc/data/cfa.json）\n纠错反馈：待补充",
       "url": "",
       "titlePrefix": "📅",
       "kind": "header"

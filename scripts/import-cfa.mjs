@@ -35,7 +35,6 @@ const HEADER_ID = 'cfa202611-header'
 
 const META = {
   schemaVersion: 2,
-  isDefault: false,
   id: CALENDAR_ID,
   name: '中国电影资料馆',
   city: '北京',

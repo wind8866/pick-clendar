@@ -28,16 +28,6 @@ PORT="${port:-80}"
 LOCAL_CONF="$(mktemp "${TMPDIR:-/tmp}/calendar-pick-nginx.XXXXXX")"
 trap 'rm -f "${LOCAL_CONF}"' EXIT
 
-# 默认日历 id 从 raw 配置读取，不写死具体排片表
-DEFAULT_FESTIVAL_ID="$(node -e '
-const fs = require("fs");
-const dir = "src/data/raw";
-const metas = fs.readdirSync(dir).filter((f) => f.endsWith(".raw.json"))
-  .map((f) => JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8")).meta);
-const picked = metas.find((m) => m && m.isDefault) || metas[0];
-process.stdout.write(picked && picked.id ? picked.id : "");
-' 2>/dev/null || true)"
-
 # ---------- 用 .env 渲染 nginx 配置 ----------
 sed -e "s|__DOMAIN__|${domain}|g" \
     -e "s|__PORT__|${PORT}|g" \
@@ -89,10 +79,5 @@ EXP
 
 echo ""
 echo "✅ 部署完成："
-if [[ -n "${DEFAULT_FESTIVAL_ID}" ]]; then
-  echo "   https://${domain}/pick/${DEFAULT_FESTIVAL_ID}"
-  echo "   http://${ip}/pick/${DEFAULT_FESTIVAL_ID}"
-else
-  echo "   https://${domain}/"
-  echo "   http://${ip}/"
-fi
+echo "   https://${domain}/pick"
+echo "   http://${ip}/pick"

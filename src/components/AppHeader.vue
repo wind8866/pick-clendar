@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Expand, Fold, FullScreen } from '@element-plus/icons-vue'
+import { ArrowLeft, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import type { FestivalConfig } from '@/types'
 import { staticPath } from '@/utils/site'
 
@@ -25,6 +25,11 @@ const logoUrl = staticPath('logo.svg')
 
 <template>
   <header class="app-header">
+    <router-link to="/pick" class="back-link" aria-label="全部影展" title="全部影展">
+      <el-icon><ArrowLeft /></el-icon>
+      <span class="back-text">全部影展</span>
+    </router-link>
+
     <div class="brand">
       <img class="brand-logo" :src="logoUrl" alt="" aria-hidden="true" />
       <div class="brand-text">
@@ -75,13 +80,32 @@ const logoUrl = staticPath('logo.svg')
   display: flex;
   flex: none;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 20px;
   min-height: 68px;
   padding: 12px 24px;
   border-bottom: 1px solid var(--line);
   background: var(--paper-strong);
   backdrop-filter: blur(10px);
+}
+
+.back-link {
+  display: inline-flex;
+  flex: none;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.back-link:hover {
+  border-color: var(--red);
+  color: var(--red);
 }
 
 .brand {
@@ -137,6 +161,7 @@ const logoUrl = staticPath('logo.svg')
   flex: none;
   gap: 6px;
   align-items: center;
+  margin-left: auto;
 }
 
 .tool-btn {
@@ -168,6 +193,17 @@ const logoUrl = staticPath('logo.svg')
   .brand {
     width: auto;
     flex: 1;
+  }
+
+  .back-link {
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .back-text {
+    display: none;
   }
 
   .brand-logo {

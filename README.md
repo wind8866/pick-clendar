@@ -14,9 +14,10 @@ pnpm dev
 pnpm build       # 会自动先执行 pnpm gen
 ```
 
-启动后访问 `/` 会自动跳转到默认日历：
+启动后访问 `/` 会进入影展列表 `/pick`，再点卡片进入具体日历：
 
 ```text
+http://127.0.0.1:5173/pick                  # 影展列表
 http://127.0.0.1:5173/pick/qingdao202602
 http://127.0.0.1:5173/pick/cfa202611
 http://127.0.0.1:5173/pick/cfa-beijing
@@ -24,10 +25,17 @@ http://127.0.0.1:5173/pick/cfa-beijing
 
 ## 路由
 
+- `/pick`：影展列表，以卡片展示所有日历
 - `/pick/:festivalId`：按日历 id 加载配置
-- `/`：跳转到配置中 `isDefault: true` 的日历
-- 未知日历 id：回退到默认日历
-- 多日历可以通过 `/pick/<id>` 直接访问；当前页面不提供切换入口
+- `/`：跳转到 `/pick`
+- 未知日历 id / 未知路径：回退到 `/pick`
+- 日历页左上角「← 全部影展」可返回列表
+
+## 影展列表
+
+- 卡片内容：日历名称、城市 · 场地、`updatedAt`（数据更新日期）；封面暂无图片，用该日历主题色 + 名称首字占位。
+- 排序：`order` 升序（缺省 999）→ `updatedAt` 倒序 → id；青岛 `order: 0` 固定第一个。
+- 列表页使用中性主题，卡片封面使用各日历自己的 `theme` 三色。
 
 ## 现有日历
 
@@ -83,7 +91,7 @@ http://127.0.0.1:5173/pick/cfa-beijing
 ```json
 {
   "schemaVersion": 2,
-  "isDefault": true,
+  "order": 0,
   "id": "qingdao202602",
   "name": "日历名称",
   "city": "城市",
@@ -127,6 +135,7 @@ http://127.0.0.1:5173/pick/cfa-beijing
 - `director` / `year` / `language` / `rating` / `ratingCount` 为结构化字段，周视图与导出使用；`description` 为自由补充（可为空），`weekDesc` 为周视图专属补充（可选）。`description` 非空时优先使用它，不再自动拼「年代/导演/语言」。
 - `location` 为影厅 / 场地（可选）。同一影院有多个 `location` 时，工具栏「今天」左侧会出现多选筛选（移动端会单独占一行）；周视图副标题和日期弹窗也会显示厅号。
 - `kind: 'header'` 为标题头日程（如影展封面），仅进入订阅/导出 `.ics`，不在前端日历展示、不参与选片。
+- `order` 控制影展列表排序，数字越小越靠前；缺省按 `updatedAt` 倒序。青岛为 `0`。
 - `initialDate` 决定月视图第一行所在周，也用于默认定位；缺省时自动取最早一场的日期。
 - `timeZone` 缺省为 `Asia/Shanghai`，导出、周视图时间轴、日期分组都按它计算。
 - `defaultView` 可选 `month` / `week`；缺省时桌面用月视图、移动端用周视图。多厅、单日场次密集的日历建议设 `month`。
@@ -142,7 +151,7 @@ http://127.0.0.1:5173/pick/cfa-beijing
   - 周视图工具栏的上一页 / 下一页按「可见天数」翻页：折叠时 7 天、展开时 4 天（移动端 2 天），不会展开后仍整周跳。
 - 加入日程时若与已选场次时间重叠，会弹出 message 提示「与已选「xx」时间冲突 N 分钟」；已选列表和截图里的「时间冲突 N 分钟」固定用红色（`--danger`），不随主题主色变化。
 - 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；导出与订阅按同一口径生成：不含评分与影院名/地址。
-- 新增日历：先填 [新日历配置问卷](doc/calendar-questionnaire.md)，再在 `src/data/raw` 新增 `.raw.json` 并执行 `pnpm gen`；需要时设置 `isDefault`。二维码依赖 `qrcode`（已在 devDependencies 中），缺少 `siteOrigin` 时只跳过二维码。
+- 新增日历：先填 [新日历配置问卷](doc/calendar-questionnaire.md)，再在 `src/data/raw` 新增 `.raw.json` 并执行 `pnpm gen`；需要排序时设置 `order`。二维码依赖 `qrcode`（已在 devDependencies 中），缺少 `siteOrigin` 时只跳过二维码。
 
 ## 时区与导出
 

@@ -50,7 +50,8 @@ export interface FestivalAdjacency {
 
 export interface FestivalConfig {
   schemaVersion: number
-  isDefault?: boolean
+  /** 列表排序，数字越小越靠前；缺省按 updatedAt 倒序 */
+  order?: number
   id: string
   name: string
   city?: string
