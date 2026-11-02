@@ -6,7 +6,7 @@
 //
 // 用法：
 //   node scripts/import-cfa.mjs [输入文件]
-// 默认输入：项目根目录 cfa.json
+// 默认输入：doc/data/cfa.json
 // 输出：src/data/raw/cfa202611.raw.json
 //
 // 只保留 screen_cinema 以「小西天艺术影院」开头的场次（1 号厅 + 2 号厅）。
@@ -23,7 +23,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const INPUT = process.argv[2] ? path.resolve(process.argv[2]) : path.join(ROOT, 'cfa.json')
+const INPUT = process.argv[2] ? path.resolve(process.argv[2]) : path.join(ROOT, 'doc/data/cfa.json')
 const OUTPUT = path.join(ROOT, 'src/data/raw/cfa202611.raw.json')
 
 const CINEMA = '小西天艺术影院'
@@ -198,7 +198,7 @@ async function main() {
       '中国电影资料馆 · 小西天艺术影院排片日历',
       `${first.start.slice(0, 10)} – ${lastEndLocal}`,
       '',
-      '数据来源：中国电影资料馆官方排片（cfa.json）',
+      '数据来源：中国电影资料馆官方排片（doc/data/cfa.json）',
       '纠错反馈：待补充',
     ].join('\n'),
   }

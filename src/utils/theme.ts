@@ -61,21 +61,22 @@ const INK_SOFT = '#5f4c3e'
 const MUTED = '#8a7a63'
 const WHITE = '#ffffff'
 const BLACK = '#000000'
+// 结构线框用中性色，不跟随主题主色；否则亮色主题会把网格、边框全染成主题色
+const LINE_INK = '#6b4a3a'
 
 /** 把主题三色注入根元素 CSS 变量，供全站样式使用 */
 export function applyTheme(theme?: FestivalTheme): void {
   const { background, primary, secondary } = theme ?? DEFAULT_THEME
   const root = document.documentElement
 
-  const line = mix(primary, background, 0.72)
-  const lineSoft = mix(primary, background, 0.86)
+  const line = mix(LINE_INK, background, 0.72)
+  const lineSoft = mix(LINE_INK, background, 0.86)
   const paperStrong = mix(background, WHITE, 0.72)
   const panelSoft = mix(background, WHITE, 0.42)
 
   const vars: Record<string, string> = {
     '--paper': background,
     '--paper-strong': paperStrong,
-    '--panel': mix(background, primary, 0.05),
     '--panel-soft': panelSoft,
     '--ink': INK,
     '--ink-soft': INK_SOFT,
@@ -85,20 +86,18 @@ export function applyTheme(theme?: FestivalTheme): void {
     '--red': primary,
     '--red-deep': mix(primary, BLACK, 0.18),
     '--red-soft': mix(primary, WHITE, 0.86),
-    '--gold': mix(primary, '#e7c877', 0.35),
-    '--gold-soft': mix(primary, '#f6e9c8', 0.55),
     '--secondary': secondary,
     '--secondary-soft': mix(secondary, WHITE, 0.82),
-    '--secondary-deep': mix(secondary, BLACK, 0.18),
     // 交互态颜色全部由主题派生，换配色时不会残留上一套颜色
     '--sel-bg': withAlpha(mix(secondary, BLACK, 0.08), 0.72),
     '--sel-line': mix(secondary, BLACK, 0.18),
     '--hover-same-bg': primary,
     '--hover-same-fg': readableOn(primary),
     '--on-primary': readableOn(primary),
-    '--remove-hover-bg': mix('#fef0f0', primary, 0.05),
-    '--week-default-bg': mix(primary, WHITE, 0.84),
-    '--highlight': mix('#fff8c9', primary, 0.06),
+    // 提醒 / 悬停底色保持固定语义色，不跟主题主色走
+    '--remove-hover-bg': 'rgb(254, 240, 240)',
+    '--week-default-bg': '#eae3e0',
+    '--highlight': '#fff1b8',
     '--shadow': '0 10px 30px rgb(60 40 28 / 12%)',
     '--el-color-primary': primary,
     '--el-color-primary-light-3': mix(primary, WHITE, 0.3),

@@ -700,7 +700,7 @@ async function clearAll(): Promise<void> {
 
 .pick-card.highlight {
   animation: card-flash 1.9s ease;
-  border-color: var(--gold);
+  border-color: var(--line);
 }
 
 .pick-card.hover-same {
@@ -872,7 +872,7 @@ async function clearAll(): Promise<void> {
   top: 0;
   bottom: 0;
   left: 50%;
-  border-left: 1px dashed #c8b79b;
+  border-left: 1px dashed var(--line);
   content: "";
 }
 

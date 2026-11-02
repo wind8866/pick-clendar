@@ -2,7 +2,6 @@
   /* 主题三色由 config.theme 注入（见 src/utils/theme.ts），此处为默认回退值 */
   --paper: #e5cea8;
   --paper-strong: #f8f1e7;
-  --panel: #dfc6a1;
   --panel-soft: #f0e3cd;
   --ink: #33241d;
   --ink-soft: #5f4c3e;
@@ -14,11 +13,8 @@
   /* 冲突等危险态固定用红色，不随主题主色变化 */
   --danger: #b23a2f;
   --red-soft: #eae3e0;
-  --gold: #966841;
-  --gold-soft: #b7987e;
   --secondary: #9ab9af;
   --secondary-soft: #edf2f1;
-  --secondary-deep: #7e9890;
   --highlight: #fff1b8;
   --sel-bg: rgba(117, 196, 171, 0.68);
   --sel-line: #5e9d89;
