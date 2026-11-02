@@ -11,6 +11,8 @@
   --line-soft: #d4b896;
   --red: #6a3424;
   --red-deep: #572b1e;
+  /* 冲突等危险态固定用红色，不随主题主色变化 */
+  --danger: #b23a2f;
   --red-soft: #eae3e0;
   --gold: #966841;
   --gold-soft: #b7987e;

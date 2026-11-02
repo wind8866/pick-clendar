@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { ElMessage } from 'element-plus'
 import type {
   EventOverride,
   FestivalConfig,
@@ -194,11 +195,46 @@ export const useSelectionStore = defineStore('selection', () => {
     else pick(eventId)
   }
 
+  /** 找到与指定日程时间重叠最多的一条已选日程 */
+  function overlappingEvent(
+    event: FestivalEvent,
+  ): { other: FestivalEvent; minutes: number } | null {
+    const start = zoned(event.start, timeZone.value).valueOf()
+    const end = start + event.durationMinutes * 60_000
+    let worst: { other: FestivalEvent; minutes: number } | null = null
+
+    for (const id of selectedIds.value) {
+      if (id === event.id) continue
+      const other = eventMap.value.get(id)
+      if (!other) continue
+      const otherStart = zoned(other.start, timeZone.value).valueOf()
+      const otherEnd = otherStart + other.durationMinutes * 60_000
+      const overlap = Math.min(end, otherEnd) - Math.max(start, otherStart)
+      if (overlap > 0 && (!worst || overlap > worst.minutes)) {
+        worst = { other, minutes: Math.round(overlap / 60_000) }
+      }
+    }
+    return worst
+  }
+
+  function notifyConflict(event: FestivalEvent): void {
+    const conflict = overlappingEvent(event)
+    if (!conflict) return
+    ElMessage.warning({
+      message: `与已选「${displayTitle(conflict.other)}」时间冲突 ${conflict.minutes} 分钟`,
+      duration: 4000,
+      showClose: true,
+      grouping: true,
+    })
+  }
+
   function pick(eventId: string): void {
     if (!eventMap.value.has(eventId) || selectedSet.value.has(eventId)) return
     selectedIds.value = [...selectedIds.value, eventId]
     flash(eventId)
     save()
+    const event = eventMap.value.get(eventId)
+    if (event) notifyConflict(event)
   }
 
   function discard(eventId: string): void {

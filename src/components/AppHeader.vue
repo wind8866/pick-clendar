@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { ArrowDown, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
+import { Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import type { FestivalConfig } from '@/types'
-import { festivalConfigs } from '@/data/festivals'
 import { staticPath } from '@/utils/site'
 
 const props = defineProps<{
@@ -17,24 +15,12 @@ const emit = defineEmits<{
   'toggle-fullscreen': []
 }>()
 
-const router = useRouter()
-
 const subtitle = computed(() => {
   const parts = [props.config.city, props.config.venue].filter(Boolean)
   return parts.join(' · ')
 })
 
 const logoUrl = staticPath('logo.svg')
-
-/** 有多个日历配置时才显示切换入口，单日历下不增加噪音 */
-const calendars = computed(() =>
-  festivalConfigs.map((item) => ({ id: item.id, name: item.name })),
-)
-
-function switchCalendar(id: string): void {
-  if (id === props.config.id) return
-  router.push(`/pick/${id}`)
-}
 </script>
 
 <template>
@@ -46,30 +32,6 @@ function switchCalendar(id: string): void {
         <p v-if="subtitle">{{ subtitle }}</p>
       </div>
     </div>
-
-    <el-dropdown
-      v-if="calendars.length > 1"
-      trigger="click"
-      class="calendar-switch"
-      @command="switchCalendar"
-    >
-      <button type="button" class="switch-btn">
-        <span>切换日历</span>
-        <el-icon><ArrowDown /></el-icon>
-      </button>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item
-            v-for="item in calendars"
-            :key="item.id"
-            :command="item.id"
-            :disabled="item.id === config.id"
-          >
-            {{ item.name }}
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
 
     <div class="header-tools">
       <el-tooltip
@@ -170,34 +132,6 @@ function switchCalendar(id: string): void {
   font-variant-numeric: tabular-nums;
 }
 
-.calendar-switch {
-  flex: none;
-  margin-left: auto;
-}
-
-.switch-btn {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  padding: 4px 10px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--paper-strong);
-  color: var(--ink-soft);
-  font-size: 12px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.switch-btn:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-
-.switch-btn .el-icon {
-  font-size: 11px;
-}
-
 .header-tools {
   display: flex;
   flex: none;
@@ -232,7 +166,8 @@ function switchCalendar(id: string): void {
   }
 
   .brand {
-    width: 100%;
+    width: auto;
+    flex: 1;
   }
 
   .brand-logo {

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "gen": "node scripts/generate-calendar.mjs",
+    "import:cfa": "node scripts/import-cfa.mjs",
     "prebuild": "node scripts/generate-calendar.mjs",
     "build": "vue-tsc --noEmit && vite build",
     "typecheck": "vue-tsc --noEmit",

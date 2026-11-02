@@ -29,13 +29,51 @@ store.init(config, route.path)
 
 // 路由切换日历由 App.vue 的 router-view key 触发组件重建，因此这里只需按当前配置初始化一次
 const isMobile = useIsMobile()
-const view = ref<CalendarView>(isMobile.value ? 'week' : 'month')
+// 多厅/密集排片可在配置里指定默认视图，避免窄屏周视图挤在一起
+const view = ref<CalendarView>(
+  config.defaultView ?? (isMobile.value ? 'week' : 'month'),
+)
 const anchor = ref(dateInZone(config.initialDate, config.timeZone).format('YYYY-MM-DD'))
 const activeTab = ref<'calendar' | 'selected'>('calendar')
 const panelOpen = ref(true)
 const isFullscreen = ref(false)
 // 周视图跳转信号：点击今天 / 上一周 / 下一周时递增，触发横向日历定位
 const weekJumpSeq = ref(0)
+
+/** 同一影院多厅排片时，按影厅筛选；空数组表示全部 */
+const halls = computed(() =>
+  [
+    ...new Set(
+      config.events
+        .filter((event) => event.kind !== 'header' && event.location)
+        .map((event) => event.location as string),
+    ),
+  ].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN')),
+)
+const selectedHalls = ref<string[]>([])
+
+// 月视图纵向展开 / 周视图横向展开，分别记住状态
+const monthExpanded = ref(false)
+const weekExpanded = ref(false)
+const expanded = computed(() =>
+  view.value === 'week' ? weekExpanded.value : monthExpanded.value,
+)
+
+const expandTip = computed(() => {
+  if (view.value === 'week') {
+    return weekExpanded.value
+      ? '收起，恢复 7 天视图'
+      : `展开为 ${isMobile.value ? 2 : 4} 天，日程标题不换行`
+  }
+  return monthExpanded.value
+    ? '收起，恢复 5 行月视图'
+    : '展开，一屏显示当天全部场次'
+})
+
+function toggleExpanded(): void {
+  if (view.value === 'week') weekExpanded.value = !weekExpanded.value
+  else monthExpanded.value = !monthExpanded.value
+}
 
 const dayOpen = ref(false)
 const dayDate = ref('')
@@ -58,13 +96,20 @@ function rangeDay(value: string) {
 }
 
 const rangeText = computed(() => {
-  if (view.value === 'week' && weekRange.value) {
-    return rangeLabel(rangeDay(weekRange.value.start), rangeDay(weekRange.value.end))
-  }
-  return rangeLabel(
-    view.value === 'week' ? weekStart.value : monthStart.value,
-    view.value === 'week' ? weekEnd.value : monthEnd.value,
-  )
+  const isWeek = view.value === 'week'
+  const start = isWeek && weekRange.value
+    ? rangeDay(weekRange.value.start)
+    : isWeek
+      ? weekStart.value
+      : monthStart.value
+  const end = isWeek && weekRange.value
+    ? rangeDay(weekRange.value.end)
+    : isWeek
+      ? weekEnd.value
+      : monthEnd.value
+  // 移动端工具栏空间紧张，用紧凑日期格式，避免被截断成「2026年10…」
+  if (isMobile.value) return `${start.format('MM/DD')}–${end.format('MM/DD')}`
+  return rangeLabel(start, end)
 })
 
 function changeView(next: CalendarView): void {
@@ -75,8 +120,11 @@ function changeView(next: CalendarView): void {
   }
 }
 
-function shiftWeek(delta: number): void {
-  anchor.value = anchorDate.value.add(delta, 'week').format('YYYY-MM-DD')
+// 周视图左右按钮按「可见天数」翻页：展开后 4 天/2 天，折叠时仍是 7 天
+const weekPageDays = computed(() => (weekExpanded.value ? (isMobile.value ? 2 : 4) : 7))
+
+function shiftPage(delta: number): void {
+  anchor.value = anchorDate.value.add(delta * weekPageDays.value, 'day').format('YYYY-MM-DD')
   weekJumpSeq.value += 1
 }
 
@@ -159,19 +207,36 @@ onBeforeUnmount(() => {
       :class="{ 'show-selection': activeTab === 'selected', 'panel-closed': !panelOpen }"
     >
       <section class="calendar-pane">
-        <div class="calendar-toolbar">
+        <div class="calendar-toolbar" :class="{ 'has-halls': halls.length > 1 }">
           <span class="toolbar-range">{{ rangeText }}</span>
           <div class="toolbar-actions">
+            <el-select
+              v-if="halls.length > 1"
+              v-model="selectedHalls"
+              multiple
+              collapse-tags
+              clearable
+              size="small"
+              class="hall-filter"
+              placeholder="全部影厅"
+              :max-collapse-tags="1"
+              title="按影厅筛选"
+              aria-label="按影厅筛选"
+            >
+              <el-option v-for="hall in halls" :key="hall" :label="hall" :value="hall" />
+            </el-select>
+
             <el-button
               v-if="view === 'week'"
               circle
               size="small"
               class="week-nav"
-              aria-label="上一周"
-              @click="shiftWeek(-1)"
+              aria-label="上一页"
+              @click="shiftPage(-1)"
             >
               <el-icon><ArrowLeft /></el-icon>
             </el-button>
+
             <el-button size="small" class="today-btn" @click="goToday">
               <el-icon><Calendar /></el-icon>
               今天
@@ -181,11 +246,25 @@ onBeforeUnmount(() => {
               circle
               size="small"
               class="week-nav"
-              aria-label="下一周"
-              @click="shiftWeek(1)"
+              aria-label="下一页"
+              @click="shiftPage(1)"
             >
               <el-icon><ArrowRight /></el-icon>
             </el-button>
+
+            <el-tooltip :content="expandTip" placement="bottom" popper-class="header-tip">
+              <el-button
+                size="small"
+                class="expand-btn"
+                :class="{ active: expanded }"
+                :aria-pressed="expanded"
+                @click="toggleExpanded"
+              >
+                <span class="expand-icon" aria-hidden="true">{{ view === 'week' ? '↔' : '↕' }}</span>
+                <span class="expand-text">{{ expanded ? '收起' : '展开' }}</span>
+              </el-button>
+            </el-tooltip>
+
             <div class="segmented" role="group" aria-label="视图切换">
               <button
                 type="button"
@@ -210,6 +289,8 @@ onBeforeUnmount(() => {
           :config="config"
           :anchor="anchor"
           :jump-seq="weekJumpSeq"
+          :halls="selectedHalls"
+          :expanded="weekExpanded"
           @update:anchor="anchor = $event"
           @range-change="onWeekRange"
         />
@@ -217,6 +298,8 @@ onBeforeUnmount(() => {
           v-else
           :config="config"
           :anchor="anchor"
+          :halls="selectedHalls"
+          :expanded="monthExpanded"
           @open-day="openDay"
           @update:anchor="anchor = $event"
         />
@@ -229,6 +312,7 @@ onBeforeUnmount(() => {
       v-model="dayOpen"
       :date="dayDate"
       :config="config"
+      :halls="selectedHalls"
       @select="onDaySelect"
     />
   </div>
@@ -297,6 +381,36 @@ onBeforeUnmount(() => {
   margin-right: 4px;
 }
 
+.hall-filter {
+  width: 156px;
+}
+
+.hall-filter :deep(.el-select__wrapper) {
+  min-height: 24px;
+  font-size: 12px;
+}
+
+.expand-btn {
+  color: var(--ink-soft);
+}
+
+.expand-btn.active {
+  border-color: var(--red);
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.expand-icon {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.expand-text {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
 .segmented {
   display: flex;
   padding: 3px;
@@ -350,7 +464,22 @@ onBeforeUnmount(() => {
 
   .toolbar-range {
     flex: 1;
-    font-size: 12px;
+    font-size: 11px;
+  }
+
+  /* 多厅日历：日期范围单独一行，给影厅筛选留出宽度 */
+  .calendar-toolbar.has-halls {
+    flex-wrap: wrap;
+    row-gap: 5px;
+  }
+
+  .calendar-toolbar.has-halls .toolbar-range {
+    flex: 1 0 100%;
+  }
+
+  .calendar-toolbar.has-halls .toolbar-actions {
+    flex: 1 0 100%;
+    justify-content: flex-end;
   }
 
   .toolbar-actions {
@@ -364,6 +493,23 @@ onBeforeUnmount(() => {
   .today-btn {
     padding-right: 8px;
     padding-left: 8px;
+  }
+
+  .hall-filter {
+    width: 128px;
+  }
+
+  .expand-icon {
+    font-size: 14px;
+  }
+
+  .expand-text {
+    display: none;
+  }
+
+  .expand-btn {
+    padding-right: 7px;
+    padding-left: 7px;
   }
 
   .segmented {

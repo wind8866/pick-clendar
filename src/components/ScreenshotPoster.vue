@@ -295,7 +295,7 @@ defineExpose({ root })
 }
 
 .poster-gap.conflict .poster-gap-label {
-  color: var(--red);
+  color: var(--danger);
   font-weight: 700;
 }
 

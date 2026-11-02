@@ -1,0 +1,1095 @@
+{
+  "meta": {
+    "schemaVersion": 2,
+    "isDefault": false,
+    "id": "cfa202611",
+    "name": "中国电影资料馆",
+    "city": "北京",
+    "venue": "小西天艺术影院",
+    "venueAddress": "北京市海淀区小西天文慧园路3号",
+    "timeZone": "Asia/Shanghai",
+    "siteOrigin": "https://cal.wind8866.top",
+    "itemNoun": "场",
+    "defaultView": "month",
+    "theme": {
+      "background": "#E9E1D2",
+      "primary": "#2C4640",
+      "secondary": "#C09A5B"
+    },
+    "labels": {
+      "featured": "活动场",
+      "sameTitle": "同片场次"
+    },
+    "adjacency": {
+      "normalMinutes": 60,
+      "featuredMinutes": 120
+    },
+    "initialDate": "2026-10-29",
+    "updatedAt": "2026-11-02"
+  },
+  "events": [
+    {
+      "kind": "header",
+      "id": "cfa202611-header",
+      "title": "📅中国电影资料馆·小西天艺术影院排片日历",
+      "start": "2026-10-29T09:00:00+08:00",
+      "durationMinutes": 30,
+      "description": "中国电影资料馆 · 小西天艺术影院排片日历\n2026-10-29 – 2026-12-06\n\n数据来源：中国电影资料馆官方排片（cfa.json）\n纠错反馈：待补充"
+    },
+    {
+      "id": "cfa-15510",
+      "title": "关于无尽",
+      "start": "2026-10-29T18:30:00+08:00",
+      "durationMinutes": 76,
+      "description": "2019年 瑞典 德国 挪威 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2019
+    },
+    {
+      "id": "cfa-15509",
+      "title": "解构爱情狂",
+      "start": "2026-10-29T19:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "1997年 美国 喜剧 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1997
+    },
+    {
+      "id": "cfa-15530",
+      "title": "🎉杭州新浪潮短片集",
+      "start": "2026-10-30T18:30:00+08:00",
+      "durationMinutes": 69,
+      "description": "2016年 中国 短片 · 2号厅\n映后：交流",
+      "url": "",
+      "location": "2号厅",
+      "year": 2016,
+      "postScreening": true
+    },
+    {
+      "id": "cfa-15521",
+      "title": "幕间休息+沉睡的巴黎",
+      "start": "2026-10-30T19:00:00+08:00",
+      "durationMinutes": 22,
+      "description": "1924年 法国 短片 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1924
+    },
+    {
+      "id": "cfa-15511",
+      "title": "倒扣的王牌",
+      "start": "2026-10-31T11:00:00+08:00",
+      "durationMinutes": 111,
+      "description": "1951年 美国 剧情 黑色电影 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1951
+    },
+    {
+      "id": "cfa-15515",
+      "title": "东方红",
+      "start": "2026-10-31T13:00:00+08:00",
+      "durationMinutes": 120,
+      "description": "1965年 中国 剧情 歌舞 历史 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1965
+    },
+    {
+      "id": "cfa-15512",
+      "title": "战地军魂",
+      "start": "2026-10-31T13:40:00+08:00",
+      "durationMinutes": 120,
+      "description": "1953年 美国 剧情 喜剧 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1953
+    },
+    {
+      "id": "cfa-15522",
+      "title": "百代喜剧与奇幻系列短片集",
+      "start": "2026-10-31T15:30:00+08:00",
+      "durationMinutes": 70,
+      "description": "1904年 法国 短片 喜剧 奇幻 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1904
+    },
+    {
+      "id": "cfa-15513",
+      "title": "龙凤配",
+      "start": "2026-10-31T16:20:00+08:00",
+      "durationMinutes": 113,
+      "description": "1954年 美国 剧情 喜剧 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1954
+    },
+    {
+      "id": "cfa-15523",
+      "title": "悲惨世界",
+      "start": "2026-10-31T17:10:00+08:00",
+      "durationMinutes": 160,
+      "description": "1913年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1913
+    },
+    {
+      "id": "cfa-15514",
+      "title": "女巫布莱尔",
+      "start": "2026-10-31T19:00:00+08:00",
+      "durationMinutes": 81,
+      "description": "1999年 美国 悬疑 恐怖 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1999
+    },
+    {
+      "id": "cfa-15516",
+      "title": "黄昏之恋",
+      "start": "2026-11-01T11:00:00+08:00",
+      "durationMinutes": 130,
+      "description": "1957年 美国 剧情 喜剧 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15520",
+      "title": "四渡赤水",
+      "start": "2026-11-01T13:00:00+08:00",
+      "durationMinutes": 162,
+      "description": "1983年 中国 战争 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1983
+    },
+    {
+      "id": "cfa-15517",
+      "title": "热情如火",
+      "start": "2026-11-01T13:50:00+08:00",
+      "durationMinutes": 121,
+      "description": "1959年 美国 喜剧 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1959
+    },
+    {
+      "id": "cfa-15524",
+      "title": "短片集“女主角”",
+      "start": "2026-11-01T16:00:00+08:00",
+      "durationMinutes": 79,
+      "description": "1905年 法国 短片 喜剧 纪录片 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1905
+    },
+    {
+      "id": "cfa-15518",
+      "title": "桃色公寓",
+      "start": "2026-11-01T16:30:00+08:00",
+      "durationMinutes": 125,
+      "description": "1960年 美国 剧情 喜剧 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1960
+    },
+    {
+      "id": "cfa-15525",
+      "title": "纳博布+贝胡拉",
+      "start": "2026-11-01T17:50:00+08:00",
+      "durationMinutes": 55,
+      "description": "1913年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1913
+    },
+    {
+      "id": "cfa-15519",
+      "title": "飞来福",
+      "start": "2026-11-01T19:10:00+08:00",
+      "durationMinutes": 125,
+      "description": "1966年 美国 喜剧 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1966
+    },
+    {
+      "id": "cfa-15675",
+      "title": "特写",
+      "start": "2026-11-02T18:30:00+08:00",
+      "durationMinutes": 98,
+      "description": "1990年 伊朗 剧情 犯罪 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1990
+    },
+    {
+      "id": "cfa-15674",
+      "title": "洛可兄弟",
+      "start": "2026-11-02T19:00:00+08:00",
+      "durationMinutes": 179,
+      "description": "1960年 意大利 法国 剧情 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1960
+    },
+    {
+      "id": "cfa-15677",
+      "title": "帕特森",
+      "start": "2026-11-03T18:30:00+08:00",
+      "durationMinutes": 118,
+      "description": "2016年 德国 法国 美国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2016
+    },
+    {
+      "id": "cfa-15676",
+      "title": "天堂电影院",
+      "start": "2026-11-03T19:00:00+08:00",
+      "durationMinutes": 125,
+      "description": "1988年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1988
+    },
+    {
+      "id": "cfa-15679",
+      "title": "奇美拉",
+      "start": "2026-11-04T18:30:00+08:00",
+      "durationMinutes": 126,
+      "description": "2023年 意大利 法国 瑞士 爱情 奇幻 喜剧 冒险 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2023
+    },
+    {
+      "id": "cfa-15678",
+      "title": "热带雨",
+      "start": "2026-11-04T19:00:00+08:00",
+      "durationMinutes": 103,
+      "description": "2019年 中国台湾 新加坡 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2019
+    },
+    {
+      "id": "cfa-15680",
+      "title": "鸟类变形记",
+      "start": "2026-11-05T18:30:00+08:00",
+      "durationMinutes": 101,
+      "description": "2020年 葡萄牙 剧情 传记 纪录片 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2020
+    },
+    {
+      "id": "cfa-15756",
+      "title": "🎉金童",
+      "start": "2026-11-05T19:00:00+08:00",
+      "durationMinutes": 156,
+      "description": "2026年 英国 舞台剧 · 1号厅\n映后：交流",
+      "url": "",
+      "location": "1号厅",
+      "year": 2026,
+      "postScreening": true
+    },
+    {
+      "id": "cfa-15728",
+      "title": "高楼边",
+      "start": "2026-11-06T18:30:00+08:00",
+      "durationMinutes": 98,
+      "description": "1993年 中国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1993
+    },
+    {
+      "id": "cfa-15506",
+      "title": "离开拉斯维加斯",
+      "start": "2026-11-06T19:00:00+08:00",
+      "durationMinutes": 111,
+      "description": "1995年 美国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1995
+    },
+    {
+      "id": "cfa-15502",
+      "title": "爵士春秋",
+      "start": "2026-11-07T11:00:00+08:00",
+      "durationMinutes": 123,
+      "description": "1979年 美国 剧情 喜剧 音乐 歌舞 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1979
+    },
+    {
+      "id": "cfa-15682",
+      "title": "刘三姐",
+      "start": "2026-11-07T13:10:00+08:00",
+      "durationMinutes": 112,
+      "description": "1960年 中国 剧情 戏曲 音乐 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1960
+    },
+    {
+      "id": "cfa-15503",
+      "title": "低俗小说",
+      "start": "2026-11-07T13:40:00+08:00",
+      "durationMinutes": 154,
+      "description": "1994年 美国 剧情 喜剧 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1994
+    },
+    {
+      "id": "cfa-15526",
+      "title": "罪人",
+      "start": "2026-11-07T15:30:00+08:00",
+      "durationMinutes": 88,
+      "description": "1917年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1917
+    },
+    {
+      "id": "cfa-15504",
+      "title": "出租车司机",
+      "start": "2026-11-07T17:00:00+08:00",
+      "durationMinutes": 114,
+      "description": "1976年 美国 剧情 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1976
+    },
+    {
+      "id": "cfa-15527",
+      "title": "海上劳工",
+      "start": "2026-11-07T17:30:00+08:00",
+      "durationMinutes": 92,
+      "description": "1918年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1918
+    },
+    {
+      "id": "cfa-15505",
+      "title": "亡命驾驶",
+      "start": "2026-11-07T19:30:00+08:00",
+      "durationMinutes": 100,
+      "description": "2011年 美国 剧情 动作 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2011
+    },
+    {
+      "id": "cfa-15498",
+      "title": "生活多美好",
+      "start": "2026-11-08T11:00:00+08:00",
+      "durationMinutes": 130,
+      "description": "1946年 美国 剧情 爱情 奇幻 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1946
+    },
+    {
+      "id": "cfa-15683",
+      "title": "乘龙快婿",
+      "start": "2026-11-08T13:30:00+08:00",
+      "durationMinutes": 85,
+      "description": "1947年 中国 喜剧 爱情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1947
+    },
+    {
+      "id": "cfa-15499",
+      "title": "安妮·霍尔",
+      "start": "2026-11-08T13:50:00+08:00",
+      "durationMinutes": 94,
+      "description": "1977年 美国 剧情 喜剧 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1977
+    },
+    {
+      "id": "cfa-15528",
+      "title": "阿莱城姑娘",
+      "start": "2026-11-08T15:30:00+08:00",
+      "durationMinutes": 102,
+      "description": "1922年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1922
+    },
+    {
+      "id": "cfa-15500",
+      "title": "黄金三镖客",
+      "start": "2026-11-08T16:00:00+08:00",
+      "durationMinutes": 179,
+      "description": "1966年 意大利 西班牙 西德 西部 冒险 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1966
+    },
+    {
+      "id": "cfa-15529",
+      "title": "女人与玩偶",
+      "start": "2026-11-08T17:40:00+08:00",
+      "durationMinutes": 115,
+      "description": "1929年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1929
+    },
+    {
+      "id": "cfa-15501",
+      "title": "老无所依",
+      "start": "2026-11-08T19:30:00+08:00",
+      "durationMinutes": 122,
+      "description": "2007年 美国 剧情 惊悚 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2007
+    },
+    {
+      "id": "cfa-15685",
+      "title": "审判",
+      "start": "2026-11-10T18:30:00+08:00",
+      "durationMinutes": 119,
+      "description": "1962年 法国 意大利 西德 剧情 悬疑 惊悚 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1962
+    },
+    {
+      "id": "cfa-15684",
+      "title": "坠落的审判",
+      "start": "2026-11-10T19:00:00+08:00",
+      "durationMinutes": 151,
+      "description": "2023年 法国 剧情 家庭 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2023
+    },
+    {
+      "id": "cfa-15687",
+      "title": "茜茜公主",
+      "start": "2026-11-11T18:30:00+08:00",
+      "durationMinutes": 101,
+      "description": "1955年 奥地利 剧情 爱情 历史 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1955
+    },
+    {
+      "id": "cfa-15686",
+      "title": "翠湖",
+      "start": "2026-11-11T19:00:00+08:00",
+      "durationMinutes": 120,
+      "description": "2026年 中国 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2026
+    },
+    {
+      "id": "cfa-15689",
+      "title": "茜茜公主2：年轻的皇后",
+      "start": "2026-11-12T18:30:00+08:00",
+      "durationMinutes": 101,
+      "description": "1956年 奥地利 剧情 爱情 历史 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1956
+    },
+    {
+      "id": "cfa-15688",
+      "title": "旅行",
+      "start": "2026-11-12T19:00:00+08:00",
+      "durationMinutes": 136,
+      "description": "1992年 阿根廷 法国 德国 意大利 墨西哥 西班牙 英国 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1992
+    },
+    {
+      "id": "cfa-15691",
+      "title": "茜茜公主3：皇后的命运",
+      "start": "2026-11-13T18:30:00+08:00",
+      "durationMinutes": 104,
+      "description": "1957年 奥地利 剧情 爱情 历史 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15690",
+      "title": "🎉灰烬与钻石",
+      "start": "2026-11-13T19:00:00+08:00",
+      "durationMinutes": 103,
+      "description": "1958年 波兰 剧情 战争 · 1号厅\n映前：开幕式 映后：交流",
+      "url": "",
+      "location": "1号厅",
+      "year": 1958,
+      "postScreening": true
+    },
+    {
+      "id": "cfa-15692",
+      "title": "一切可售",
+      "start": "2026-11-14T10:30:00+08:00",
+      "durationMinutes": 105,
+      "description": "1969年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1969
+    },
+    {
+      "id": "cfa-15693",
+      "title": "一代人",
+      "start": "2026-11-14T13:00:00+08:00",
+      "durationMinutes": 87,
+      "description": "1955年 波兰 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1955
+    },
+    {
+      "id": "cfa-15697",
+      "title": "草原上的人们",
+      "start": "2026-11-14T13:10:00+08:00",
+      "durationMinutes": 92,
+      "description": "1953年 中国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1953
+    },
+    {
+      "id": "cfa-15694",
+      "title": "下水道",
+      "start": "2026-11-14T15:00:00+08:00",
+      "durationMinutes": 91,
+      "description": "1957年 波兰 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15695",
+      "title": "无罪的巫师",
+      "start": "2026-11-14T17:10:00+08:00",
+      "durationMinutes": 87,
+      "description": "1960年 波兰 剧情 爱情 音乐 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1960
+    },
+    {
+      "id": "cfa-15696",
+      "title": "边境杀手",
+      "start": "2026-11-14T19:10:00+08:00",
+      "durationMinutes": 121,
+      "description": "2015年 美国 墨西哥 中国香港 剧情 惊悚 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2015
+    },
+    {
+      "id": "cfa-15698",
+      "title": "福地",
+      "start": "2026-11-15T10:30:00+08:00",
+      "durationMinutes": 170,
+      "description": "1975年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1975
+    },
+    {
+      "id": "cfa-15702",
+      "title": "一江春水向东流",
+      "start": "2026-11-15T13:30:00+08:00",
+      "durationMinutes": 185,
+      "description": "1947年 中国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1947
+    },
+    {
+      "id": "cfa-15699",
+      "title": "大理石人",
+      "start": "2026-11-15T13:50:00+08:00",
+      "durationMinutes": 165,
+      "description": "1977年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1977
+    },
+    {
+      "id": "cfa-15700",
+      "title": "不求麻醉药",
+      "start": "2026-11-15T17:10:00+08:00",
+      "durationMinutes": 131,
+      "description": "1978年 波兰 法国 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1978
+    },
+    {
+      "id": "cfa-15701",
+      "title": "乐团指挥",
+      "start": "2026-11-15T20:00:00+08:00",
+      "durationMinutes": 101,
+      "description": "1980年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1980
+    },
+    {
+      "id": "cfa-15704",
+      "title": "两小无猜",
+      "start": "2026-11-17T18:30:00+08:00",
+      "durationMinutes": 94,
+      "description": "2003年 法国 比利时 剧情 喜剧 爱情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2003
+    },
+    {
+      "id": "cfa-15703",
+      "title": "丹东",
+      "start": "2026-11-17T19:00:00+08:00",
+      "durationMinutes": 136,
+      "description": "1983年 法国 波兰 剧情 传记 历史 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1983
+    },
+    {
+      "id": "cfa-15706",
+      "title": "惩罚",
+      "start": "2026-11-18T18:30:00+08:00",
+      "durationMinutes": 86,
+      "description": "2022年 阿根廷 智利 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2022
+    },
+    {
+      "id": "cfa-15729",
+      "title": "钢的琴",
+      "start": "2026-11-18T19:00:00+08:00",
+      "durationMinutes": 106,
+      "description": "2010年 中国 剧情 喜剧 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2010
+    },
+    {
+      "id": "cfa-15708",
+      "title": "天涯沦落女",
+      "start": "2026-11-19T18:30:00+08:00",
+      "durationMinutes": 106,
+      "description": "1985年 法国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1985
+    },
+    {
+      "id": "cfa-15707",
+      "title": "科扎克医生",
+      "start": "2026-11-19T19:00:00+08:00",
+      "durationMinutes": 118,
+      "description": "1990年 波兰 德国 英国 剧情 传记 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1990
+    },
+    {
+      "id": "cfa-15710",
+      "title": "南特的雅克·德米",
+      "start": "2026-11-20T18:30:00+08:00",
+      "durationMinutes": 120,
+      "description": "1991年 法国 剧情 传记 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1991
+    },
+    {
+      "id": "cfa-15709",
+      "title": "🎉残影余像",
+      "start": "2026-11-20T19:00:00+08:00",
+      "durationMinutes": 98,
+      "description": "2016年 波兰 剧情 传记 历史 · 1号厅\n映后：讲座",
+      "url": "",
+      "location": "1号厅",
+      "year": 2016,
+      "postScreening": true
+    },
+    {
+      "id": "cfa-15711",
+      "title": "一代人",
+      "start": "2026-11-21T10:30:00+08:00",
+      "durationMinutes": 87,
+      "description": "1955年 波兰 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1955
+    },
+    {
+      "id": "cfa-15712",
+      "title": "下水道",
+      "start": "2026-11-21T12:30:00+08:00",
+      "durationMinutes": 91,
+      "description": "1957年 波兰 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15716",
+      "title": "芦笙恋歌",
+      "start": "2026-11-21T13:00:00+08:00",
+      "durationMinutes": 95,
+      "description": "1957年 中国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15713",
+      "title": "灰烬与钻石",
+      "start": "2026-11-21T14:40:00+08:00",
+      "durationMinutes": 103,
+      "description": "1958年 波兰 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1958
+    },
+    {
+      "id": "cfa-15717",
+      "title": "101夜",
+      "start": "2026-11-21T15:00:00+08:00",
+      "durationMinutes": 105,
+      "description": "1995年 英国 法国 喜剧 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1995
+    },
+    {
+      "id": "cfa-15714",
+      "title": "一切可售",
+      "start": "2026-11-21T17:00:00+08:00",
+      "durationMinutes": 105,
+      "description": "1969年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1969
+    },
+    {
+      "id": "cfa-15715",
+      "title": "焦土之城",
+      "start": "2026-11-21T19:30:00+08:00",
+      "durationMinutes": 131,
+      "description": "2010年 加拿大 法国 剧情 悬疑 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2010
+    },
+    {
+      "id": "cfa-15718",
+      "title": "丹东",
+      "start": "2026-11-22T10:30:00+08:00",
+      "durationMinutes": 136,
+      "description": "1983年 法国 波兰 剧情 传记 历史 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1983
+    },
+    {
+      "id": "cfa-15722",
+      "title": "新闺怨",
+      "start": "2026-11-22T13:00:00+08:00",
+      "durationMinutes": 105,
+      "description": "1948年 中国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1948
+    },
+    {
+      "id": "cfa-15719",
+      "title": "福地",
+      "start": "2026-11-22T13:20:00+08:00",
+      "durationMinutes": 170,
+      "description": "1975年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1975
+    },
+    {
+      "id": "cfa-15723",
+      "title": "拾穗者",
+      "start": "2026-11-22T15:10:00+08:00",
+      "durationMinutes": 82,
+      "description": "2000年 法国 纪录片 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2000
+    },
+    {
+      "id": "cfa-15720",
+      "title": "大理石人",
+      "start": "2026-11-22T16:40:00+08:00",
+      "durationMinutes": 165,
+      "description": "1977年 波兰 剧情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1977
+    },
+    {
+      "id": "cfa-15721",
+      "title": "边境杀手",
+      "start": "2026-11-22T20:00:00+08:00",
+      "durationMinutes": 121,
+      "description": "2015年 美国 墨西哥 中国香港 剧情 惊悚 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2015
+    },
+    {
+      "id": "cfa-15725",
+      "title": "野兽",
+      "start": "2026-11-24T18:30:00+08:00",
+      "durationMinutes": 146,
+      "description": "2023年 法国 加拿大 剧情 爱情 科幻 惊悚 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 2023
+    },
+    {
+      "id": "cfa-15853",
+      "title": "还有明天",
+      "start": "2026-11-24T19:00:00+08:00",
+      "durationMinutes": 119,
+      "description": "2023年 意大利 剧情 喜剧 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2023
+    },
+    {
+      "id": "cfa-15727",
+      "title": "侏儒流氓",
+      "start": "2026-11-25T18:30:00+08:00",
+      "durationMinutes": 96,
+      "description": "1971年 西德 剧情 喜剧 恐怖 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1971
+    },
+    {
+      "id": "cfa-15726",
+      "title": "🎉天伦",
+      "start": "2026-11-25T19:00:00+08:00",
+      "durationMinutes": 48,
+      "description": "1935年 中国 剧情 家庭 · 1号厅\n映前：导赏",
+      "url": "",
+      "location": "1号厅",
+      "year": 1935,
+      "postScreening": true
+    },
+    {
+      "id": "cfa-15731",
+      "title": "我的魔鬼",
+      "start": "2026-11-26T18:30:00+08:00",
+      "durationMinutes": 99,
+      "description": "1999年 英国 德国 芬兰 美国 纪录片 传记 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1999
+    },
+    {
+      "id": "cfa-15732",
+      "title": "战国妖姬",
+      "start": "2026-11-27T19:00:00+08:00",
+      "durationMinutes": 123,
+      "description": "1954年 意大利 剧情 爱情 历史 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1954
+    },
+    {
+      "id": "cfa-15734",
+      "title": "电动维纳斯",
+      "start": "2026-11-28T11:00:00+08:00",
+      "durationMinutes": 122,
+      "description": "2026年 法国 喜剧 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 2026
+    },
+    {
+      "id": "cfa-15738",
+      "title": "冰山上的来客",
+      "start": "2026-11-28T13:00:00+08:00",
+      "durationMinutes": 106,
+      "description": "1963年 中国 剧情 战争 悬疑 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1963
+    },
+    {
+      "id": "cfa-15735",
+      "title": "白夜",
+      "start": "2026-11-28T13:40:00+08:00",
+      "durationMinutes": 102,
+      "description": "1957年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15736",
+      "title": "北斗七星",
+      "start": "2026-11-28T16:00:00+08:00",
+      "durationMinutes": 101,
+      "description": "1965年 意大利 法国 剧情 悬疑 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1965
+    },
+    {
+      "id": "cfa-15737",
+      "title": "纳粹狂魔",
+      "start": "2026-11-28T18:30:00+08:00",
+      "durationMinutes": 158,
+      "description": "1969年 意大利 西德 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1969
+    },
+    {
+      "id": "cfa-15741",
+      "title": "法外之徒",
+      "start": "2026-11-29T10:15:00+08:00",
+      "durationMinutes": 95,
+      "description": "1964年 法国 剧情 犯罪 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1964
+    },
+    {
+      "id": "cfa-15742",
+      "title": "路德维希",
+      "start": "2026-11-29T12:30:00+08:00",
+      "durationMinutes": 239,
+      "description": "1973年 意大利 法国 西德 剧情 传记 历史 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1973
+    },
+    {
+      "id": "cfa-15745",
+      "title": "为了和平",
+      "start": "2026-11-29T12:40:00+08:00",
+      "durationMinutes": 111,
+      "description": "1956年 中国 剧情 · 2号厅",
+      "url": "",
+      "location": "2号厅",
+      "year": 1956
+    },
+    {
+      "id": "cfa-15743",
+      "title": "家族的肖像",
+      "start": "2026-11-29T17:10:00+08:00",
+      "durationMinutes": 122,
+      "description": "1974年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1974
+    },
+    {
+      "id": "cfa-15744",
+      "title": "无辜",
+      "start": "2026-11-29T19:40:00+08:00",
+      "durationMinutes": 129,
+      "description": "1976年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1976
+    },
+    {
+      "id": "cfa-15748",
+      "title": "战国妖姬",
+      "start": "2026-12-05T11:00:00+08:00",
+      "durationMinutes": 123,
+      "description": "1954年 意大利 剧情 爱情 历史 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1954
+    },
+    {
+      "id": "cfa-15749",
+      "title": "白夜",
+      "start": "2026-12-05T13:40:00+08:00",
+      "durationMinutes": 102,
+      "description": "1957年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1957
+    },
+    {
+      "id": "cfa-15750",
+      "title": "北斗七星",
+      "start": "2026-12-05T16:00:00+08:00",
+      "durationMinutes": 101,
+      "description": "1965年 意大利 法国 剧情 悬疑 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1965
+    },
+    {
+      "id": "cfa-15751",
+      "title": "纳粹狂魔",
+      "start": "2026-12-05T18:30:00+08:00",
+      "durationMinutes": 158,
+      "description": "1969年 意大利 西德 剧情 战争 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1969
+    },
+    {
+      "id": "cfa-15752",
+      "title": "路德维希",
+      "start": "2026-12-06T13:00:00+08:00",
+      "durationMinutes": 239,
+      "description": "1973年 意大利 法国 西德 剧情 传记 历史 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1973
+    },
+    {
+      "id": "cfa-15753",
+      "title": "家族的肖像",
+      "start": "2026-12-06T17:30:00+08:00",
+      "durationMinutes": 122,
+      "description": "1974年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1974
+    },
+    {
+      "id": "cfa-15754",
+      "title": "无辜",
+      "start": "2026-12-06T20:00:00+08:00",
+      "durationMinutes": 129,
+      "description": "1976年 意大利 法国 剧情 爱情 · 1号厅",
+      "url": "",
+      "location": "1号厅",
+      "year": 1976
+    }
+  ]
+}

@@ -8,6 +8,8 @@ const props = defineProps<{
   modelValue: boolean
   date: string
   config: FestivalConfig
+  /** 影厅筛选，空数组表示全部 */
+  halls?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -18,11 +20,18 @@ const emit = defineEmits<{
 const store = useSelectionStore()
 
 const day = computed(() => (props.date ? dateInZone(props.date, props.config.timeZone) : null))
+
+function matchesHall(event: FestivalEvent): boolean {
+  if (!props.halls?.length) return true
+  return !event.location || props.halls.includes(event.location)
+}
+
 const events = computed(() =>
   props.config.events
     .filter(
       (event) =>
         event.kind !== 'header' &&
+        matchesHall(event) &&
         toDateKey(event.start, props.config.timeZone) === props.date,
     )
     .sort((a, b) => compareStart(a.start, b.start)),
@@ -59,8 +68,11 @@ function pickDay(event: FestivalEvent): void {
         @click="pickDay(event)"
       >
         <span class="day-time">
-          {{ hm(zoned(event.start, config.timeZone)) }} –
-          {{ hm(eventEnd(event.start, event.durationMinutes, config.timeZone)) }}
+          <span>
+            {{ hm(zoned(event.start, config.timeZone)) }} –
+            {{ hm(eventEnd(event.start, event.durationMinutes, config.timeZone)) }}
+          </span>
+          <span v-if="event.location" class="day-hall">{{ event.location }}</span>
         </span>
         <span class="day-title">{{ store.displayTitle(event) }}</span>
         <span class="day-action">
@@ -126,9 +138,17 @@ function pickDay(event: FestivalEvent): void {
 }
 
 .day-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   color: var(--red);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
+}
+
+.day-hall {
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .day-title {

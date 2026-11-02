@@ -886,7 +886,7 @@ async function clearAll(): Promise<void> {
 }
 
 .gap.conflict .gap-label {
-  color: var(--red);
+  color: var(--danger);
   font-weight: 700;
 }
 

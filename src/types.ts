@@ -20,6 +20,8 @@ export interface FestivalEvent {
   description: string
   /** 周视图专属补充说明，可选 */
   weekDesc?: string
+  /** 影厅 / 场地（同一影院多厅排片时用于筛选与展示） */
+  location?: string
   director?: string
   year?: number
   language?: string
@@ -64,6 +66,8 @@ export interface FestivalConfig {
   shareUrl?: string
   itemNoun: string
   updatedAt?: string
+  /** 默认视图；缺省时桌面用月视图、移动端用周视图 */
+  defaultView?: CalendarView
   theme?: FestivalTheme
   labels?: FestivalLabels
   adjacency?: FestivalAdjacency

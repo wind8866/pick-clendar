@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Dayjs } from 'dayjs'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
 import { useIsMobile } from '@/composables/useIsMobile'
+import { computeLanePlacements } from '@/utils/lanes'
 import {
   compareStart,
   dateInZone,
@@ -23,6 +25,10 @@ const props = defineProps<{
   anchor: string
   /** 由「今天 / 上一周 / 下一周」触发的跳转序号，避免与自由滚动的锚点回传互相干扰 */
   jumpSeq?: number
+  /** 影厅筛选，空数组表示全部 */
+  halls?: string[]
+  /** 横向展开：桌面 4 天 / 移动端 2 天，标题不换行 */
+  expanded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -38,9 +44,9 @@ const scrollEl = ref<HTMLElement | null>(null)
 // 横向日历渲染足够长的连续日期，用户可自由左右滑动并停在任意位置
 const WEEKS_BEFORE = 12
 const WEEKS_AFTER = 12
-const VISIBLE_DAYS = 7
 const DAY_COUNT = (WEEKS_BEFORE + 1 + WEEKS_AFTER) * 7
 
+const visibleDays = computed(() => (props.expanded ? (isMobile.value ? 2 : 4) : 7))
 const axisWidth = computed(() => (isMobile.value ? 42 : 58))
 const dayWidth = ref(50)
 
@@ -124,10 +130,15 @@ const hours = computed(() =>
   Array.from({ length: endHour.value - startHour.value + 1 }, (_, index) => startHour.value + index),
 )
 
+function matchesHall(event: FestivalEvent): boolean {
+  if (!props.halls?.length) return true
+  return !event.location || props.halls.includes(event.location)
+}
+
 const eventsByDate = computed(() => {
   const map = new Map<string, FestivalEvent[]>()
   for (const event of props.config.events) {
-    if (event.kind === 'header') continue
+    if (event.kind === 'header' || !matchesHall(event)) continue
     const key = toDateKey(event.start, props.config.timeZone)
     const bucket = map.get(key)
     if (bucket) bucket.push(event)
@@ -135,6 +146,15 @@ const eventsByDate = computed(() => {
   }
   for (const bucket of map.values()) bucket.sort((a, b) => compareStart(a.start, b.start))
   return map
+})
+
+/** 多厅/多场次同时放映时按重叠关系并排显示，互不遮挡 */
+const placementsByDate = computed(() => {
+  const result = new Map<string, ReturnType<typeof computeLanePlacements>>()
+  for (const [date, events] of eventsByDate.value) {
+    result.set(date, computeLanePlacements(events))
+  }
+  return result
 })
 
 function eventsFor(day: Dayjs): FestivalEvent[] {
@@ -149,8 +169,9 @@ function endText(event: FestivalEvent): string {
   return hm(zoned(event.start, props.config.timeZone).add(event.durationMinutes, 'minute'))
 }
 
-function directorYear(event: FestivalEvent): string {
+function eventSub(event: FestivalEvent): string {
   const parts: string[] = []
+  if (event.location) parts.push(event.location)
   if (event.director) parts.push(event.director)
   if (event.year !== undefined) parts.push(String(event.year))
   return parts.join(' · ')
@@ -165,18 +186,35 @@ function positionStyle(event: FestivalEvent): Record<string, string> {
   if (visibleEnd <= visibleStart) return { display: 'none' }
   const top = ((visibleStart - dayStartMin.value) / totalMinutes.value) * 100
   const height = ((visibleEnd - visibleStart) / totalMinutes.value) * 100
-  return {
+  const style: Record<string, string> = {
     top: `${top}%`,
     height: `${Math.max(height, 2.5)}%`,
   }
+
+  const placement = placementsByDate.value
+    .get(toDateKey(event.start, props.config.timeZone))
+    ?.get(event.id)
+  if (placement && placement.lanes > 1) {
+    const width = 100 / placement.lanes
+    style.left = `calc(${placement.lane * width}% + 2px)`
+    style.width = `calc(${width}% - 4px)`
+    style.right = 'auto'
+  }
+
+  return style
 }
 
 function computeDayWidth(el: HTMLElement): number {
-  return Math.max(24, (el.clientWidth - axisWidth.value) / VISIBLE_DAYS)
+  return Math.max(24, (el.clientWidth - axisWidth.value) / visibleDays.value)
+}
+
+/** 折叠时对齐到周一；展开时对齐到 anchor 当天，配合按页翻页 */
+function alignDate(value: string): Dayjs {
+  return props.expanded ? dateInZone(value, props.config.timeZone) : weekStartOf(value)
 }
 
 function anchorIndexFor(value: string): number {
-  const key = weekStartOf(value).format('YYYY-MM-DD')
+  const key = alignDate(value).format('YYYY-MM-DD')
   const index = days.value.findIndex((day) => day.format('YYYY-MM-DD') === key)
   return index < 0 ? 0 : index
 }
@@ -217,8 +255,8 @@ function updateVisible(): void {
     })
   }
 
-  // 锚点取第一列完整可见日期所在周的周一，与周切换的语义保持一致
-  const anchorKey = startOfWeek(anchorDay).format('YYYY-MM-DD')
+  // 折叠时上报所在周的周一；展开时上报第一列完整可见日期，按页翻页更直观
+  const anchorKey = (props.expanded ? anchorDay : startOfWeek(anchorDay)).format('YYYY-MM-DD')
   if (anchorKey !== lastAnchorKey) {
     lastAnchorKey = anchorKey
     emit('update:anchor', anchorKey)
@@ -278,7 +316,7 @@ function rebuildRange(target: Dayjs): void {
 }
 
 function scrollToAnchor(value: string): void {
-  const target = weekStartOf(value)
+  const target = alignDate(value)
   const targetKey = target.format('YYYY-MM-DD')
   const index = days.value.findIndex((day) => day.format('YYYY-MM-DD') === targetKey)
   if (index < 0) {
@@ -295,6 +333,22 @@ watch(
     scrollToAnchor(props.anchor)
   },
 )
+
+// 展开/收起后列宽变化，保持左侧日期不跳
+watch(visibleDays, () => {
+  if (!ready) return
+  nextTick(onResize)
+})
+
+/** 展开态下按可见天数左右翻页 */
+function pageDays(direction: number): void {
+  const el = scrollEl.value
+  if (!el) return
+  el.scrollBy({
+    left: direction * dayWidth.value * visibleDays.value,
+    behavior: 'smooth',
+  })
+}
 
 function onEnter(mouse: MouseEvent, event: FestivalEvent): void {
   if (isMobile.value) return
@@ -392,7 +446,7 @@ function hourTop(hour: number): string {
 </script>
 
 <template>
-  <div class="week-shell">
+  <div class="week-shell" :class="{ expanded }" :style="{ '--axis-w': `${axisWidth}px` }">
     <div ref="scrollEl" class="week-scroll" @scroll="onScroll">
       <div
         class="week-inner"
@@ -471,7 +525,7 @@ function hourTop(hour: number): string {
                     {{ startText(event) }}<span class="event-time-end"> – {{ endText(event) }}</span>
                   </span>
                   <span class="event-title">{{ store.displayTitle(event) }}</span>
-                  <span v-if="directorYear(event)" class="event-sub">{{ directorYear(event) }}</span>
+                  <span v-if="eventSub(event)" class="event-sub">{{ eventSub(event) }}</span>
                 </button>
               </div>
             </div>
@@ -479,6 +533,25 @@ function hourTop(hour: number): string {
         </div>
       </div>
     </div>
+
+    <template v-if="expanded">
+      <button
+        type="button"
+        class="week-page week-page-prev"
+        aria-label="向前翻"
+        @click="pageDays(-1)"
+      >
+        <el-icon><ArrowLeft /></el-icon>
+      </button>
+      <button
+        type="button"
+        class="week-page week-page-next"
+        aria-label="向后翻"
+        @click="pageDays(1)"
+      >
+        <el-icon><ArrowRight /></el-icon>
+      </button>
+    </template>
 
     <div v-if="isMobile && showSwipeHint" class="swipe-hint" aria-hidden="true">
       ← 左右滑动查看 →
@@ -514,6 +587,42 @@ function hourTop(hour: number): string {
   flex: 1;
   min-height: 0;
   flex-direction: column;
+}
+
+.week-page {
+  position: absolute;
+  top: 50%;
+  z-index: 8;
+  display: grid;
+  width: 20px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper-strong);
+  box-shadow: var(--shadow);
+  color: var(--ink-soft);
+  cursor: pointer;
+  place-items: center;
+  transform: translateY(-50%);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.week-page:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.week-page-prev {
+  left: calc(var(--axis-w) + 2px);
+}
+
+.week-page-next {
+  right: 2px;
+}
+
+/* 展开态下标题不换行，尽量完整显示 */
+.week-shell.expanded .event-title {
+  white-space: nowrap;
 }
 
 .week-scroll {
@@ -827,6 +936,11 @@ function hourTop(hour: number): string {
     min-height: 28px;
     padding: 3px 4px;
     border-left-width: 0;
+  }
+
+  .week-page {
+    width: 18px;
+    height: 32px;
   }
 
   .event-time {

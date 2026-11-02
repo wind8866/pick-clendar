@@ -20,6 +20,10 @@ import EventHoverCard from '@/components/EventHoverCard.vue'
 const props = defineProps<{
   config: FestivalConfig
   anchor: string
+  /** 影厅筛选，空数组表示全部 */
+  halls?: string[]
+  /** 纵向展开：每行高度按当天最多场次撑开，显示全部日程 */
+  expanded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -42,6 +46,8 @@ const {
 
 const scrollEl = ref<HTMLElement | null>(null)
 const rowHeight = ref(120)
+// 5 行铺满时的基准行高，展开时作为最小行高
+const baseRowHeight = ref(120)
 const weeks = ref<WeekRow[]>([])
 const topWeekKey = ref('')
 const rangeStart = ref<Dayjs | null>(null)
@@ -87,10 +93,15 @@ function resetRange(anchor: Dayjs): void {
   rangeStart.value = start
 }
 
+function matchesHall(event: FestivalEvent): boolean {
+  if (!props.halls?.length) return true
+  return !event.location || props.halls.includes(event.location)
+}
+
 const eventsByDate = computed(() => {
   const map = new Map<string, FestivalEvent[]>()
   for (const event of props.config.events) {
-    if (event.kind === 'header') continue
+    if (event.kind === 'header' || !matchesHall(event)) continue
     const key = toDateKey(event.start, props.config.timeZone)
     const bucket = map.get(key)
     if (bucket) bucket.push(event)
@@ -164,11 +175,40 @@ function applyRowHeight(next: number): void {
   })
 }
 
+const maxEventsPerDay = computed(() => {
+  let max = 0
+  for (const bucket of eventsByDate.value.values()) {
+    max = Math.max(max, bucket.length)
+  }
+  return max
+})
+
+// 展开：每行至少保持原来的 5 行高度，有更多场次时继续撑高
+const expandedRowHeight = computed(() =>
+  Math.max(baseRowHeight.value, CELL_OVERHEAD + maxEventsPerDay.value * chipHeight.value + 4),
+)
+
 function measure(): void {
   const el = scrollEl.value
   if (!el) return
-  applyRowHeight(el.clientHeight / 5)
+  baseRowHeight.value = el.clientHeight / 5
+  applyRowHeight(props.expanded ? expandedRowHeight.value : baseRowHeight.value)
 }
+
+watch(
+  () => props.expanded,
+  () => {
+    nextTick(() => {
+      if (props.expanded) applyRowHeight(expandedRowHeight.value)
+      else measure()
+    })
+  },
+)
+
+// 筛选影厅后最大场次数会变，展开态需要跟着调整行高
+watch(expandedRowHeight, () => {
+  if (props.expanded) applyRowHeight(expandedRowHeight.value)
+})
 
 function prependWeeks(): void {
   if (extending || !rangeStart.value) return

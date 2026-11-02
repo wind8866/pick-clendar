@@ -52,8 +52,10 @@ function eventId(start) {
 
 function normalizeEvent(event) {
   const { title, titlePrefix } = splitPrefix(event.title)
+  const explicitId = event.id === undefined ? '' : String(event.id).trim()
   const normalized = {
-    id: eventId(event.start),
+    // 优先用数据源自带 id（如票务场次 id）：改期也不会丢失本地已选
+    id: explicitId || eventId(event.start),
     title,
     start: event.start,
     durationMinutes: event.durationMinutes,
@@ -67,6 +69,7 @@ function normalizeEvent(event) {
   if (event.rating !== undefined) normalized.rating = event.rating
   if (event.ratingCount !== undefined) normalized.ratingCount = event.ratingCount
   if (event.weekDesc) normalized.weekDesc = event.weekDesc
+  if (event.location) normalized.location = event.location
   if (event.postScreening) normalized.postScreening = true
   if (event.kind) normalized.kind = event.kind
   return normalized
