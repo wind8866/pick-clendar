@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
-import { eventEnd, hm, weekdayLabel, zoned } from '@/utils/time'
+import { compareStart, dateInZone, eventEnd, hm, toDateKey, weekdayLabel, zoned } from '@/utils/time'
 
 const props = defineProps<{
   modelValue: boolean
@@ -17,11 +17,15 @@ const emit = defineEmits<{
 
 const store = useSelectionStore()
 
-const day = computed(() => (props.date ? zoned(`${props.date}T12:00:00+08:00`, props.config.timeZone) : null))
+const day = computed(() => (props.date ? dateInZone(props.date, props.config.timeZone) : null))
 const events = computed(() =>
   props.config.events
-    .filter((event) => event.kind !== 'header' && event.start.slice(0, 10) === props.date)
-    .sort((a, b) => a.start.localeCompare(b.start)),
+    .filter(
+      (event) =>
+        event.kind !== 'header' &&
+        toDateKey(event.start, props.config.timeZone) === props.date,
+    )
+    .sort((a, b) => compareStart(a.start, b.start)),
 )
 
 function pickDay(event: FestivalEvent): void {

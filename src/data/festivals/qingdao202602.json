@@ -8,14 +8,17 @@
   "venueAddress": "青岛市市南区香港中路 31 号银座商城 5 楼",
   "timeZone": "Asia/Shanghai",
   "initialDate": "2026-10-26",
-  "subscribeUrl": "https://cal.wind8866.top/subscribe/qingdao202602.ics",
-  "shareUrl": "https://cal.wind8866.top/pick/qingdao202602",
+  "siteOrigin": "https://cal.wind8866.top",
   "itemNoun": "部影片",
   "updatedAt": "2026-10-26",
   "theme": {
     "background": "#E5CEA8",
     "primary": "#6A3424",
     "secondary": "#9AB9AF"
+  },
+  "labels": {
+    "featured": "映后交流",
+    "sameTitle": "同片场次"
   },
   "events": [
     {

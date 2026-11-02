@@ -2,10 +2,11 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowLeft, ArrowRight, Calendar } from '@element-plus/icons-vue'
-import { dayjs, rangeLabel, startOfWeek, zoned } from '@/utils/time'
+import { dateInZone, dayjs, rangeLabel, startOfWeek } from '@/utils/time'
 import type { CalendarView, FestivalConfig, FestivalEvent } from '@/types'
 import { findFestival } from '@/data/festivals'
 import { useSelectionStore } from '@/stores/selection'
+import { useIsMobile } from '@/composables/useIsMobile'
 import { applyTheme } from '@/utils/theme'
 import AppHeader from '@/components/AppHeader.vue'
 import WeekCalendar from '@/components/WeekCalendar.vue'
@@ -20,12 +21,16 @@ if (!foundConfig) {
 }
 const config: FestivalConfig = foundConfig
 
+// 在首次渲染前注入主题，避免切到另一个日历的一瞬间沿用上一套配色
+if (typeof document !== 'undefined') applyTheme(config.theme)
+
 const store = useSelectionStore()
 store.init(config, route.path)
 
-const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches
-const view = ref<CalendarView>(isMobile ? 'week' : 'month')
-const anchor = ref(dayjs.tz(config.initialDate, config.timeZone).format('YYYY-MM-DD'))
+// 路由切换日历由 App.vue 的 router-view key 触发组件重建，因此这里只需按当前配置初始化一次
+const isMobile = useIsMobile()
+const view = ref<CalendarView>(isMobile.value ? 'week' : 'month')
+const anchor = ref(dateInZone(config.initialDate, config.timeZone).format('YYYY-MM-DD'))
 const activeTab = ref<'calendar' | 'selected'>('calendar')
 const panelOpen = ref(true)
 const isFullscreen = ref(false)
@@ -35,9 +40,7 @@ const weekJumpSeq = ref(0)
 const dayOpen = ref(false)
 const dayDate = ref('')
 
-const anchorDate = computed(() =>
-  zoned(`${anchor.value}T12:00:00+08:00`, config.timeZone),
-)
+const anchorDate = computed(() => dateInZone(anchor.value, config.timeZone))
 const weekStart = computed(() => startOfWeek(anchorDate.value))
 const weekEnd = computed(() => weekStart.value.add(6, 'day'))
 const monthStart = computed(() => startOfWeek(anchorDate.value))
@@ -51,7 +54,7 @@ function onWeekRange(range: { start: string; end: string }): void {
 }
 
 function rangeDay(value: string) {
-  return zoned(`${value}T12:00:00+08:00`, config.timeZone)
+  return dateInZone(value, config.timeZone)
 }
 
 const rangeText = computed(() => {
@@ -114,7 +117,6 @@ function syncFullscreen(): void {
 
 onMounted(() => {
   document.title = `${config.name} · 日程挑选`
-  applyTheme(config.theme)
   document.addEventListener('fullscreenchange', syncFullscreen)
   syncFullscreen()
 })

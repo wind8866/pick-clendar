@@ -5,7 +5,7 @@ import type {
   FestivalConfig,
   FestivalEvent,
 } from '@/types'
-import { eventEnd, toDateKey, zoned } from '@/utils/time'
+import { eventEnd, compareStart, toDateKey, zoned } from '@/utils/time'
 
 function normalizeMinutes(value: unknown, fallback = 0): number {
   const num = typeof value === 'number' ? value : Number(value)
@@ -14,7 +14,9 @@ function normalizeMinutes(value: unknown, fallback = 0): number {
 }
 
 function storageKeyFor(path: string): string {
-  return `calendar-pick:v1:${path}`
+  // 归一化尾部斜杠与 query，保持与既有 key 兼容（/pick/qingdao202602 不变）
+  const normalized = path.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/'
+  return `calendar-pick:v1:${normalized}`
 }
 
 export const useSelectionStore = defineStore('selection', () => {
@@ -43,10 +45,16 @@ export const useSelectionStore = defineStore('selection', () => {
     const events = [...selectedSet.value]
       .map((id) => eventMap.value.get(id))
       .filter((event): event is FestivalEvent => Boolean(event))
-    return events.sort((a, b) => a.start.localeCompare(b.start))
+    return events.sort((a, b) => compareStart(a.start, b.start))
   })
 
   const timeZone = computed(() => config.value?.timeZone ?? 'Asia/Shanghai')
+
+  /** 「紧挨」判定阈值：默认普通场 60 分钟、特色场 120 分钟，可按日历覆盖 */
+  const adjacency = computed(() => ({
+    normal: config.value?.adjacency?.normalMinutes ?? 60,
+    featured: config.value?.adjacency?.featuredMinutes ?? 120,
+  }))
 
   function init(nextConfig: FestivalConfig, path: string): void {
     config.value = nextConfig
@@ -253,13 +261,14 @@ export const useSelectionStore = defineStore('selection', () => {
       'minute',
     )
     if (gap < 0) return false
-    // 活动场次（映后交流）间隔放宽到 2 小时，普通场次 1 小时
-    const threshold = prev.postScreening || event.postScreening ? 120 : 60
+    // 特色场次（如映后交流）放宽阈值，普通场次按配置的默认值
+    const threshold =
+      prev.postScreening || event.postScreening ? adjacency.value.featured : adjacency.value.normal
     if (gap > threshold) return false
     const dayKey = dateOf(event)
     const dayEvents = schedulableEvents.value
       .filter((item) => dateOf(item) === dayKey)
-      .sort((a, b) => a.start.localeCompare(b.start))
+      .sort((a, b) => compareStart(a.start, b.start))
     const prevIndex = dayEvents.findIndex((item) => item.id === prev.id)
     const eventIndex = dayEvents.findIndex((item) => item.id === event.id)
     return prevIndex >= 0 && eventIndex >= 0 && eventIndex - prevIndex === 1

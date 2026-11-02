@@ -21,9 +21,10 @@
   - 已从海报补充 `venueAddress`；页面与截图展示场地名（`city` · `venue`），
     订阅与导出的 `.ics` 均不携带影院名/地址。
 - [x] **订阅日历地址**
-  - 需求已从“在线文档”改为静态日历文件：`subscribeUrl` 指向
-    `https://cal.wind8866.top/subscribe/qingdao202602.ics`，本地对应
-    `public/subscribe/qingdao202602.ics`，由 `pnpm gen` 生成；“订阅日历”按钮点击复制该地址。
+  - 需求已从“在线文档”改为静态日历文件：本地对应
+    `public/subscribe/qingdao202602.ics`，由 `pnpm gen` 生成；“订阅日历”按钮点击复制绝对地址。
+  - 域名不再写死在代码或配置里：运行时取当前页面 origin（可用 `VITE_SITE_ORIGIN` 覆盖）；
+    二维码地址在生成时取 `SITE_ORIGIN` 环境变量或 raw 的 `meta.siteOrigin`。
 - [x] **订阅日历与导出口径对齐**
   - 已确认订阅日历属于导出的另一种：静态 `.ics` 去掉评分/评价人数和 `LOCATION`，
     描述统一为“YYYY年 导演 语言”；`scripts/generate-calendar.mjs` 已同步并重新生成。
@@ -58,9 +59,9 @@
 | 单场时长 | `durationMinutes`，来自片长表（79–178 分钟） |
 | 描述 | 结构化字段；日历详情显示“YYYY年 导演 语言”+ 评分/人数，订阅/导出的 ICS、CSV、已选列表、截图不含评分 |
 | 影片链接 | 豆瓣条目页 |
-| 订阅日历 | `https://cal.wind8866.top/subscribe/qingdao202602.ics`（静态文件，不含影院名/地址） |
-| 时区 | `Asia/Shanghai` |
-| 初始锚点 | `initialDate: 2026-10-26`（月视图第一行） |
+| 订阅日历 | `<页面 origin>/subscribe/qingdao202602.ics`（静态文件，不含影院名/地址） |
+| 时区 | `Asia/Shanghai`（导出按此时区推导，跨夏令时自动退回 UTC） |
+| 初始锚点 | `initialDate: 2026-10-26`（月视图第一行；缺省时取最早一场日期） |
 | 行程默认值 | 0 分钟（不设置行程） |
 
 > 行程为 0 时：界面显示“未设置”，ICS / CSV / 截图中隐藏行程字段。

@@ -31,6 +31,25 @@ function mix(a: string, b: string, ratio: number): string {
   )
 }
 
+function withAlpha(hex: string, alpha: number): string {
+  const [r, g, b] = parseHex(hex)
+  return `rgb(${r} ${g} ${b} / ${alpha})`
+}
+
+/** 粗略相对亮度，用于给任意主色挑一个可读的前景色 */
+function luminance(hex: string): number {
+  const [r, g, b] = parseHex(hex).map((value) => {
+    const channel = value / 255
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+function readableOn(hex: string): string {
+  // 亮度低于阈值视为暗底，用浅色字；否则用深色字
+  return luminance(hex) > 0.22 ? INK : '#fdf6ec'
+}
+
 export const DEFAULT_THEME: FestivalTheme = {
   background: '#E5CEA8',
   primary: '#6A3424',
@@ -71,7 +90,15 @@ export function applyTheme(theme?: FestivalTheme): void {
     '--secondary': secondary,
     '--secondary-soft': mix(secondary, WHITE, 0.82),
     '--secondary-deep': mix(secondary, BLACK, 0.18),
-    '--highlight': '#fff1b8',
+    // 交互态颜色全部由主题派生，换配色时不会残留上一套颜色
+    '--sel-bg': withAlpha(mix(secondary, BLACK, 0.08), 0.72),
+    '--sel-line': mix(secondary, BLACK, 0.18),
+    '--hover-same-bg': primary,
+    '--hover-same-fg': readableOn(primary),
+    '--on-primary': readableOn(primary),
+    '--remove-hover-bg': mix('#fef0f0', primary, 0.05),
+    '--week-default-bg': mix(primary, WHITE, 0.84),
+    '--highlight': mix('#fff8c9', primary, 0.06),
     '--shadow': '0 10px 30px rgb(60 40 28 / 12%)',
     '--el-color-primary': primary,
     '--el-color-primary-light-3': mix(primary, WHITE, 0.3),
@@ -92,4 +119,9 @@ export function applyTheme(theme?: FestivalTheme): void {
   for (const [key, value] of Object.entries(vars)) {
     root.style.setProperty(key, value)
   }
+
+  // 移动端浏览器地址栏颜色跟随主题
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute('content', background)
 }

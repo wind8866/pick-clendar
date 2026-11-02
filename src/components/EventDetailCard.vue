@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
-import { eventEnd, formatDuration, hm, zoned } from '@/utils/time'
+import { compareStart, eventEnd, formatDuration, hm, zoned } from '@/utils/time'
 
 const props = defineProps<{
   event: FestivalEvent
@@ -32,7 +32,7 @@ const urlHost = computed(() => {
   }
 })
 
-// 同片未来场次（晚于当前场），用于详情展示
+// 同名未来场次（晚于当前场），用于详情展示
 const futureSiblings = computed(() =>
   props.config.events
     .filter(
@@ -40,9 +40,9 @@ const futureSiblings = computed(() =>
         event.kind !== 'header' &&
         event.title === props.event.title &&
         event.id !== props.event.id &&
-        event.start > props.event.start,
+        compareStart(event.start, props.event.start) > 0,
     )
-    .sort((a, b) => a.start.localeCompare(b.start)),
+    .sort((a, b) => compareStart(a.start, b.start)),
 )
 
 function siblingLabel(event: FestivalEvent): string {
@@ -71,7 +71,7 @@ function siblingLabel(event: FestivalEvent): string {
     <p v-if="event.weekDesc" class="card-week">{{ event.weekDesc }}</p>
 
     <div v-if="futureSiblings.length" class="card-siblings">
-      <p class="card-siblings-head">同片场次</p>
+      <p class="card-siblings-head">{{ config.labels?.sameTitle ?? '同片场次' }}</p>
       <p v-for="sibling in futureSiblings" :key="sibling.id" class="card-sibling">
         {{ siblingLabel(sibling) }}
       </p>

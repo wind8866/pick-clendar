@@ -1,0 +1,2 @@
+# ICS 规范要求 CRLF 行尾：不要做换行归一化，避免每次 pnpm gen 都产生整文件 diff
+public/subscribe/*.ics -text

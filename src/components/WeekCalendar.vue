@@ -6,6 +6,8 @@ import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
 import { useIsMobile } from '@/composables/useIsMobile'
 import {
+  compareStart,
+  dateInZone,
   dayjs,
   hm,
   startOfWeek,
@@ -43,7 +45,7 @@ const axisWidth = computed(() => (isMobile.value ? 42 : 58))
 const dayWidth = ref(50)
 
 function weekStartOf(value: string): Dayjs {
-  return startOfWeek(zoned(`${value}T12:00:00+08:00`, props.config.timeZone))
+  return startOfWeek(dateInZone(value, props.config.timeZone))
 }
 
 function initialRangeStart(anchor: string): Dayjs {
@@ -131,7 +133,7 @@ const eventsByDate = computed(() => {
     if (bucket) bucket.push(event)
     else map.set(key, [event])
   }
-  for (const bucket of map.values()) bucket.sort((a, b) => a.start.localeCompare(b.start))
+  for (const bucket of map.values()) bucket.sort((a, b) => compareStart(a.start, b.start))
   return map
 })
 

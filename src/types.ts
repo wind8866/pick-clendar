@@ -31,6 +31,21 @@ export interface FestivalEvent {
   kind?: 'header'
 }
 
+export interface FestivalLabels {
+  /** 特色场次标签（如「映后交流」）；设为空字符串则不显示 */
+  featured?: string
+  /** 详情中同名场次分组的标题（如「同片场次」） */
+  sameTitle?: string
+}
+
+/** 判定「两场紧挨」的间隔阈值（分钟） */
+export interface FestivalAdjacency {
+  /** 普通场次 */
+  normalMinutes?: number
+  /** 特色场次（如带映后交流） */
+  featuredMinutes?: number
+}
+
 export interface FestivalConfig {
   schemaVersion: number
   isDefault?: boolean
@@ -40,12 +55,18 @@ export interface FestivalConfig {
   venue?: string
   venueAddress?: string
   timeZone: string
+  /** 月视图首行所在日期；缺省时取最早一场的日期 */
   initialDate: string
-  subscribeUrl: string
+  /** 订阅地址覆盖项；缺省时由站点 origin + BASE_URL 自动生成 */
+  subscribeUrl?: string
+  /** 构建期生成二维码用的站点绝对地址（仅脚本读取） */
+  siteOrigin?: string
   shareUrl?: string
   itemNoun: string
   updatedAt?: string
   theme?: FestivalTheme
+  labels?: FestivalLabels
+  adjacency?: FestivalAdjacency
   events: FestivalEvent[]
 }
 

@@ -17,8 +17,26 @@ export function zoned(iso: string, timeZone: string): Dayjs {
   return dayjs(iso).tz(timeZone)
 }
 
+/**
+ * 用目标时区解释一个「只有日期」的字符串，取当天正午作为安全锚点。
+ * 不要写 `${date}T12:00:00+08:00`：偏移写死后，换时区会把日期整体挪走一天。
+ */
+export function dateInZone(date: string, timeZone: string): Dayjs {
+  return dayjs.tz(`${date.slice(0, 10)}T12:00:00`, timeZone)
+}
+
 export function toDateKey(iso: string, timeZone: string): string {
   return zoned(iso, timeZone).format('YYYY-MM-DD')
+}
+
+/** 按真实时间点比较，避免 ISO 字符串带不同偏移时 localeCompare 排错 */
+export function compareStart(a: string, b: string): number {
+  return new Date(a).getTime() - new Date(b).getTime()
+}
+
+/** 该瞬间在目标时区的偏移（分钟），用于判断导出是否需要 VTIMEZONE */
+export function zoneOffsetMinutes(iso: string, timeZone: string): number {
+  return zoned(iso, timeZone).utcOffset()
 }
 
 export function eventEnd(iso: string, durationMinutes: number, timeZone: string): Dayjs {
@@ -69,6 +87,20 @@ export function browserTimestamp(): string {
 
 export function icsLocal(date: Dayjs): string {
   return date.format('YYYYMMDDTHHmmss')
+}
+
+/** 绝对时间（UTC）形式，带 Z 后缀，用于跨时区/夏令时安全回退 */
+export function icsUtc(iso: string): string {
+  return `${dayjs(iso).utc().format('YYYYMMDDTHHmmss')}Z`
+}
+
+/** 分钟偏移转 ICS 的 ±HHMM */
+export function icsOffset(minutes: number): string {
+  const sign = minutes < 0 ? '-' : '+'
+  const abs = Math.abs(Math.round(minutes))
+  const hh = String(Math.floor(abs / 60)).padStart(2, '0')
+  const mm = String(abs % 60).padStart(2, '0')
+  return `${sign}${hh}${mm}`
 }
 
 export function icsStamp(): string {

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
 import { eventEnd, formatGap, hm, weekdayLabel, zoned } from '@/utils/time'
+import { qrCodePath } from '@/utils/site'
 
 const props = defineProps<{
   config: FestivalConfig
@@ -76,7 +77,9 @@ const groups = computed<PosterGroup[]>(() => {
 
 const hasPrefix = computed(() => store.selectedEvents.some((event) => event.titlePrefix))
 
-const qrSrc = `${import.meta.env.BASE_URL}qrcode/${props.config.id}.svg`
+const qrSrc = qrCodePath(props.config)
+// 二维码是构建期生成的静态资源：缺失时整块隐藏，避免截图里出现裂图
+const qrOk = ref(true)
 
 defineExpose({ root })
 </script>
@@ -94,8 +97,8 @@ defineExpose({ root })
         <p v-if="footerText" class="poster-note">{{ footerText }}</p>
       </div>
 
-      <div class="poster-qr-box">
-        <img class="poster-qr" :src="qrSrc" alt="创建排片表" />
+      <div v-if="qrOk" class="poster-qr-box">
+        <img class="poster-qr" :src="qrSrc" alt="创建排片表" @error="qrOk = false" />
         <span class="poster-qr-hint">创建排片表</span>
       </div>
     </header>
@@ -144,7 +147,7 @@ defineExpose({ root })
   overflow: hidden;
   width: 393px;
   padding: 0 0 16px;
-  background: #fbf7ee;
+  background: var(--paper-strong);
   color: var(--ink);
   font-family: var(--font-sans);
 }
@@ -157,8 +160,8 @@ defineExpose({ root })
   align-items: flex-start;
   justify-content: space-between;
   padding: 18px 20px 22px;
-  background: #6a3424;
-  color: #fbf7ee;
+  background: var(--red);
+  color: var(--on-primary);
 }
 
 .poster-head::after {
@@ -168,7 +171,7 @@ defineExpose({ root })
   bottom: -1px;
   left: 0;
   height: 10px;
-  background: radial-gradient(circle at 7px 10px, #fbf7ee 6px, transparent 6.5px);
+  background: radial-gradient(circle at 7px 10px, var(--paper-strong) 6px, transparent 6.5px);
   background-repeat: repeat-x;
   background-size: 14px 10px;
   pointer-events: none;
@@ -180,7 +183,7 @@ defineExpose({ root })
 }
 
 .poster-title-main {
-  color: #fbf7ee;
+  color: var(--on-primary);
   font-family: var(--font-serif);
   font-size: 21px;
   font-weight: 700;
@@ -190,14 +193,16 @@ defineExpose({ root })
 
 .poster-venue {
   margin-top: 6px;
-  color: rgb(251 247 238 / 82%);
+  color: var(--on-primary);
   font-size: 11px;
+  opacity: 0.82;
 }
 
 .poster-note {
   margin-top: 3px;
-  color: rgb(251 247 238 / 78%);
+  color: var(--on-primary);
   font-size: 11px;
+  opacity: 0.78;
   line-height: 1.4;
 }
 
@@ -217,8 +222,9 @@ defineExpose({ root })
 }
 
 .poster-qr-hint {
-  color: rgb(251 247 238 / 80%);
+  color: var(--on-primary);
   font-size: 9px;
+  opacity: 0.8;
   white-space: nowrap;
 }
 
@@ -272,7 +278,7 @@ defineExpose({ root })
   width: 1px;
   background-image: repeating-linear-gradient(
     to bottom,
-    #c8b79b 0 4px,
+    var(--line) 0 4px,
     transparent 4px 9px
   );
   content: "";
@@ -281,7 +287,7 @@ defineExpose({ root })
 .poster-gap-label {
   position: relative;
   padding: 0 3px;
-  background: #fbf7ee;
+  background: var(--paper-strong);
   color: var(--muted);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
@@ -310,7 +316,7 @@ defineExpose({ root })
   width: 1px;
   background-image: repeating-linear-gradient(
     to bottom,
-    #c8b79b 0 4px,
+    var(--line) 0 4px,
     transparent 4px 9px
   );
   content: "";

@@ -28,6 +28,16 @@ PORT="${port:-80}"
 LOCAL_CONF="$(mktemp "${TMPDIR:-/tmp}/calendar-pick-nginx.XXXXXX")"
 trap 'rm -f "${LOCAL_CONF}"' EXIT
 
+# 默认日历 id 从 raw 配置读取，不写死具体排片表
+DEFAULT_FESTIVAL_ID="$(node -e '
+const fs = require("fs");
+const dir = "src/data/raw";
+const metas = fs.readdirSync(dir).filter((f) => f.endsWith(".raw.json"))
+  .map((f) => JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8")).meta);
+const picked = metas.find((m) => m && m.isDefault) || metas[0];
+process.stdout.write(picked && picked.id ? picked.id : "");
+' 2>/dev/null || true)"
+
 # ---------- 用 .env 渲染 nginx 配置 ----------
 sed -e "s|__DOMAIN__|${domain}|g" \
     -e "s|__PORT__|${PORT}|g" \
@@ -38,8 +48,7 @@ export ip name password domain REMOTE_DIR REMOTE_CONF PORT LOCAL_CONF
 
 command -v expect >/dev/null 2>&1 || { echo "❌ 需要 expect（macOS 自带 /usr/bin/expect）"; exit 1; }
 
-echo "==> 1/4 生成数据并构建"
-pnpm gen
+echo "==> 1/4 生成数据并构建（build 的 prebuild 会自动执行 gen）"
 pnpm build
 
 echo "==> 2/4 上传 dist → ${name}@${ip}:${REMOTE_DIR}/"
@@ -80,5 +89,10 @@ EXP
 
 echo ""
 echo "✅ 部署完成："
-echo "   https://${domain}/pick/qingdao202602"
-echo "   http://${ip}/pick/qingdao202602"
+if [[ -n "${DEFAULT_FESTIVAL_ID}" ]]; then
+  echo "   https://${domain}/pick/${DEFAULT_FESTIVAL_ID}"
+  echo "   http://${ip}/pick/${DEFAULT_FESTIVAL_ID}"
+else
+  echo "   https://${domain}/"
+  echo "   http://${ip}/"
+fi

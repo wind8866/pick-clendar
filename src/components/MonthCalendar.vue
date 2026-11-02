@@ -6,6 +6,8 @@ import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
 import { useIsMobile } from '@/composables/useIsMobile'
 import {
+  compareStart,
+  dateInZone,
   dayjs,
   hm,
   startOfWeek,
@@ -72,7 +74,7 @@ function makeWeek(start: Dayjs): WeekRow {
 }
 
 function anchorWeek(): Dayjs {
-  return startOfWeek(zoned(`${props.anchor}T12:00:00+08:00`, props.config.timeZone))
+  return startOfWeek(dateInZone(props.anchor, props.config.timeZone))
 }
 
 function buildRange(start: Dayjs, count: number): WeekRow[] {
@@ -94,7 +96,7 @@ const eventsByDate = computed(() => {
     if (bucket) bucket.push(event)
     else map.set(key, [event])
   }
-  for (const bucket of map.values()) bucket.sort((a, b) => a.start.localeCompare(b.start))
+  for (const bucket of map.values()) bucket.sort((a, b) => compareStart(a.start, b.start))
   return map
 })
 
@@ -266,7 +268,7 @@ watch(
   () => props.anchor,
   (value) => {
     if (!ready) return
-    const target = startOfWeek(zoned(`${value}T12:00:00+08:00`, props.config.timeZone))
+    const target = startOfWeek(dateInZone(value, props.config.timeZone))
     if (target.format('YYYY-MM-DD') === topWeekKey.value) return
     scrollToWeek(target)
   },

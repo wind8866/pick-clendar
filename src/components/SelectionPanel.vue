@@ -5,6 +5,7 @@ import type { ExportItem, FestivalConfig, FestivalEvent } from '@/types'
 import { buildCsv } from '@/utils/csv'
 import { downloadBlob, downloadDataUrl, exportFilename } from '@/utils/download'
 import { buildIcs } from '@/utils/ics'
+import { subscribeUrl } from '@/utils/site'
 import {
   dateTimeLabel,
   dayjs,
@@ -167,9 +168,8 @@ function downloadCsv(): void {
 }
 
 async function subscribe(): Promise<void> {
-  const url =
-    props.config.subscribeUrl ||
-    `${import.meta.env.BASE_URL}subscribe/${props.config.id}.ics`
+  // 始终复制可直接粘进日历 App 的绝对地址，不再依赖配置里写死域名
+  const url = subscribeUrl(props.config)
   try {
     await navigator.clipboard.writeText(url)
     ElMessage.success('订阅地址已复制')
@@ -353,7 +353,9 @@ async function clearAll(): Promise<void> {
                   <h3>{{ store.displayTitle(item) }}</h3>
                 </a>
                 <h3 v-else>{{ store.displayTitle(item) }}</h3>
-                <span v-if="item.postScreening" class="card-tag">映后交流</span>
+                <span v-if="item.postScreening && config.labels?.featured" class="card-tag">
+                  {{ config.labels.featured }}
+                </span>
               </div>
 
               <p class="card-time">
