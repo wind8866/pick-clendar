@@ -59,6 +59,8 @@ export const DEFAULT_THEME: FestivalTheme = {
 const INK = '#33241d'
 const INK_SOFT = '#5f4c3e'
 const MUTED = '#8a7a63'
+// 冲突 / 失败等危险态固定用红，不跟随主题（绿色主题下不会变绿）
+const DANGER = '#a33a2f'
 const WHITE = '#ffffff'
 const BLACK = '#000000'
 // 结构线框用中性色，不跟随主题主色；否则亮色主题会把网格、边框全染成主题色
@@ -106,7 +108,13 @@ export function applyTheme(theme?: FestivalTheme): void {
     '--el-color-primary-light-8': mix(primary, WHITE, 0.8),
     '--el-color-primary-light-9': mix(primary, WHITE, 0.9),
     '--el-color-primary-dark-2': mix(primary, BLACK, 0.2),
-    '--el-color-danger': mix(primary, '#a33a2f', 0.2),
+    '--el-color-danger': DANGER,
+    '--el-color-danger-light-3': mix(DANGER, WHITE, 0.3),
+    '--el-color-danger-light-5': mix(DANGER, WHITE, 0.5),
+    '--el-color-danger-light-7': mix(DANGER, WHITE, 0.7),
+    '--el-color-danger-light-8': mix(DANGER, WHITE, 0.8),
+    '--el-color-danger-light-9': mix(DANGER, WHITE, 0.9),
+    '--el-color-danger-dark-2': mix(DANGER, BLACK, 0.2),
     '--el-text-color-primary': INK,
     '--el-text-color-regular': INK_SOFT,
     '--el-border-color': line,

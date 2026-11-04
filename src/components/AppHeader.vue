@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowLeft, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
+import { Expand, Fold, FullScreen, Grid } from '@element-plus/icons-vue'
 import type { FestivalConfig } from '@/types'
 import { staticPath } from '@/utils/site'
 
@@ -25,13 +25,14 @@ const logoUrl = staticPath('logo.svg')
 
 <template>
   <header class="app-header">
-    <router-link to="/pick" class="back-link" aria-label="全部影展" title="全部影展">
-      <el-icon><ArrowLeft /></el-icon>
-      <span class="back-text">全部影展</span>
+    <router-link to="/pick" class="back-mobile" aria-label="全部影展" title="全部影展">
+      <el-icon><Grid /></el-icon>
     </router-link>
 
     <div class="brand">
-      <img class="brand-logo" :src="logoUrl" alt="" aria-hidden="true" />
+      <router-link to="/pick" class="brand-logo-link" aria-label="返回首页">
+        <img class="brand-logo" :src="logoUrl" alt="" aria-hidden="true" />
+      </router-link>
       <div class="brand-text">
         <h1>{{ config.name }}</h1>
         <p v-if="subtitle">{{ subtitle }}</p>
@@ -39,6 +40,12 @@ const logoUrl = staticPath('logo.svg')
     </div>
 
     <div class="header-tools">
+      <el-tooltip content="全部影展" placement="bottom" popper-class="header-tip">
+        <router-link to="/pick" class="tool-link" aria-label="全部影展">
+          <el-icon><Grid /></el-icon>
+        </router-link>
+      </el-tooltip>
+
       <el-tooltip
         :content="panelOpen ? '收起已选日程' : '展开已选日程'"
         placement="bottom"
@@ -89,21 +96,24 @@ const logoUrl = staticPath('logo.svg')
   backdrop-filter: blur(10px);
 }
 
-.back-link {
-  display: inline-flex;
-  flex: none;
-  gap: 4px;
-  align-items: center;
-  padding: 4px 10px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--ink-soft);
-  font-size: 12px;
-  text-decoration: none;
-  transition: border-color 0.2s ease, color 0.2s ease;
+.back-mobile {
+  display: none;
 }
 
-.back-link:hover {
+.tool-link {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-soft);
+  font-size: 13px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  place-items: center;
+}
+
+.tool-link:hover {
   border-color: var(--red);
   color: var(--red);
 }
@@ -113,6 +123,22 @@ const logoUrl = staticPath('logo.svg')
   gap: 12px;
   align-items: center;
   min-width: 0;
+}
+
+.brand-logo-link {
+  display: flex;
+  flex: none;
+  border-radius: 10px;
+  transition: opacity 0.2s ease;
+}
+
+.brand-logo-link:hover {
+  opacity: 0.78;
+}
+
+.brand-logo-link:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
 }
 
 .brand-logo {
@@ -195,15 +221,22 @@ const logoUrl = staticPath('logo.svg')
     flex: 1;
   }
 
-  .back-link {
+  .back-mobile {
+    display: grid;
     width: 30px;
     height: 30px;
-    justify-content: center;
-    padding: 0;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--ink-soft);
+    font-size: 14px;
+    text-decoration: none;
+    place-items: center;
   }
 
-  .back-text {
-    display: none;
+  .back-mobile:hover {
+    border-color: var(--red);
+    color: var(--red);
   }
 
   .brand-logo {

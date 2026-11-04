@@ -11,6 +11,10 @@
   "siteOrigin": "https://cal.wind8866.top",
   "itemNoun": "部影片",
   "updatedAt": "2026-10-26",
+  "cover": {
+    "text": "风格万相",
+    "style": "scatter"
+  },
   "theme": {
     "background": "#E5CEA8",
     "primary": "#6A3424",

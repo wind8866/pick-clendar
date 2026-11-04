@@ -7,6 +7,7 @@ import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { computeLanePlacements } from '@/utils/lanes'
+import { hallColor } from '@/utils/halls'
 import {
   compareStart,
   dateInZone,
@@ -190,6 +191,9 @@ function positionStyle(event: FestivalEvent): Record<string, string> {
     top: `${top}%`,
     height: `${Math.max(height, 2.5)}%`,
   }
+  // 多厅日历：每厅一个颜色，只作用于左侧竖线
+  const color = hallColor(props.config, event.location)
+  if (color) style['--hall-color'] = color
 
   const placement = placementsByDate.value
     .get(toDateKey(event.start, props.config.timeZone))
@@ -620,9 +624,9 @@ function hourTop(hour: number): string {
   right: 2px;
 }
 
-/* 展开态下标题不换行，尽量完整显示 */
+/* 展开态下标题允许换行，最多两行 */
 .week-shell.expanded .event-title {
-  white-space: nowrap;
+  -webkit-line-clamp: 2;
 }
 
 .week-scroll {
@@ -799,7 +803,7 @@ function hourTop(hour: number): string {
   min-height: 40px;
   padding: 4px 6px;
   border: 0;
-  border-left: 3px solid var(--red);
+  border-left: 3px solid var(--hall-color, var(--red));
   border-radius: 4px;
   background: var(--week-default-bg);
   color: var(--ink);
@@ -814,7 +818,7 @@ function hourTop(hour: number): string {
 
 .event-block.selected {
   background: var(--sel-bg);
-  border-left-color: var(--sel-line);
+  border-left-color: var(--hall-color, var(--sel-line));
 }
 
 .event-block.hover-same {
@@ -835,13 +839,18 @@ function hourTop(hour: number): string {
   line-height: 1.3;
 }
 
+/* 桌面端标题最多两行，超出省略；展开态列更宽也保持两行上限 */
 .event-title {
+  display: -webkit-box;
   overflow: hidden;
   font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .event-sub {

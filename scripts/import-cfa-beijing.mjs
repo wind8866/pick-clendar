@@ -18,12 +18,15 @@ const INPUT = path.join(ROOT, 'doc/data/cfa-beijing.json')
 const OUTPUT = path.join(ROOT, 'src/data/raw/cfa-beijing.raw.json')
 
 const FROM_DATE = '2026-11-01'
+// updatedAt 表示原始数据提供的日期，不用构建当天，避免每次生成都变
+const UPDATED_AT = '2026-11-01'
 const TIME_ZONE = 'Asia/Shanghai'
 const UTC_OFFSET = '+08:00'
 const HEADER_ID = 'cfa-beijing-header'
 
 const META = {
   schemaVersion: 2,
+  order: 1,
   id: 'cfa-beijing',
   name: '中国电影资料馆',
   city: '北京',
@@ -33,10 +36,23 @@ const META = {
   siteOrigin: 'https://cal.wind8866.top',
   itemNoun: '部影片',
   defaultView: 'month',
+  // 列表封面：短名 + 文字动效（breath = 极慢呼吸闪烁）
+  cover: {
+    text: '电影资料馆',
+    style: 'breath',
+  },
+  // 主题色与风格万相对齐：降低红色饱和度 / 亮度，背景同饱和度但更浅，
+  // 主色只做点亮与交互，不再大面积铺红。
   theme: {
-    background: '#ffefec',
-    primary: '#EE3E36',
-    secondary: '#E4B24A',
+    background: '#F6EAE2',
+    primary: '#6D2E27',
+    secondary: '#C1AD86',
+  },
+  // 厅色只用于日程左侧竖线与筛选下拉标记，不参与背景
+  hallColors: {
+    '小西天 1号厅': '#6D2E27',
+    '小西天 2号厅': '#ee3e3699',
+    '百子湾 1号厅': 'rgb(98, 138, 240)',
   },
   labels: {
     featured: '映后交流',
@@ -72,12 +88,17 @@ function toStart(value) {
   return `${value.replace(' ', 'T')}${UTC_OFFSET}`
 }
 
+/** 影片类型内部用 / 分隔，如「剧情 爱情」→「剧情/爱情」 */
+function typeText(value) {
+  return cleanText(value).split(/\s+/).filter(Boolean).join('/')
+}
+
 function buildDescription(screen, hall) {
   const year = Number(screen.film_year)
   const head = [
     Number.isFinite(year) && year > 0 ? `${year}年` : '',
     cleanText(screen.film_area),
-    cleanText(screen.film_type),
+    typeText(screen.film_type),
   ]
     .filter(Boolean)
     .join(' ')
@@ -164,7 +185,7 @@ async function main() {
     meta: {
       ...META,
       initialDate: first.start.slice(0, 10),
-      updatedAt: new Date().toISOString().slice(0, 10),
+      updatedAt: UPDATED_AT,
     },
     events: [header, ...events],
   }

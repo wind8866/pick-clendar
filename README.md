@@ -8,8 +8,8 @@
 pnpm install
 pnpm gen                 # 从 raw 生成显示数据（改数据后执行）
 pnpm split:cfa           # 把 doc/data/cfa.json 拆成北京 / 江南两份
-pnpm import:cfa          # doc/data/cfa.json -> 小西天（cfa202611）raw
 pnpm import:cfa-beijing  # doc/data/cfa-beijing.json -> 北京双馆（cfa-beijing）raw
+pnpm import:cfa-jiangnan # doc/data/jiangnan.json -> 江南分馆（cfa-jiangnan）raw
 pnpm dev
 pnpm build       # 会自动先执行 pnpm gen
 ```
@@ -19,8 +19,8 @@ pnpm build       # 会自动先执行 pnpm gen
 ```text
 http://127.0.0.1:5173/pick                  # 影展列表
 http://127.0.0.1:5173/pick/qingdao202602
-http://127.0.0.1:5173/pick/cfa202611
 http://127.0.0.1:5173/pick/cfa-beijing
+http://127.0.0.1:5173/pick/cfa-jiangnan
 ```
 
 ## 路由
@@ -29,11 +29,13 @@ http://127.0.0.1:5173/pick/cfa-beijing
 - `/pick/:festivalId`：按日历 id 加载配置
 - `/`：跳转到 `/pick`
 - 未知日历 id / 未知路径：回退到 `/pick`
-- 日历页左上角「← 全部影展」可返回列表
+- 日历页顶栏右侧「全部影展」图标（全屏 / 收起侧栏按钮左侧）可返回列表；移动端收在标题左侧
+- 顶栏与列表页的 logo 都可点击回首页（`/pick`）
 
 ## 影展列表
 
-- 卡片内容：日历名称、城市 · 场地、`updatedAt`（数据更新日期）；封面暂无图片，用该日历主题色 + 名称首字占位。
+- 卡片内容：日历名称、城市 · 场地、`updatedAt`（原始数据提供日期）；封面暂无图片，用该日历主题色 + `cover.text` 短名排字。
+- 封面文字动效由 `cover.style` 决定：`scatter` 错落旋转（风格万相）、`breath` 极慢呼吸闪烁（电影资料馆）、`ripple` 水波浮动 + 压缩倒影（江南分馆）、`plain` 静止。
 - 排序：`order` 升序（缺省 999）→ `updatedAt` 倒序 → id；青岛 `order: 0` 固定第一个。
 - 列表页使用中性主题，卡片封面使用各日历自己的 `theme` 三色。
 
@@ -42,42 +44,35 @@ http://127.0.0.1:5173/pick/cfa-beijing
 | id | 内容 | 数据来源 |
 | --- | --- | --- |
 | `qingdao202602` | 风格万相 · 中外经典影片展（青岛站） | `doc/20260201.jpg`、`doc/movie-info.png` |
-| `cfa202611` | 中国电影资料馆 · 小西天艺术影院（2026-10-29 – 12-06） | `doc/data/cfa.json`，由 `pnpm import:cfa` 转换 |
 | `cfa-beijing` | 中国电影资料馆 · 北京双馆（2026-11-01 – 12-06） | `doc/data/cfa-beijing.json`，由 `pnpm import:cfa-beijing` 转换 |
-
-### 小西天（cfa202611）
-
-- `doc/data/cfa.json` 是排片接口导出，**在 10 月 / 11 月两段 day 列表拼接处少了一个 `]`，不是合法 JSON**。
-  因此 `scripts/import-cfa.mjs` 不整体 `JSON.parse`，而是用括号匹配逐个提取 `screen` 对象；
-  如果能重新导出合法 JSON，脚本同样适用。
-- 只保留 `screen_cinema` 以「小西天艺术影院」开头的场次（1 号厅 + 2 号厅），共 105 场 / 31 天。
-- 字段映射：
-  - `show_name` → `title`；带活动（`have_activity: "true"`）时加 🎉 前缀，由生成脚本拆成 `titlePrefix`
-  - `screen_start_time` → `start`（补 `+08:00`）；`screen_time_len` → `durationMinutes`
-  - `film_year` / `film_area` / `film_type` + 厅号 → `description`
-    （如 `1957年 美国 剧情 · 1号厅`，有活动时追加一行「映后：交流」）
-  - `screen_cinema` 的厅号 → `location`（用于「今天」左侧的影厅筛选、周视图副标题、日期弹窗）
-  - `id` → 场次 id（`cfa-<id>`），改期也不会丢本地已选
-- 未映射字段：`show_price`（票价）、`cover_img1`（海报）、`program_ids`、`show_type`、
-  `show_mode`、`screen_sales_time` 等；需要展示时再加字段，不要写进 description 硬编码。
-- 两个厅会同时放映（最多 2 场重叠），周视图按重叠关系并排分列；该日历 `defaultView: "month"`，
-  移动端默认打开月视图。需要看当天全部场次时用工具栏「↕ 展开」，周视图用「↔ 展开」后只显示 4 天（移动端 2 天），标题不换行。
+| `cfa-jiangnan` | 电影资料馆江南分馆（2026-11-01 – 12-06） | `doc/data/jiangnan.json`，由 `pnpm import:cfa-jiangnan` 转换 |
 
 ### 北京双馆（cfa-beijing）
 
 - 数据源拆分：
-  - `doc/data/cfa.json`：原始导出（格式损坏，仅作源文件）；
+  - `doc/data/cfa.json`：原始导出（格式损坏，仅作源文件，由 `scripts/split-cfa.mjs` 括号匹配拆分）；
   - `doc/data/cfa-beijing.json`：北京两个场馆（小西天 1/2 号厅 + 百子湾 1 号厅），145 场；
-  - `doc/data/jiangnan.json`：江南分馆影院，109 场（本次不做日历）。
+  - `doc/data/jiangnan.json`：江南分馆影院，109 场（独立日历 `cfa-jiangnan`）。
 - 日历只取 **2026-11-01 及以后**：129 场 / 28 天 / 3 个厅 + 1 条头日程（`2026-11-01 09:00`）。
 - **不增加「场馆」筛选维度**：`location` 直接写成 `小西天 1号厅` / `小西天 2号厅` / `百子湾 1号厅`，
   复用现有影厅多选筛选。
-- 配置：主题 `#ffefec / #EE3E36 / #E4B24A`；计数单位「部影片」；活动标签「映后交流」；
-  活动场加 🎉；描述模板「年代 地区 类型 · 厅号」；`defaultView: "month"`。
+- 配置：主题 `#F6EAE2 / #6D2E27 / #C1AD86`；计数单位「部影片」；活动标签「映后交流」；
+  活动场加 🎉；描述模板「年代 地区 类型 · 厅号」；`defaultView: "month"`；`order: 1`。
+- 描述里的影片类型用 `/` 分隔（如 `剧情/爱情/喜剧`），地区和厅号仍用空格 / `·`。
+- 厅色：`小西天 1号厅 #6D2E27`、`小西天 2号厅 #ee3e3699`、`百子湾 1号厅 rgb(98, 138, 240)`。
 - 票价、评分、海报、购票链接不展示。
 - 更新流程：`pnpm split:cfa` → `pnpm import:cfa-beijing` → `pnpm gen`。
-- 说明：`cfa202611` 是小西天单馆开发版，`cfa-beijing` 是北京双馆正式版；两者 11 月起的场次重叠，
-  后续如需下线 `cfa202611` 可以直接删除对应 raw / display / ics / qrcode。
+
+### 江南分馆（cfa-jiangnan）
+
+- 数据源 `doc/data/jiangnan.json`，只取 **2026-11-01 及以后**：100 场 / 4 个厅 + 1 条头日程。
+- 名称「电影资料馆江南分馆」；城市「苏州」；场地「江南分馆影院」。
+- `location` 写成 `江南 1号厅 … 江南 4号厅`；每个厅一个厅色：
+  `#3A7133` / `#B08A45` / `#54788C` / `#A15C48`。
+- 配置：主题 `#F3F1E7 / #3A7133 / #AFC0A2`（绿色由 `#53c346` 借色相，饱和度 / 亮度对齐青岛）；
+  计数单位「部影片」；活动标签「映后交流」；描述模板「年代 地区 类型 · 厅号」（类型用 `/` 分隔）；
+  `defaultView: "month"`；`order: 2`。
+- 更新流程：`pnpm split:cfa` → `pnpm import:cfa-jiangnan` → `pnpm gen`。
 
 ## 日历配置
 
@@ -103,10 +98,12 @@ http://127.0.0.1:5173/pick/cfa-beijing
   "subscribeUrl": "",
   "itemNoun": "部影片",
   "updatedAt": "2026-10-26",
+  "cover": { "text": "封面短名", "style": "breath" },
   "defaultView": "month",
   "theme": { "background": "#E5CEA8", "primary": "#6A3424", "secondary": "#9AB9AF" },
   "labels": { "featured": "映后交流", "sameTitle": "同片场次" },
   "adjacency": { "normalMinutes": 60, "featuredMinutes": 120 },
+  "hallColors": { "1号厅": "#EE3E36", "2号厅": "rgb(98, 138, 240)" },
   "events": [
     {
       "id": "20261029-1930",
@@ -134,20 +131,27 @@ http://127.0.0.1:5173/pick/cfa-beijing
 - `durationMinutes` 用于计算结束时间；不使用显式 `end` 字段，避免两处数据不一致。
 - `director` / `year` / `language` / `rating` / `ratingCount` 为结构化字段，周视图与导出使用；`description` 为自由补充（可为空），`weekDesc` 为周视图专属补充（可选）。`description` 非空时优先使用它，不再自动拼「年代/导演/语言」。
 - `location` 为影厅 / 场地（可选）。同一影院有多个 `location` 时，工具栏「今天」左侧会出现多选筛选（移动端会单独占一行）；周视图副标题和日期弹窗也会显示厅号。
+- `hallColors` 为影厅配色（可选，键与 `location` 完全一致）。配置后只影响日程左侧 3px 竖线和筛选下拉里的色块，不改变日程背景；未配置的厅回退到主题主色。移动端按既定设计不显示左侧竖线，只在筛选下拉里显示色块。
 - `kind: 'header'` 为标题头日程（如影展封面），仅进入订阅/导出 `.ics`，不在前端日历展示、不参与选片。
 - `order` 控制影展列表排序，数字越小越靠前；缺省按 `updatedAt` 倒序。青岛为 `0`。
 - `initialDate` 决定月视图第一行所在周，也用于默认定位；缺省时自动取最早一场的日期。
 - `timeZone` 缺省为 `Asia/Shanghai`，导出、周视图时间轴、日期分组都按它计算。
 - `defaultView` 可选 `month` / `week`；缺省时桌面用月视图、移动端用周视图。多厅、单日场次密集的日历建议设 `month`。
+- `cover` 为列表卡片封面：`text` 是封面短名（缺省用 `name`），`style` 可选 `plain` / `scatter` / `breath` / `ripple`；动效尊重系统「减少动态效果」设置。封面文字只是装饰，卡片的可访问名称仍取自 `h2`。
+  - `scatter`：逐字起伏 + 旋转 / 缩放，形成从左到右的波浪动线；
+  - `breath`：每字独立周期与相位地极慢明暗呼吸，另加三两颗小星星闪烁；
+  - `ripple`：逐字轻微浮动，倒影以文字横向中线为轴翻转 180° 叠在原字上。
+- `updatedAt` 表示**原始数据提供的日期**，不取构建当天，避免每次 `pnpm gen` 都把“数据更新”改成今天。
 - `siteOrigin` 仅构建期使用：生成二维码时拼出 `siteOrigin/pick/<id>`，可在部署时用环境变量 `SITE_ORIGIN` 覆盖。运行时订阅地址默认取当前页面 origin，无需配置域名。
 - `subscribeUrl` 可选，作为订阅地址的覆盖项；不填时由「页面 origin + BASE_URL + `subscribe/<id>.ics`」自动生成，保证复制出去的是绝对地址。
-- `theme` 三项主色：背景、可交互主色、协助/联动色。主色只用于点亮、选中、聚焦、提醒、按钮等交互态；日历网格、卡片边框、分隔线等结构色由背景 + 固定中性线色推导，避免亮色主题把线框全部染色。周视图时间轴由全部日程动态计算，不再使用固定的 `dayStart` / `dayEnd`。
+- `theme` 三项主色：背景、可交互主色、协助/联动色。主色只用于点亮、选中、聚焦、提醒、按钮等交互态；日历网格、卡片边框、分隔线等结构色由背景 + 固定中性线色推导，避免亮色主题把线框全部染色。周视图时间轴由全部日程动态计算，不再使用固定的 `dayStart` / `dayEnd`。新日历建议主色的饱和度 / 亮度与青岛（`#6A3424` 约 S49 / L28）同档，背景同饱和度但明显更浅；参考 [配色口径](doc/TODO.md)。
 - `labels.featured` 为特色场次标签（默认「映后交流」），设为空字符串可隐藏；`labels.sameTitle` 为详情中同名场次分组标题（默认「同片场次」）。
 - `adjacency` 为「两场紧挨」的间隔阈值（分钟），普通场次默认 60、特色场次默认 120；紧挨的场次不显示行程。
 - 同一天有场次重叠时（多厅同时放映），周视图会自动按「重叠簇」并排分列（最多 2 列时每列占一半宽）；不重叠时仍占满整格。
 - 工具栏的「↕ / ↔ 展开」按钮按当前视图生效：
   - 月视图「↕」：每行高度按当天最多场次撑开，当天全部日程都显示（原来固定 5 行、溢出显示 +N）；再次点击恢复 5 行铺满。
-  - 周视图「↔」：可见天数收窄为桌面 4 天 / 移动端 2 天，列宽变大、标题不换行；左右两侧出现翻页按钮。
+  - 周视图「↔」：可见天数收窄为桌面 4 天 / 移动端 2 天，列宽变大；左右两侧出现翻页按钮。
+  - 周视图的日程标题最多两行（桌面与移动端一致），超出省略；展开态列更宽，同样保持两行上限。
   - 周视图工具栏的上一页 / 下一页按「可见天数」翻页：折叠时 7 天、展开时 4 天（移动端 2 天），不会展开后仍整周跳。
 - 加入日程时若与已选场次时间重叠，会弹出 message 提示「与已选「xx」时间冲突 N 分钟」；已选列表和截图里的「时间冲突 N 分钟」固定用红色（`--danger`），不随主题主色变化。
 - 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；导出与订阅按同一口径生成：不含评分与影院名/地址。

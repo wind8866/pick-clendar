@@ -5,6 +5,7 @@ import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
 import { useEventHover } from '@/composables/useEventHover'
 import { useIsMobile } from '@/composables/useIsMobile'
+import { hallColor } from '@/utils/halls'
 import {
   compareStart,
   dateInZone,
@@ -113,6 +114,12 @@ const eventsByDate = computed(() => {
 
 function eventsFor(day: Dayjs): FestivalEvent[] {
   return eventsByDate.value.get(day.format('YYYY-MM-DD')) ?? []
+}
+
+/** 多厅日历：厅色只作用于左侧竖线 */
+function hallStyle(event: FestivalEvent): Record<string, string> {
+  const color = hallColor(props.config, event.location)
+  return color ? { '--hall-color': color } : {}
 }
 
 // 激进显示：尽可能铺满格子，仅在溢出时预留一行显示 +N
@@ -356,6 +363,7 @@ watch(
                 selected: store.isSelected(event.id),
                 'hover-same': store.isCalendarHighlighted(event),
               }"
+              :style="hallStyle(event)"
               :title="`${hm(zoned(event.start, config.timeZone))} ${store.displayTitle(event)}`"
               @click.stop="onChipClick($event, event)"
               @mouseenter="onChipEnter($event, event)"
@@ -539,7 +547,7 @@ watch(
   width: 3px;
   height: 12px;
   border-radius: 2px;
-  background: var(--red);
+  background: var(--hall-color, var(--red));
 }
 
 .chip-title {
@@ -564,7 +572,7 @@ watch(
 }
 
 .chip.selected .chip-bar {
-  background: var(--sel-line);
+  background: var(--hall-color, var(--sel-line));
 }
 
 .chip.hover-same {

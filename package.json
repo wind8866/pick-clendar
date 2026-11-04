@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "gen": "node scripts/generate-calendar.mjs",
-    "import:cfa": "node scripts/import-cfa.mjs",
     "import:cfa-beijing": "node scripts/import-cfa-beijing.mjs",
+    "import:cfa-jiangnan": "node scripts/import-cfa-jiangnan.mjs",
     "split:cfa": "node scripts/split-cfa.mjs",
     "prebuild": "node scripts/generate-calendar.mjs",
     "build": "vue-tsc --noEmit && vite build",

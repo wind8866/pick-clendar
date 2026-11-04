@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import type { FestivalConfig, FestivalEvent } from '@/types'
 import { useSelectionStore } from '@/stores/selection'
 import { compareStart, dateInZone, eventEnd, hm, toDateKey, weekdayLabel, zoned } from '@/utils/time'
+import { hallColor } from '@/utils/halls'
 
 const props = defineProps<{
   modelValue: boolean
@@ -40,6 +41,11 @@ const events = computed(() =>
 function pickDay(event: FestivalEvent): void {
   emit('select', event)
 }
+
+/** 多厅日历：厅色小方块，和日历左侧竖线保持一致 */
+function hallDot(event: FestivalEvent): string | undefined {
+  return hallColor(props.config, event.location)
+}
 </script>
 
 <template>
@@ -72,7 +78,15 @@ function pickDay(event: FestivalEvent): void {
             {{ hm(zoned(event.start, config.timeZone)) }} –
             {{ hm(eventEnd(event.start, event.durationMinutes, config.timeZone)) }}
           </span>
-          <span v-if="event.location" class="day-hall">{{ event.location }}</span>
+          <span v-if="event.location" class="day-hall">
+            <span
+              v-if="hallDot(event)"
+              class="hall-dot"
+              :style="{ background: hallDot(event) }"
+              aria-hidden="true"
+            />
+            {{ event.location }}
+          </span>
         </span>
         <span class="day-title">{{ store.displayTitle(event) }}</span>
         <span class="day-action">
@@ -147,8 +161,18 @@ function pickDay(event: FestivalEvent): void {
 }
 
 .day-hall {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
   color: var(--muted);
   font-size: 10px;
+}
+
+.hall-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
 }
 
 .day-title {

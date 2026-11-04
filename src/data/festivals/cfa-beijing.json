@@ -1,5 +1,6 @@
 {
   "schemaVersion": 2,
+  "order": 1,
   "id": "cfa-beijing",
   "name": "中国电影资料馆",
   "city": "北京",
@@ -9,10 +10,19 @@
   "siteOrigin": "https://cal.wind8866.top",
   "itemNoun": "部影片",
   "defaultView": "month",
+  "cover": {
+    "text": "电影资料馆",
+    "style": "breath"
+  },
   "theme": {
-    "background": "#ffefec",
-    "primary": "#EE3E36",
-    "secondary": "#E4B24A"
+    "background": "#F6EAE2",
+    "primary": "#6D2E27",
+    "secondary": "#C1AD86"
+  },
+  "hallColors": {
+    "小西天 1号厅": "#6D2E27",
+    "小西天 2号厅": "#ee3e3699",
+    "百子湾 1号厅": "rgb(98, 138, 240)"
   },
   "labels": {
     "featured": "映后交流",
@@ -23,7 +33,7 @@
     "featuredMinutes": 120
   },
   "initialDate": "2026-11-01",
-  "updatedAt": "2026-11-02",
+  "updatedAt": "2026-11-01",
   "events": [
     {
       "id": "cfa-beijing-header",
@@ -40,7 +50,7 @@
       "title": "黄昏之恋",
       "start": "2026-11-01T11:00:00+08:00",
       "durationMinutes": 130,
-      "description": "1957年 美国 剧情 喜剧 爱情 · 小西天 1号厅",
+      "description": "1957年 美国 剧情/喜剧/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1957,
       "location": "小西天 1号厅"
@@ -60,7 +70,7 @@
       "title": "圆月映花都",
       "start": "2026-11-01T13:30:00+08:00",
       "durationMinutes": 101,
-      "description": "1984年 法国 剧情 爱情 · 百子湾 1号厅",
+      "description": "1984年 法国 剧情/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 1984,
       "location": "百子湾 1号厅"
@@ -80,7 +90,7 @@
       "title": "绿光",
       "start": "2026-11-01T15:40:00+08:00",
       "durationMinutes": 98,
-      "description": "1986年 法国 剧情 喜剧 爱情 · 百子湾 1号厅",
+      "description": "1986年 法国 剧情/喜剧/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 1986,
       "location": "百子湾 1号厅"
@@ -90,7 +100,7 @@
       "title": "短片集“女主角”",
       "start": "2026-11-01T16:00:00+08:00",
       "durationMinutes": 79,
-      "description": "1905年 法国 短片 喜剧 纪录片 · 小西天 2号厅",
+      "description": "1905年 法国 短片/喜剧/纪录片 · 小西天 2号厅",
       "url": "",
       "year": 1905,
       "location": "小西天 2号厅"
@@ -100,7 +110,7 @@
       "title": "桃色公寓",
       "start": "2026-11-01T16:30:00+08:00",
       "durationMinutes": 125,
-      "description": "1960年 美国 剧情 喜剧 爱情 · 小西天 1号厅",
+      "description": "1960年 美国 剧情/喜剧/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1960,
       "location": "小西天 1号厅"
@@ -110,7 +120,7 @@
       "title": "女友的男友",
       "start": "2026-11-01T17:50:00+08:00",
       "durationMinutes": 103,
-      "description": "1987年 法国 剧情 喜剧 爱情 · 百子湾 1号厅",
+      "description": "1987年 法国 剧情/喜剧/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 1987,
       "location": "百子湾 1号厅"
@@ -130,7 +140,7 @@
       "title": "飞来福",
       "start": "2026-11-01T19:10:00+08:00",
       "durationMinutes": 125,
-      "description": "1966年 美国 喜剧 爱情 · 小西天 1号厅",
+      "description": "1966年 美国 喜剧/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1966,
       "location": "小西天 1号厅"
@@ -140,7 +150,7 @@
       "title": "特写",
       "start": "2026-11-02T18:30:00+08:00",
       "durationMinutes": 98,
-      "description": "1990年 伊朗 剧情 犯罪 · 小西天 2号厅",
+      "description": "1990年 伊朗 剧情/犯罪 · 小西天 2号厅",
       "url": "",
       "year": 1990,
       "location": "小西天 2号厅"
@@ -150,7 +160,7 @@
       "title": "洛可兄弟",
       "start": "2026-11-02T19:00:00+08:00",
       "durationMinutes": 179,
-      "description": "1960年 意大利 法国 剧情 犯罪 · 小西天 1号厅",
+      "description": "1960年 意大利 法国 剧情/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 1960,
       "location": "小西天 1号厅"
@@ -170,7 +180,7 @@
       "title": "天堂电影院",
       "start": "2026-11-03T19:00:00+08:00",
       "durationMinutes": 125,
-      "description": "1988年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1988年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1988,
       "location": "小西天 1号厅"
@@ -180,7 +190,7 @@
       "title": "奇美拉",
       "start": "2026-11-04T18:30:00+08:00",
       "durationMinutes": 126,
-      "description": "2023年 意大利 法国 瑞士 爱情 奇幻 喜剧 冒险 · 小西天 2号厅",
+      "description": "2023年 意大利 法国 瑞士 爱情/奇幻/喜剧/冒险 · 小西天 2号厅",
       "url": "",
       "year": 2023,
       "location": "小西天 2号厅"
@@ -190,7 +200,7 @@
       "title": "十字街头",
       "start": "2026-11-04T19:00:00+08:00",
       "durationMinutes": 108,
-      "description": "1937年 中国 剧情 爱情 · 百子湾 1号厅",
+      "description": "1937年 中国 剧情/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 1937,
       "location": "百子湾 1号厅"
@@ -210,7 +220,7 @@
       "title": "鸟类变形记",
       "start": "2026-11-05T18:30:00+08:00",
       "durationMinutes": 101,
-      "description": "2020年 葡萄牙 剧情 传记 纪录片 · 小西天 2号厅",
+      "description": "2020年 葡萄牙 剧情/传记/纪录片 · 小西天 2号厅",
       "url": "",
       "year": 2020,
       "location": "小西天 2号厅"
@@ -220,7 +230,7 @@
       "title": "奥兰多",
       "start": "2026-11-05T19:00:00+08:00",
       "durationMinutes": 93,
-      "description": "1992年 英国 俄罗斯 意大利 法国 荷兰 剧情 爱情 · 百子湾 1号厅",
+      "description": "1992年 英国 俄罗斯 意大利 法国 荷兰 剧情/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 1992,
       "location": "百子湾 1号厅"
@@ -252,7 +262,7 @@
       "title": "离开拉斯维加斯",
       "start": "2026-11-06T19:00:00+08:00",
       "durationMinutes": 111,
-      "description": "1995年 美国 剧情 爱情 · 小西天 1号厅",
+      "description": "1995年 美国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1995,
       "location": "小西天 1号厅"
@@ -272,7 +282,7 @@
       "title": "爵士春秋",
       "start": "2026-11-07T11:00:00+08:00",
       "durationMinutes": 123,
-      "description": "1979年 美国 剧情 喜剧 音乐 歌舞 · 小西天 1号厅",
+      "description": "1979年 美国 剧情/喜剧/音乐/歌舞 · 小西天 1号厅",
       "url": "",
       "year": 1979,
       "location": "小西天 1号厅"
@@ -282,7 +292,7 @@
       "title": "刘三姐",
       "start": "2026-11-07T13:10:00+08:00",
       "durationMinutes": 112,
-      "description": "1960年 中国 剧情 戏曲 音乐 · 小西天 2号厅",
+      "description": "1960年 中国 剧情/戏曲/音乐 · 小西天 2号厅",
       "url": "",
       "year": 1960,
       "location": "小西天 2号厅"
@@ -302,7 +312,7 @@
       "title": "低俗小说",
       "start": "2026-11-07T13:40:00+08:00",
       "durationMinutes": 154,
-      "description": "1994年 美国 剧情 喜剧 犯罪 · 小西天 1号厅",
+      "description": "1994年 美国 剧情/喜剧/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 1994,
       "location": "小西天 1号厅"
@@ -322,7 +332,7 @@
       "title": "南特的雅克·德米",
       "start": "2026-11-07T15:40:00+08:00",
       "durationMinutes": 120,
-      "description": "1991年 法国 剧情 传记 · 百子湾 1号厅",
+      "description": "1991年 法国 剧情/传记 · 百子湾 1号厅",
       "url": "",
       "year": 1991,
       "location": "百子湾 1号厅"
@@ -332,7 +342,7 @@
       "title": "出租车司机",
       "start": "2026-11-07T17:00:00+08:00",
       "durationMinutes": 114,
-      "description": "1976年 美国 剧情 犯罪 · 小西天 1号厅",
+      "description": "1976年 美国 剧情/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 1976,
       "location": "小西天 1号厅"
@@ -362,7 +372,7 @@
       "title": "亡命驾驶",
       "start": "2026-11-07T19:30:00+08:00",
       "durationMinutes": 100,
-      "description": "2011年 美国 剧情 动作 · 小西天 1号厅",
+      "description": "2011年 美国 剧情/动作 · 小西天 1号厅",
       "url": "",
       "year": 2011,
       "location": "小西天 1号厅"
@@ -372,7 +382,7 @@
       "title": "生活多美好",
       "start": "2026-11-08T11:00:00+08:00",
       "durationMinutes": 130,
-      "description": "1946年 美国 剧情 爱情 奇幻 · 小西天 1号厅",
+      "description": "1946年 美国 剧情/爱情/奇幻 · 小西天 1号厅",
       "url": "",
       "year": 1946,
       "location": "小西天 1号厅"
@@ -392,7 +402,7 @@
       "title": "乘龙快婿",
       "start": "2026-11-08T13:30:00+08:00",
       "durationMinutes": 85,
-      "description": "1947年 中国 喜剧 爱情 · 小西天 2号厅",
+      "description": "1947年 中国 喜剧/爱情 · 小西天 2号厅",
       "url": "",
       "year": 1947,
       "location": "小西天 2号厅"
@@ -402,7 +412,7 @@
       "title": "安妮·霍尔",
       "start": "2026-11-08T13:50:00+08:00",
       "durationMinutes": 94,
-      "description": "1977年 美国 剧情 喜剧 爱情 · 小西天 1号厅",
+      "description": "1977年 美国 剧情/喜剧/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1977,
       "location": "小西天 1号厅"
@@ -432,7 +442,7 @@
       "title": "黄金三镖客",
       "start": "2026-11-08T16:00:00+08:00",
       "durationMinutes": 179,
-      "description": "1966年 意大利 西班牙 西德 西部 冒险 · 小西天 1号厅",
+      "description": "1966年 意大利 西班牙 西德 西部/冒险 · 小西天 1号厅",
       "url": "",
       "year": 1966,
       "location": "小西天 1号厅"
@@ -462,7 +472,7 @@
       "title": "老无所依",
       "start": "2026-11-08T19:30:00+08:00",
       "durationMinutes": 122,
-      "description": "2007年 美国 剧情 惊悚 犯罪 · 小西天 1号厅",
+      "description": "2007年 美国 剧情/惊悚/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 2007,
       "location": "小西天 1号厅"
@@ -472,7 +482,7 @@
       "title": "审判",
       "start": "2026-11-10T18:30:00+08:00",
       "durationMinutes": 119,
-      "description": "1962年 法国 意大利 西德 剧情 悬疑 惊悚 · 小西天 2号厅",
+      "description": "1962年 法国 意大利 西德 剧情/悬疑/惊悚 · 小西天 2号厅",
       "url": "",
       "year": 1962,
       "location": "小西天 2号厅"
@@ -482,7 +492,7 @@
       "title": "坠落的审判",
       "start": "2026-11-10T19:00:00+08:00",
       "durationMinutes": 151,
-      "description": "2023年 法国 剧情 家庭 · 小西天 1号厅",
+      "description": "2023年 法国 剧情/家庭 · 小西天 1号厅",
       "url": "",
       "year": 2023,
       "location": "小西天 1号厅"
@@ -492,7 +502,7 @@
       "title": "茜茜公主",
       "start": "2026-11-11T18:30:00+08:00",
       "durationMinutes": 101,
-      "description": "1955年 奥地利 剧情 爱情 历史 · 小西天 2号厅",
+      "description": "1955年 奥地利 剧情/爱情/历史 · 小西天 2号厅",
       "url": "",
       "year": 1955,
       "location": "小西天 2号厅"
@@ -522,7 +532,7 @@
       "title": "茜茜公主2：年轻的皇后",
       "start": "2026-11-12T18:30:00+08:00",
       "durationMinutes": 101,
-      "description": "1956年 奥地利 剧情 爱情 历史 · 小西天 2号厅",
+      "description": "1956年 奥地利 剧情/爱情/历史 · 小西天 2号厅",
       "url": "",
       "year": 1956,
       "location": "小西天 2号厅"
@@ -532,7 +542,7 @@
       "title": "特写",
       "start": "2026-11-12T19:00:00+08:00",
       "durationMinutes": 98,
-      "description": "1990年 伊朗 剧情 犯罪 · 百子湾 1号厅",
+      "description": "1990年 伊朗 剧情/犯罪 · 百子湾 1号厅",
       "url": "",
       "year": 1990,
       "location": "百子湾 1号厅"
@@ -552,7 +562,7 @@
       "title": "茜茜公主3：皇后的命运",
       "start": "2026-11-13T18:30:00+08:00",
       "durationMinutes": 104,
-      "description": "1957年 奥地利 剧情 爱情 历史 · 小西天 2号厅",
+      "description": "1957年 奥地利 剧情/爱情/历史 · 小西天 2号厅",
       "url": "",
       "year": 1957,
       "location": "小西天 2号厅"
@@ -572,7 +582,7 @@
       "title": "灰烬与钻石",
       "start": "2026-11-13T19:00:00+08:00",
       "durationMinutes": 103,
-      "description": "1958年 波兰 剧情 战争 · 小西天 1号厅\n映前：开幕式 映后：交流",
+      "description": "1958年 波兰 剧情/战争 · 小西天 1号厅\n映前：开幕式 映后：交流",
       "url": "",
       "titlePrefix": "🎉",
       "year": 1958,
@@ -594,7 +604,7 @@
       "title": "一代人",
       "start": "2026-11-14T13:00:00+08:00",
       "durationMinutes": 87,
-      "description": "1955年 波兰 剧情 战争 · 小西天 1号厅",
+      "description": "1955年 波兰 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1955,
       "location": "小西天 1号厅"
@@ -614,7 +624,7 @@
       "title": "灿烂人生",
       "start": "2026-11-14T13:30:00+08:00",
       "durationMinutes": 366,
-      "description": "2003年 意大利 剧情 家庭 爱情 · 百子湾 1号厅",
+      "description": "2003年 意大利 剧情/家庭/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 2003,
       "location": "百子湾 1号厅"
@@ -624,7 +634,7 @@
       "title": "下水道",
       "start": "2026-11-14T15:00:00+08:00",
       "durationMinutes": 91,
-      "description": "1957年 波兰 剧情 战争 · 小西天 1号厅",
+      "description": "1957年 波兰 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1957,
       "location": "小西天 1号厅"
@@ -634,7 +644,7 @@
       "title": "无罪的巫师",
       "start": "2026-11-14T17:10:00+08:00",
       "durationMinutes": 87,
-      "description": "1960年 波兰 剧情 爱情 音乐 · 小西天 1号厅",
+      "description": "1960年 波兰 剧情/爱情/音乐 · 小西天 1号厅",
       "url": "",
       "year": 1960,
       "location": "小西天 1号厅"
@@ -644,7 +654,7 @@
       "title": "边境杀手",
       "start": "2026-11-14T19:10:00+08:00",
       "durationMinutes": 121,
-      "description": "2015年 美国 墨西哥 中国香港 剧情 惊悚 犯罪 · 小西天 1号厅",
+      "description": "2015年 美国 墨西哥 中国香港 剧情/惊悚/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 2015,
       "location": "小西天 1号厅"
@@ -664,7 +674,7 @@
       "title": "法外之徒",
       "start": "2026-11-15T13:30:00+08:00",
       "durationMinutes": 95,
-      "description": "1964年 法国 剧情 犯罪 · 百子湾 1号厅",
+      "description": "1964年 法国 剧情/犯罪 · 百子湾 1号厅",
       "url": "",
       "year": 1964,
       "location": "百子湾 1号厅"
@@ -714,7 +724,7 @@
       "title": "穆赫兰道",
       "start": "2026-11-15T18:10:00+08:00",
       "durationMinutes": 147,
-      "description": "2001年 法国 美国 剧情 悬疑 · 百子湾 1号厅",
+      "description": "2001年 法国 美国 剧情/悬疑 · 百子湾 1号厅",
       "url": "",
       "year": 2001,
       "location": "百子湾 1号厅"
@@ -734,7 +744,7 @@
       "title": "两小无猜",
       "start": "2026-11-17T18:30:00+08:00",
       "durationMinutes": 94,
-      "description": "2003年 法国 比利时 剧情 喜剧 爱情 · 小西天 2号厅",
+      "description": "2003年 法国 比利时 剧情/喜剧/爱情 · 小西天 2号厅",
       "url": "",
       "year": 2003,
       "location": "小西天 2号厅"
@@ -744,7 +754,7 @@
       "title": "丹东",
       "start": "2026-11-17T19:00:00+08:00",
       "durationMinutes": 136,
-      "description": "1983年 法国 波兰 剧情 传记 历史 · 小西天 1号厅",
+      "description": "1983年 法国 波兰 剧情/传记/历史 · 小西天 1号厅",
       "url": "",
       "year": 1983,
       "location": "小西天 1号厅"
@@ -764,7 +774,7 @@
       "title": "还乡日记",
       "start": "2026-11-18T19:00:00+08:00",
       "durationMinutes": 112,
-      "description": "1947年 中国 剧情 喜剧 · 百子湾 1号厅",
+      "description": "1947年 中国 剧情/喜剧 · 百子湾 1号厅",
       "url": "",
       "year": 1947,
       "location": "百子湾 1号厅"
@@ -774,7 +784,7 @@
       "title": "钢的琴",
       "start": "2026-11-18T19:00:00+08:00",
       "durationMinutes": 106,
-      "description": "2010年 中国 剧情 喜剧 · 小西天 1号厅",
+      "description": "2010年 中国 剧情/喜剧 · 小西天 1号厅",
       "url": "",
       "year": 2010,
       "location": "小西天 1号厅"
@@ -804,7 +814,7 @@
       "title": "科扎克医生",
       "start": "2026-11-19T19:00:00+08:00",
       "durationMinutes": 118,
-      "description": "1990年 波兰 德国 英国 剧情 传记 战争 · 小西天 1号厅",
+      "description": "1990年 波兰 德国 英国 剧情/传记/战争 · 小西天 1号厅",
       "url": "",
       "year": 1990,
       "location": "小西天 1号厅"
@@ -814,7 +824,7 @@
       "title": "南特的雅克·德米",
       "start": "2026-11-20T18:30:00+08:00",
       "durationMinutes": 120,
-      "description": "1991年 法国 剧情 传记 · 小西天 2号厅",
+      "description": "1991年 法国 剧情/传记 · 小西天 2号厅",
       "url": "",
       "year": 1991,
       "location": "小西天 2号厅"
@@ -824,7 +834,7 @@
       "title": "穆赫兰道",
       "start": "2026-11-20T19:00:00+08:00",
       "durationMinutes": 147,
-      "description": "2001年 法国 美国 剧情 悬疑 · 百子湾 1号厅",
+      "description": "2001年 法国 美国 剧情/悬疑 · 百子湾 1号厅",
       "url": "",
       "year": 2001,
       "location": "百子湾 1号厅"
@@ -834,7 +844,7 @@
       "title": "残影余像",
       "start": "2026-11-20T19:00:00+08:00",
       "durationMinutes": 98,
-      "description": "2016年 波兰 剧情 传记 历史 · 小西天 1号厅\n映后：讲座",
+      "description": "2016年 波兰 剧情/传记/历史 · 小西天 1号厅\n映后：讲座",
       "url": "",
       "titlePrefix": "🎉",
       "year": 2016,
@@ -846,7 +856,7 @@
       "title": "一代人",
       "start": "2026-11-21T10:30:00+08:00",
       "durationMinutes": 87,
-      "description": "1955年 波兰 剧情 战争 · 小西天 1号厅",
+      "description": "1955年 波兰 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1955,
       "location": "小西天 1号厅"
@@ -856,7 +866,7 @@
       "title": "下水道",
       "start": "2026-11-21T12:30:00+08:00",
       "durationMinutes": 91,
-      "description": "1957年 波兰 剧情 战争 · 小西天 1号厅",
+      "description": "1957年 波兰 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1957,
       "location": "小西天 1号厅"
@@ -886,7 +896,7 @@
       "title": "灰烬与钻石",
       "start": "2026-11-21T14:40:00+08:00",
       "durationMinutes": 103,
-      "description": "1958年 波兰 剧情 战争 · 小西天 1号厅",
+      "description": "1958年 波兰 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1958,
       "location": "小西天 1号厅"
@@ -936,7 +946,7 @@
       "title": "焦土之城",
       "start": "2026-11-21T19:30:00+08:00",
       "durationMinutes": 131,
-      "description": "2010年 加拿大 法国 剧情 悬疑 战争 · 小西天 1号厅",
+      "description": "2010年 加拿大 法国 剧情/悬疑/战争 · 小西天 1号厅",
       "url": "",
       "year": 2010,
       "location": "小西天 1号厅"
@@ -946,7 +956,7 @@
       "title": "丹东",
       "start": "2026-11-22T10:30:00+08:00",
       "durationMinutes": 136,
-      "description": "1983年 法国 波兰 剧情 传记 历史 · 小西天 1号厅",
+      "description": "1983年 法国 波兰 剧情/传记/历史 · 小西天 1号厅",
       "url": "",
       "year": 1983,
       "location": "小西天 1号厅"
@@ -976,7 +986,7 @@
       "title": "灿烂人生",
       "start": "2026-11-22T13:30:00+08:00",
       "durationMinutes": 366,
-      "description": "2003年 意大利 剧情 家庭 爱情 · 百子湾 1号厅",
+      "description": "2003年 意大利 剧情/家庭/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 2003,
       "location": "百子湾 1号厅"
@@ -1006,7 +1016,7 @@
       "title": "边境杀手",
       "start": "2026-11-22T20:00:00+08:00",
       "durationMinutes": 121,
-      "description": "2015年 美国 墨西哥 中国香港 剧情 惊悚 犯罪 · 小西天 1号厅",
+      "description": "2015年 美国 墨西哥 中国香港 剧情/惊悚/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 2015,
       "location": "小西天 1号厅"
@@ -1016,7 +1026,7 @@
       "title": "野兽",
       "start": "2026-11-24T18:30:00+08:00",
       "durationMinutes": 146,
-      "description": "2023年 法国 加拿大 剧情 爱情 科幻 惊悚 · 小西天 2号厅",
+      "description": "2023年 法国 加拿大 剧情/爱情/科幻/惊悚 · 小西天 2号厅",
       "url": "",
       "year": 2023,
       "location": "小西天 2号厅"
@@ -1026,7 +1036,7 @@
       "title": "还有明天",
       "start": "2026-11-24T19:00:00+08:00",
       "durationMinutes": 119,
-      "description": "2023年 意大利 剧情 喜剧 · 小西天 1号厅",
+      "description": "2023年 意大利 剧情/喜剧 · 小西天 1号厅",
       "url": "",
       "year": 2023,
       "location": "小西天 1号厅"
@@ -1036,7 +1046,7 @@
       "title": "侏儒流氓",
       "start": "2026-11-25T18:30:00+08:00",
       "durationMinutes": 96,
-      "description": "1971年 西德 剧情 喜剧 恐怖 · 小西天 2号厅",
+      "description": "1971年 西德 剧情/喜剧/恐怖 · 小西天 2号厅",
       "url": "",
       "year": 1971,
       "location": "小西天 2号厅"
@@ -1056,7 +1066,7 @@
       "title": "天伦",
       "start": "2026-11-25T19:00:00+08:00",
       "durationMinutes": 48,
-      "description": "1935年 中国 剧情 家庭 · 小西天 1号厅\n映前：导赏",
+      "description": "1935年 中国 剧情/家庭 · 小西天 1号厅\n映前：导赏",
       "url": "",
       "titlePrefix": "🎉",
       "year": 1935,
@@ -1068,7 +1078,7 @@
       "title": "我的魔鬼",
       "start": "2026-11-26T18:30:00+08:00",
       "durationMinutes": 99,
-      "description": "1999年 英国 德国 芬兰 美国 纪录片 传记 · 小西天 2号厅",
+      "description": "1999年 英国 德国 芬兰 美国 纪录片/传记 · 小西天 2号厅",
       "url": "",
       "year": 1999,
       "location": "小西天 2号厅"
@@ -1078,7 +1088,7 @@
       "title": "两小无猜",
       "start": "2026-11-26T19:00:00+08:00",
       "durationMinutes": 94,
-      "description": "2003年 法国 比利时 剧情 喜剧 爱情 · 百子湾 1号厅",
+      "description": "2003年 法国 比利时 剧情/喜剧/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 2003,
       "location": "百子湾 1号厅"
@@ -1088,7 +1098,7 @@
       "title": "奥兰多",
       "start": "2026-11-27T19:00:00+08:00",
       "durationMinutes": 93,
-      "description": "1992年 英国 俄罗斯 意大利 法国 荷兰 剧情 爱情 · 百子湾 1号厅",
+      "description": "1992年 英国 俄罗斯 意大利 法国 荷兰 剧情/爱情 · 百子湾 1号厅",
       "url": "",
       "year": 1992,
       "location": "百子湾 1号厅"
@@ -1098,7 +1108,7 @@
       "title": "战国妖姬",
       "start": "2026-11-27T19:00:00+08:00",
       "durationMinutes": 123,
-      "description": "1954年 意大利 剧情 爱情 历史 战争 · 小西天 1号厅",
+      "description": "1954年 意大利 剧情/爱情/历史/战争 · 小西天 1号厅",
       "url": "",
       "year": 1954,
       "location": "小西天 1号厅"
@@ -1118,7 +1128,7 @@
       "title": "冰山上的来客",
       "start": "2026-11-28T13:00:00+08:00",
       "durationMinutes": 106,
-      "description": "1963年 中国 剧情 战争 悬疑 · 小西天 2号厅",
+      "description": "1963年 中国 剧情/战争/悬疑 · 小西天 2号厅",
       "url": "",
       "year": 1963,
       "location": "小西天 2号厅"
@@ -1128,7 +1138,7 @@
       "title": "茜茜公主",
       "start": "2026-11-28T13:30:00+08:00",
       "durationMinutes": 101,
-      "description": "1955年 奥地利 剧情 爱情 历史 · 百子湾 1号厅",
+      "description": "1955年 奥地利 剧情/爱情/历史 · 百子湾 1号厅",
       "url": "",
       "year": 1955,
       "location": "百子湾 1号厅"
@@ -1138,7 +1148,7 @@
       "title": "白夜",
       "start": "2026-11-28T13:40:00+08:00",
       "durationMinutes": 102,
-      "description": "1957年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1957年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1957,
       "location": "小西天 1号厅"
@@ -1148,7 +1158,7 @@
       "title": "茜茜公主2：年轻的皇后",
       "start": "2026-11-28T15:40:00+08:00",
       "durationMinutes": 101,
-      "description": "1956年 奥地利 剧情 爱情 历史 · 百子湾 1号厅",
+      "description": "1956年 奥地利 剧情/爱情/历史 · 百子湾 1号厅",
       "url": "",
       "year": 1956,
       "location": "百子湾 1号厅"
@@ -1158,7 +1168,7 @@
       "title": "北斗七星",
       "start": "2026-11-28T16:00:00+08:00",
       "durationMinutes": 101,
-      "description": "1965年 意大利 法国 剧情 悬疑 · 小西天 1号厅",
+      "description": "1965年 意大利 法国 剧情/悬疑 · 小西天 1号厅",
       "url": "",
       "year": 1965,
       "location": "小西天 1号厅"
@@ -1168,7 +1178,7 @@
       "title": "茜茜公主3：皇后的命运",
       "start": "2026-11-28T17:50:00+08:00",
       "durationMinutes": 104,
-      "description": "1957年 奥地利 剧情 爱情 历史 · 百子湾 1号厅",
+      "description": "1957年 奥地利 剧情/爱情/历史 · 百子湾 1号厅",
       "url": "",
       "year": 1957,
       "location": "百子湾 1号厅"
@@ -1178,7 +1188,7 @@
       "title": "纳粹狂魔",
       "start": "2026-11-28T18:30:00+08:00",
       "durationMinutes": 158,
-      "description": "1969年 意大利 西德 剧情 战争 · 小西天 1号厅",
+      "description": "1969年 意大利 西德 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1969,
       "location": "小西天 1号厅"
@@ -1188,7 +1198,7 @@
       "title": "法外之徒",
       "start": "2026-11-29T10:15:00+08:00",
       "durationMinutes": 95,
-      "description": "1964年 法国 剧情 犯罪 · 小西天 1号厅",
+      "description": "1964年 法国 剧情/犯罪 · 小西天 1号厅",
       "url": "",
       "year": 1964,
       "location": "小西天 1号厅"
@@ -1198,7 +1208,7 @@
       "title": "路德维希",
       "start": "2026-11-29T12:30:00+08:00",
       "durationMinutes": 239,
-      "description": "1973年 意大利 法国 西德 剧情 传记 历史 · 小西天 1号厅",
+      "description": "1973年 意大利 法国 西德 剧情/传记/历史 · 小西天 1号厅",
       "url": "",
       "year": 1973,
       "location": "小西天 1号厅"
@@ -1218,7 +1228,7 @@
       "title": "审判",
       "start": "2026-11-29T13:30:00+08:00",
       "durationMinutes": 119,
-      "description": "1962年 法国 意大利 西德 剧情 悬疑 惊悚 · 百子湾 1号厅",
+      "description": "1962年 法国 意大利 西德 剧情/悬疑/惊悚 · 百子湾 1号厅",
       "url": "",
       "year": 1962,
       "location": "百子湾 1号厅"
@@ -1238,7 +1248,7 @@
       "title": "家族的肖像",
       "start": "2026-11-29T17:10:00+08:00",
       "durationMinutes": 122,
-      "description": "1974年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1974年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1974,
       "location": "小西天 1号厅"
@@ -1248,7 +1258,7 @@
       "title": "洛可兄弟",
       "start": "2026-11-29T18:40:00+08:00",
       "durationMinutes": 179,
-      "description": "1960年 意大利 法国 剧情 犯罪 · 百子湾 1号厅",
+      "description": "1960年 意大利 法国 剧情/犯罪 · 百子湾 1号厅",
       "url": "",
       "year": 1960,
       "location": "百子湾 1号厅"
@@ -1258,7 +1268,7 @@
       "title": "无辜",
       "start": "2026-11-29T19:40:00+08:00",
       "durationMinutes": 129,
-      "description": "1976年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1976年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1976,
       "location": "小西天 1号厅"
@@ -1268,7 +1278,7 @@
       "title": "战国妖姬",
       "start": "2026-12-05T11:00:00+08:00",
       "durationMinutes": 123,
-      "description": "1954年 意大利 剧情 爱情 历史 战争 · 小西天 1号厅",
+      "description": "1954年 意大利 剧情/爱情/历史/战争 · 小西天 1号厅",
       "url": "",
       "year": 1954,
       "location": "小西天 1号厅"
@@ -1278,7 +1288,7 @@
       "title": "白夜",
       "start": "2026-12-05T13:40:00+08:00",
       "durationMinutes": 102,
-      "description": "1957年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1957年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1957,
       "location": "小西天 1号厅"
@@ -1288,7 +1298,7 @@
       "title": "北斗七星",
       "start": "2026-12-05T16:00:00+08:00",
       "durationMinutes": 101,
-      "description": "1965年 意大利 法国 剧情 悬疑 · 小西天 1号厅",
+      "description": "1965年 意大利 法国 剧情/悬疑 · 小西天 1号厅",
       "url": "",
       "year": 1965,
       "location": "小西天 1号厅"
@@ -1298,7 +1308,7 @@
       "title": "纳粹狂魔",
       "start": "2026-12-05T18:30:00+08:00",
       "durationMinutes": 158,
-      "description": "1969年 意大利 西德 剧情 战争 · 小西天 1号厅",
+      "description": "1969年 意大利 西德 剧情/战争 · 小西天 1号厅",
       "url": "",
       "year": 1969,
       "location": "小西天 1号厅"
@@ -1308,7 +1318,7 @@
       "title": "路德维希",
       "start": "2026-12-06T13:00:00+08:00",
       "durationMinutes": 239,
-      "description": "1973年 意大利 法国 西德 剧情 传记 历史 · 小西天 1号厅",
+      "description": "1973年 意大利 法国 西德 剧情/传记/历史 · 小西天 1号厅",
       "url": "",
       "year": 1973,
       "location": "小西天 1号厅"
@@ -1318,7 +1328,7 @@
       "title": "家族的肖像",
       "start": "2026-12-06T17:30:00+08:00",
       "durationMinutes": 122,
-      "description": "1974年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1974年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1974,
       "location": "小西天 1号厅"
@@ -1328,7 +1338,7 @@
       "title": "无辜",
       "start": "2026-12-06T20:00:00+08:00",
       "durationMinutes": 129,
-      "description": "1976年 意大利 法国 剧情 爱情 · 小西天 1号厅",
+      "description": "1976年 意大利 法国 剧情/爱情 · 小西天 1号厅",
       "url": "",
       "year": 1976,
       "location": "小西天 1号厅"

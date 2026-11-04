@@ -40,6 +40,16 @@ export interface FestivalLabels {
   sameTitle?: string
 }
 
+/** 影展列表卡片封面的文字样式 */
+export type FestivalCoverStyle = 'plain' | 'scatter' | 'breath' | 'ripple'
+
+export interface FestivalCover {
+  /** 封面短名；缺省取日历 name */
+  text?: string
+  /** 封面的文字动效：plain 静止 / scatter 错落 / breath 呼吸 / ripple 水波 */
+  style?: FestivalCoverStyle
+}
+
 /** 判定「两场紧挨」的间隔阈值（分钟） */
 export interface FestivalAdjacency {
   /** 普通场次 */
@@ -72,6 +82,10 @@ export interface FestivalConfig {
   theme?: FestivalTheme
   labels?: FestivalLabels
   adjacency?: FestivalAdjacency
+  /** 列表卡片封面：短名 + 文字动效 */
+  cover?: FestivalCover
+  /** 影厅配色：键为 location，用于日历左侧竖线与筛选下拉的厅标识 */
+  hallColors?: Record<string, string>
   events: FestivalEvent[]
 }
 

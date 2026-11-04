@@ -8,6 +8,7 @@ import { findFestival } from '@/data/festivals'
 import { useSelectionStore } from '@/stores/selection'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { applyTheme } from '@/utils/theme'
+import { hallColor } from '@/utils/halls'
 import AppHeader from '@/components/AppHeader.vue'
 import WeekCalendar from '@/components/WeekCalendar.vue'
 import MonthCalendar from '@/components/MonthCalendar.vue'
@@ -52,6 +53,11 @@ const halls = computed(() =>
 )
 const selectedHalls = ref<string[]>([])
 
+/** 影厅筛选下拉的厅色标记；未配置厅色时不显示 */
+function hallDot(hall: string): string | undefined {
+  return hallColor(config, hall)
+}
+
 // 月视图纵向展开 / 周视图横向展开，分别记住状态
 const monthExpanded = ref(false)
 const weekExpanded = ref(false)
@@ -63,7 +69,7 @@ const expandTip = computed(() => {
   if (view.value === 'week') {
     return weekExpanded.value
       ? '收起，恢复 7 天视图'
-      : `展开为 ${isMobile.value ? 2 : 4} 天，日程标题不换行`
+      : `展开为 ${isMobile.value ? 2 : 4} 天，每列更宽`
   }
   return monthExpanded.value
     ? '收起，恢复 5 行月视图'
@@ -223,7 +229,17 @@ onBeforeUnmount(() => {
               title="按影厅筛选"
               aria-label="按影厅筛选"
             >
-              <el-option v-for="hall in halls" :key="hall" :label="hall" :value="hall" />
+              <el-option v-for="hall in halls" :key="hall" :label="hall" :value="hall">
+                <span class="hall-option">
+                  <span
+                    v-if="hallDot(hall)"
+                    class="hall-dot"
+                    :style="{ background: hallDot(hall) }"
+                    aria-hidden="true"
+                  />
+                  <span>{{ hall }}</span>
+                </span>
+              </el-option>
             </el-select>
 
             <el-button
@@ -388,6 +404,19 @@ onBeforeUnmount(() => {
 .hall-filter :deep(.el-select__wrapper) {
   min-height: 24px;
   font-size: 12px;
+}
+
+.hall-option {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.hall-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
 }
 
 .expand-btn {
