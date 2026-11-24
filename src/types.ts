@@ -48,6 +48,8 @@ export interface FestivalCover {
   text?: string
   /** 封面的文字动效：plain 静止 / scatter 错落 / breath 呼吸 / ripple 水波 */
   style?: FestivalCoverStyle
+  /** 封面的图形彩蛋：eyes 为悬停时飞到上方的两只“眼睛” */
+  motif?: 'eyes'
 }
 
 /** 判定「两场紧挨」的间隔阈值（分钟） */

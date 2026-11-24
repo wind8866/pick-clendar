@@ -14,7 +14,8 @@
     "updatedAt": "2026-10-26",
     "cover": {
       "text": "风格万相",
-      "style": "scatter"
+      "style": "scatter",
+      "motif": "eyes"
     },
     "theme": {
       "background": "#E5CEA8",
