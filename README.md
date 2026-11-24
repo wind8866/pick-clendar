@@ -170,7 +170,8 @@ http://127.0.0.1:5173/pick/cfa-jiangnan
   - 周视图的日程标题最多两行（桌面与移动端一致），超出省略；展开态列更宽，同样保持两行上限。
   - 周视图工具栏的上一页 / 下一页按「可见天数」翻页：折叠时 7 天、展开时 4 天（移动端 2 天），不会展开后仍整周跳。
 - 加入日程时若与已选场次时间重叠，会弹出 message 提示「与已选「xx」时间冲突 N 分钟」；已选列表和截图里的「时间冲突 N 分钟」固定用红色（`--danger`），不随主题主色变化。
-- 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；导出与订阅按同一口径生成：不含评分与影院名/地址。
+- 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；导出与订阅共用描述口径：不含评分与影院名/地址。
+  订阅文件是所有访问者共享的静态文件，不包含个人设置（行程时间），因此行程只在「导出日历」生成的 `.ics` 里单独生成 VEVENT。
 - 新增日历：先填 [新日历配置问卷](doc/calendar-questionnaire.md)，再在 `src/data/raw` 新增 `.raw.json` 并执行 `pnpm gen`；需要排序时设置 `order`。二维码依赖 `qrcode`（已在 devDependencies 中），缺少 `siteOrigin` 时只跳过二维码。
 
 ## 时区与导出
@@ -192,8 +193,10 @@ calendar-pick:v1:<当前路径>
 ## 导出
 
 - **列表截图**：393px 宽的紧凑竖版 PNG（2x），适合手机查看；主题色与页面一致，缺少二维码时自动隐藏二维码块
-- **导出日历**：`.ics`，按 `config.timeZone` 生成，固定偏移用 `TZID` + `VTIMEZONE`，跨夏令时退回 UTC
-- **导出 Excel**：UTF-8 BOM 的 `.csv`
+- **导出日历**：`.ics`，按 `config.timeZone` 生成，固定偏移用 `TZID` + `VTIMEZONE`，跨夏令时退回 UTC；
+  单场行程 > 0 时，会在影片开始前额外生成一条 `行程` VEVENT（`🚗 前往「影片」`），
+  用于在日历里占住出发/准备时间；影片自身的 DESCRIPTION 仍保留 `行程：N 分钟`
+- **导出 Excel**：UTF-8 BOM 的 `.csv`，行程单独一列
 
 文件名统一为“内容名 + 浏览器本地时间戳”。页面中的真实时长来自 `doc/movie-info.png`，待补内容见 [doc/TODO.md](doc/TODO.md)。
 
