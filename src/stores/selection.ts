@@ -315,13 +315,21 @@ export const useSelectionStore = defineStore('selection', () => {
     return isAdjacentToPrev(event) ? 0 : travelOf(event)
   }
 
-  /** 描述首行：年代 / 导演 / 语言 */
+  /**
+   * 描述首行：年代 / 导演 / 语言。
+   * 配置 hallInDescription 时，把 location（厅号 / 场地）追加在末尾，
+   * 这样影厅只在描述里出现，不占用筛选和日历格子的空间。
+   */
   function metaLine(event: FestivalEvent): string {
     const parts: string[] = []
     if (event.year !== undefined) parts.push(`${event.year}年`)
     if (event.director) parts.push(event.director)
     if (event.language) parts.push(event.language)
-    return parts.join(' ')
+    const line = parts.join(' ')
+    if (config.value?.hallInDescription && event.location) {
+      return line ? `${line} · ${event.location}` : event.location
+    }
+    return line
   }
 
   /** 完整描述（含评分），仅用于日历视图的详情 */

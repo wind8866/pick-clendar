@@ -43,9 +43,20 @@ http://127.0.0.1:5173/pick/cfa-jiangnan
 
 | id | 内容 | 数据来源 |
 | --- | --- | --- |
-| `qingdao202602` | 风格万相 · 中外经典影片展（青岛站） | `doc/20260201.jpg`、`doc/movie-info.png` |
+| `qingdao202602` | 风格万相 · 中外经典影片展（青岛站，首轮 + 二轮） | `doc/20260201.jpg`、`doc/20260202.png`、`doc/movie-info.png` |
 | `cfa-beijing` | 中国电影资料馆 · 北京双馆（2026-11-01 – 12-06） | `doc/data/cfa-beijing.json`，由 `pnpm import:cfa-beijing` 转换 |
 | `cfa-jiangnan` | 电影资料馆江南分馆（2026-11-01 – 12-06） | `doc/data/jiangnan.json`，由 `pnpm import:cfa-jiangnan` 转换 |
+
+### 风格万相 · 青岛两轮（qingdao202602）
+
+- 首轮 `2026-10-29 – 11-28`：艾尚乐汀艺术影城；二轮 `2026-11-29 – 12-13`：青岛中影国际影城（集地广场 CINITY LED 店）。
+- 两个影院放在同一个日历里，不新增「场馆」维度；`venue` 写成 `艾尚乐汀艺术影城｜中影国际影城`。
+- 二轮海报有影厅信息，按「不显示筛选，只在描述里写厅号」处理：事件带 `location`
+  （`中影国际影城 CINITY LED 厅` / `中影国际影城 2号厅`），配置 `hallInDescription: true`，
+  描述自动追加为「年代 导演 语言 · 厅号」，工具栏不出现影厅筛选，周视图副标题和日期弹窗也不重复厅号。
+- 首轮海报没有厅号，事件不带 `location`，描述保持「年代 导演 语言」。
+- 二轮影片信息复用首轮同片数据（导演 / 年代 / 语言 / 评分 / 豆瓣链接），只补场次时间与厅号。
+- 更新流程：改 `src/data/raw/qingdao202602.raw.json` → `pnpm gen`。
 
 ### 北京双馆（cfa-beijing）
 
@@ -104,6 +115,7 @@ http://127.0.0.1:5173/pick/cfa-jiangnan
   "labels": { "featured": "映后交流", "sameTitle": "同片场次" },
   "adjacency": { "normalMinutes": 60, "featuredMinutes": 120 },
   "hallColors": { "1号厅": "#EE3E36", "2号厅": "rgb(98, 138, 240)" },
+  "hallInDescription": false,
   "events": [
     {
       "id": "20261029-1930",
@@ -131,6 +143,9 @@ http://127.0.0.1:5173/pick/cfa-jiangnan
 - `durationMinutes` 用于计算结束时间；不使用显式 `end` 字段，避免两处数据不一致。
 - `director` / `year` / `language` / `rating` / `ratingCount` 为结构化字段，周视图与导出使用；`description` 为自由补充（可为空），`weekDesc` 为周视图专属补充（可选）。`description` 非空时优先使用它，不再自动拼「年代/导演/语言」。
 - `location` 为影厅 / 场地（可选）。同一影院有多个 `location` 时，工具栏「今天」左侧会出现多选筛选（移动端会单独占一行）；周视图副标题和日期弹窗也会显示厅号。
+- `hallInDescription` 为 `true` 时（可选，默认 `false`），`location` 改为只追加到描述末尾：
+  工具栏不出现影厅筛选，周视图副标题和日期弹窗不显示厅号，但已选列表、截图、`.ics` / `.csv` 的描述都会带上厅号。
+  适合「厅号只是备注、不需要按厅筛选」的日历（如青岛二轮）。
 - `hallColors` 为影厅配色（可选，键与 `location` 完全一致）。配置后只影响日程左侧 3px 竖线和筛选下拉里的色块，不改变日程背景；未配置的厅回退到主题主色。移动端按既定设计不显示左侧竖线，只在筛选下拉里显示色块。
 - `kind: 'header'` 为标题头日程（如影展封面），仅进入订阅/导出 `.ics`，不在前端日历展示、不参与选片。
 - `order` 控制影展列表排序，数字越小越靠前；缺省按 `updatedAt` 倒序。青岛为 `0`。

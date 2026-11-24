@@ -88,6 +88,11 @@ export interface FestivalConfig {
   cover?: FestivalCover
   /** 影厅配色：键为 location，用于日历左侧竖线与筛选下拉的厅标识 */
   hallColors?: Record<string, string>
+  /**
+   * 影厅只进描述、不显示筛选（如青岛二轮）。
+   * 开启后 location 会追加到描述末尾，筛选、周视图副标题和日期弹窗都不再显示厅号。
+   */
+  hallInDescription?: boolean
   events: FestivalEvent[]
 }
 

@@ -177,13 +177,18 @@ function foldLine(line) {
   return parts.map((part, index) => (index === 0 ? part : ` ${part}`)).join('\r\n')
 }
 
-function composedMeta(event) {
-  // 与页面导出的 .ics 保持一致：年代 / 导演 / 语言，不含评分与影院信息
+function composedMeta(event, config) {
+  // 与页面导出的 .ics 保持一致：年代 / 导演 / 语言，不含评分与影院地址
   const parts = []
   if (event.year !== undefined) parts.push(`${event.year}年`)
   if (event.director) parts.push(event.director)
   if (event.language) parts.push(event.language)
-  return parts.join(' ')
+  const line = parts.join(' ')
+  // 与页面一致：hallInDescription 时把厅号 / 场地追加到描述末尾
+  if (config.hallInDescription && event.location) {
+    return line ? `${line} · ${event.location}` : event.location
+  }
+  return line
 }
 
 /**
@@ -254,7 +259,7 @@ function buildSubscribeIcs(config) {
           )}`,
       `SUMMARY:${escapeText(title)}`,
     )
-    const desc = event.description || composedMeta(event)
+    const desc = event.description || composedMeta(event, config)
     if (desc) lines.push(`DESCRIPTION:${escapeText(desc)}`)
     if (event.url) lines.push(`URL:${event.url}`)
     lines.push('END:VEVENT')

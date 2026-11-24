@@ -46,6 +46,9 @@ function pickDay(event: FestivalEvent): void {
 function hallDot(event: FestivalEvent): string | undefined {
   return hallColor(props.config, event.location)
 }
+
+/** 厅号只进描述的日历不在日期弹窗里重复显示 */
+const showHall = computed(() => !props.config.hallInDescription)
 </script>
 
 <template>
@@ -78,7 +81,7 @@ function hallDot(event: FestivalEvent): string | undefined {
             {{ hm(zoned(event.start, config.timeZone)) }} –
             {{ hm(eventEnd(event.start, event.durationMinutes, config.timeZone)) }}
           </span>
-          <span v-if="event.location" class="day-hall">
+          <span v-if="event.location && showHall" class="day-hall">
             <span
               v-if="hallDot(event)"
               class="hall-dot"

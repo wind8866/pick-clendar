@@ -172,7 +172,8 @@ function endText(event: FestivalEvent): string {
 
 function eventSub(event: FestivalEvent): string {
   const parts: string[] = []
-  if (event.location) parts.push(event.location)
+  // 厅号只进描述的日历（hallInDescription）不在周视图副标题里重复
+  if (event.location && !props.config.hallInDescription) parts.push(event.location)
   if (event.director) parts.push(event.director)
   if (event.year !== undefined) parts.push(String(event.year))
   return parts.join(' · ')

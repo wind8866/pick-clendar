@@ -41,16 +41,20 @@ const isFullscreen = ref(false)
 // 周视图跳转信号：点击今天 / 上一周 / 下一周时递增，触发横向日历定位
 const weekJumpSeq = ref(0)
 
-/** 同一影院多厅排片时，按影厅筛选；空数组表示全部 */
-const halls = computed(() =>
-  [
+/**
+ * 同一影院多厅排片时，按影厅筛选；空数组表示全部。
+ * hallInDescription 的日历把厅号写进描述，不提供筛选（如青岛二轮）。
+ */
+const halls = computed(() => {
+  if (config.hallInDescription) return []
+  return [
     ...new Set(
       config.events
         .filter((event) => event.kind !== 'header' && event.location)
         .map((event) => event.location as string),
     ),
-  ].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN')),
-)
+  ].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
+})
 const selectedHalls = ref<string[]>([])
 
 /** 影厅筛选下拉的厅色标记；未配置厅色时不显示 */
