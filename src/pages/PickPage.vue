@@ -34,7 +34,8 @@ const isMobile = useIsMobile()
 const view = ref<CalendarView>(
   config.defaultView ?? (isMobile.value ? 'week' : 'month'),
 )
-const anchor = ref(dateInZone(config.initialDate, config.timeZone).format('YYYY-MM-DD'))
+// 所有日历默认定位到“今天所在周”：月视图第一行就是本周，周视图也直接落在本周
+const anchor = ref(startOfWeek(dayjs().tz(config.timeZone)).format('YYYY-MM-DD'))
 const activeTab = ref<'calendar' | 'selected'>('calendar')
 const panelOpen = ref(true)
 const isFullscreen = ref(false)

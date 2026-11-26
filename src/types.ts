@@ -72,7 +72,7 @@ export interface FestivalConfig {
   venue?: string
   venueAddress?: string
   timeZone: string
-  /** 月视图首行所在日期；缺省时取最早一场的日期 */
+  /** 兼容/兜底字段；页面默认定位到今天所在周，不再用它作为初始锚点 */
   initialDate: string
   /** 订阅地址覆盖项；缺省时由站点 origin + BASE_URL 自动生成 */
   subscribeUrl?: string
