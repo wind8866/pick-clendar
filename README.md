@@ -171,6 +171,7 @@ http://127.0.0.1:5173/pick/cfa-jiangnan
   - 周视图工具栏的上一页 / 下一页按「可见天数」翻页：折叠时 7 天、展开时 4 天（移动端 2 天），不会展开后仍整周跳。
 - 加入日程时若与已选场次时间重叠，会弹出 message 提示「与已选「xx」时间冲突 N 分钟」；已选列表和截图里的「时间冲突 N 分钟」固定用红色（`--danger`），不随主题主色变化。
 - 订阅日历由 `pnpm gen` 生成静态 `public/subscribe/<id>.ics`；导出与订阅共用描述口径：不含评分与影院名/地址。
+  CFA 的北京 / 江南日历由 Node 服务滚动生成到 `public/runtime/subscribe/<id>.ics`（过去 3 天 ~ 下下月月底），其余日历仍用静态文件。
   订阅文件是所有访问者共享的静态文件，不包含个人设置（行程时间），因此行程只在「导出日历」生成的 `.ics` 里单独生成 VEVENT。
 - 新增日历：先填 [新日历配置问卷](doc/calendar-questionnaire.md)，再在 `src/data/raw` 新增 `.raw.json` 并执行 `pnpm gen`；需要排序时设置 `order`。二维码依赖 `qrcode`（已在 devDependencies 中），缺少 `siteOrigin` 时只跳过二维码。
 
@@ -199,6 +200,57 @@ calendar-pick:v1:<当前路径>
 - **导出 Excel**：UTF-8 BOM 的 `.csv`，行程单独一列
 
 文件名统一为“内容名 + 浏览器本地时间戳”。页面中的真实时长来自 `doc/movie-info.png`，待补内容见 [doc/TODO.md](doc/TODO.md)。
+
+## 资料馆自动同步服务
+
+资料馆的排片接口需要 `Authori-zation` token，不能放在前端。仓库里直接增加了 `server/`（同一个项目、同一份仓库，不是另一个前后端分离项目）：
+
+```text
+server/
+  index.mjs        # systemd 常驻：启动跑一次，之后每 8 小时
+  run-sync.mjs     # 命令行单次同步
+  auth.mjs         # 账号密码登录、token 缓存、110002 重登
+  cfa-client.mjs   # getCalendar 请求
+  normalize.mjs    # 接口字段 -> FestivalEvent，按影院拆分
+  merge.mjs        # 历史归档 + 未来窗口覆盖
+  ics.mjs          # 订阅日历滚动窗口（过去 3 天 ~ 下下月月底）
+  alerts.mjs       # Bark / 企业微信 / Telegram / webhook
+```
+
+### 本地
+
+1. 复制 `deploy/cfa.env.example` 为 `.env.cfa.local`（已被 `.gitignore` 的 `*.local` 忽略），填账号密码。
+2. 跑一次：
+
+```bash
+pnpm sync:cfa
+```
+
+3. 输出在 `public/runtime/`：
+
+```text
+runtime/festivals/cfa-beijing.json
+runtime/festivals/cfa-jiangnan.json
+runtime/festivals/index.json
+runtime/subscribe/cfa-beijing.ics
+runtime/subscribe/cfa-jiangnan.ics
+runtime/status.json
+```
+
+网页配置保留完整历史归档；订阅 ICS 只保留“过去 3 天 ~ 下下月月底”，头日程作为例外始终保留。
+
+前端通过 [src/data/festivals/runtime.ts](src/data/festivals/runtime.ts) 的路由守卫加载运行时 JSON，失败自动回退到打包数据。订阅地址在 [src/utils/site.ts](src/utils/site.ts) 里对 `runtime` 配置改为 `/runtime/subscribe/<id>.ics`。
+
+### 生产
+
+- 服务器安装 Node 20+；
+- `server/` 放 `/opt/calendar-pick/server`，seed 放 `/opt/calendar-pick/seed`；
+- `deploy/cfa.env.example` 复制到 `/etc/calendar-pick/cfa.env`，`chmod 600`；
+- `deploy/calendar-sync.service` 放 `/etc/systemd/system/`，创建 `calendar` 用户并让它拥有 `/var/lib/calendar-pick`；
+- nginx 模板里的 `/runtime/` 指向 `runtime_root`（默认 `/var/lib/calendar-pick`），由 `deploy.sh` 渲染；
+- `systemctl enable --now calendar-sync`。
+
+告警默认建议 Bark：iPhone 装 Bark 后把 `https://api.day.app/xxxxx` 填到 `BARK_URL`。登录失败、接口连续失败、token 剩余不足 7 天、出现未知影院时都会推送；没有配置告警地址时只写 journal 和 `runtime/status.json`。
 
 ## 部署
 
