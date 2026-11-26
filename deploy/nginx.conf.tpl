@@ -1,6 +1,6 @@
 # calendar-pick 站点配置模板
 # 由 deploy.sh 从 .env 渲染后上传到 /etc/nginx/conf.d/calendar-pick.conf
-# 占位符由 .env 注入：domain / port / remote_dir
+# 占位符由 .env 注入：domain / port / remote_dir / runtime_root
 # 注意：HTTPS 证书路径依赖 domain 对应的证书，换域名前先跑 deploy/certbot.sh
 
 server {
@@ -15,6 +15,18 @@ server {
 
     root __REMOTE_DIR__;
     index index.html;
+
+    # Node 采集服务生成的运行时数据；^~ 避免被下面的 .ics 正则抢走 root
+    location ^~ /runtime/ {
+        root __RUNTIME_ROOT__;
+        add_header Cache-Control "no-cache";
+        types {
+            application/json json;
+            text/calendar ics;
+        }
+        try_files $uri =404;
+        autoindex off;
+    }
 
     location /assets/ {
         expires 30d;
@@ -42,6 +54,18 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/__DOMAIN__/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    # Node 采集服务生成的运行时数据；^~ 避免被下面的 .ics 正则抢走 root
+    location ^~ /runtime/ {
+        root __RUNTIME_ROOT__;
+        add_header Cache-Control "no-cache";
+        types {
+            application/json json;
+            text/calendar ics;
+        }
+        try_files $uri =404;
+        autoindex off;
+    }
 
     location /assets/ {
         expires 30d;

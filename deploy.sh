@@ -23,6 +23,7 @@ set +a
   "${domain:?❌ .env 缺少 domain}"
 
 REMOTE_DIR="${remote_dir:-/var/www/calendar-pick}"
+RUNTIME_ROOT="${runtime_root:-/var/lib/calendar-pick}"
 REMOTE_CONF="/etc/nginx/conf.d/calendar-pick.conf"
 PORT="${port:-80}"
 LOCAL_CONF="$(mktemp "${TMPDIR:-/tmp}/calendar-pick-nginx.XXXXXX")"
@@ -32,9 +33,10 @@ trap 'rm -f "${LOCAL_CONF}"' EXIT
 sed -e "s|__DOMAIN__|${domain}|g" \
     -e "s|__PORT__|${PORT}|g" \
     -e "s|__REMOTE_DIR__|${REMOTE_DIR}|g" \
+    -e "s|__RUNTIME_ROOT__|${RUNTIME_ROOT}|g" \
     deploy/nginx.conf.tpl > "${LOCAL_CONF}"
 
-export ip name password domain REMOTE_DIR REMOTE_CONF PORT LOCAL_CONF
+export ip name password domain REMOTE_DIR RUNTIME_ROOT REMOTE_CONF PORT LOCAL_CONF
 
 command -v expect >/dev/null 2>&1 || { echo "❌ 需要 expect（macOS 自带 /usr/bin/expect）"; exit 1; }
 
