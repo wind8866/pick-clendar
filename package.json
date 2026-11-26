@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "gen": "node scripts/generate-calendar.mjs",
+    "sync:cfa": "node server/run-sync.mjs",
+    "serve:cfa": "node server/index.mjs",
     "import:cfa-beijing": "node scripts/import-cfa-beijing.mjs",
     "import:cfa-jiangnan": "node scripts/import-cfa-jiangnan.mjs",
     "split:cfa": "node scripts/split-cfa.mjs",

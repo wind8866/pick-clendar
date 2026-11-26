@@ -6,3 +6,5 @@ dist
 *.local
 .env
 .npm-cache
+public/runtime
+server/state

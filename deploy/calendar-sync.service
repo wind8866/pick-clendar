@@ -1,0 +1,22 @@
+[Unit]
+Description=Calendar CFA sync service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=calendar
+Group=calendar
+WorkingDirectory=/opt/calendar-pick
+EnvironmentFile=/etc/calendar-pick/cfa.env
+ExecStart=/usr/bin/node server/index.mjs
+Restart=always
+RestartSec=10
+UMask=0022
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
