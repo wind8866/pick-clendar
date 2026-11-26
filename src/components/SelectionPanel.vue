@@ -353,8 +353,11 @@ async function clearAll(): Promise<void> {
                   <h3>{{ store.displayTitle(item) }}</h3>
                 </a>
                 <h3 v-else>{{ store.displayTitle(item) }}</h3>
-                <span v-if="item.postScreening && config.labels?.featured" class="card-tag">
-                  {{ config.labels.featured }}
+                <span
+                  v-if="item.activity || (item.postScreening && config.labels?.featured)"
+                  class="card-tag"
+                >
+                  {{ item.activity || config.labels?.featured }}
                 </span>
               </div>
 

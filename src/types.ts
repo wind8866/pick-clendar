@@ -29,6 +29,8 @@ export interface FestivalEvent {
   ratingCount?: number
   url: string
   postScreening?: boolean
+  /** 活动原文，如「映前：导赏」「映后：交流」；用于列表标签 */
+  activity?: string
   /** 特殊日程类型：header 为标题头（仅进导出数据，前端不展示） */
   kind?: 'header'
 }
@@ -93,6 +95,8 @@ export interface FestivalConfig {
    * 开启后 location 会追加到描述末尾，筛选、周视图副标题和日期弹窗都不再显示厅号。
    */
   hallInDescription?: boolean
+  /** 该配置由 Node 服务在运行时生成；订阅指向 /runtime/subscribe/<id>.ics */
+  runtime?: boolean
   events: FestivalEvent[]
 }
 

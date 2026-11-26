@@ -30,7 +30,9 @@ export function staticPath(path: string): string {
 export function subscribeUrl(config: FestivalConfig): string {
   const override = config.subscribeUrl?.trim()
   if (override) return override
-  const path = staticPath(`subscribe/${config.id}.ics`)
+  const path = staticPath(
+    config.runtime ? `runtime/subscribe/${config.id}.ics` : `subscribe/${config.id}.ics`,
+  )
   const origin = siteOrigin()
   return origin ? new URL(path, origin).toString() : path
 }
